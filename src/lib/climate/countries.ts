@@ -116,9 +116,9 @@ export const COUNTRIES: Record<CountryCode, CountryConfig> = {
   },
 };
 
-export const COUNTRY_CODES: CountryCode[] = ["PAK", "UZB"];
+export const COUNTRY_CODES: CountryCode[] = ["UZB", "PAK"];
 
-export const DEFAULT_COUNTRY: CountryCode = "PAK";
+export const DEFAULT_COUNTRY: CountryCode = "UZB";
 
 export function getCountry(code: string | null | undefined): CountryConfig {
   if (!code) return COUNTRIES[DEFAULT_COUNTRY];

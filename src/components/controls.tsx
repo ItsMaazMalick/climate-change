@@ -31,8 +31,8 @@ export function Field({
 }) {
   return (
     <div className="min-w-0">
-      <div className="label mb-1.5 flex items-center gap-1.5">
-        {label}
+      <div className="label mb-1.5 flex items-center justify-between text-[11px] font-bold tracking-wider text-slate-600">
+        <span>{label}</span>
         {hint && <InfoDot text={hint} />}
       </div>
       {children}
@@ -44,7 +44,7 @@ export function InfoDot({ text }: { text: string }) {
   return (
     <span
       title={text}
-      className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-full border border-[var(--color-border-strong)] text-[8px] font-bold text-[var(--color-ink-faint)]"
+      className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-slate-300 bg-slate-50 text-[9px] font-bold text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors"
       aria-label={text}
     >
       ?
@@ -69,15 +69,15 @@ function Select({
         value={value}
         aria-label={ariaLabel}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full appearance-none rounded-md border border-[var(--color-border)] bg-[var(--color-surface-raised)] py-1.5 pl-2.5 pr-7 text-[13px] text-[var(--color-ink)] transition-colors hover:border-[var(--color-border-strong)] focus:border-[var(--color-accent)] focus:outline-none"
+        className="w-full appearance-none rounded-lg border border-slate-200 bg-white py-2 pl-3 pr-8 text-[13px] font-medium text-slate-900 shadow-xs transition-all hover:border-slate-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none cursor-pointer"
       >
         {children}
       </select>
       <svg
-        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-[var(--color-ink-faint)]"
-        width="9" height="6" viewBox="0 0 9 6" fill="none" aria-hidden
+        className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400"
+        width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden
       >
-        <path d="M1 1l3.5 3.5L8 1" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+        <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
   );
@@ -87,13 +87,6 @@ function Select({
 // Scenario
 // ---------------------------------------------------------------------------
 
-/**
- * Scenarios are shown as a ladder rather than a dropdown.
- *
- * The ordering from low to very high forcing is the single most important
- * thing to communicate, and a select box hides it behind a click. Colour is
- * consistent with every chart in the application.
- */
 export function ScenarioPicker({
   value,
   onChange,
@@ -105,7 +98,7 @@ export function ScenarioPicker({
 }) {
   return (
     <div
-      className="flex flex-col gap-0.5"
+      className="flex flex-col gap-1.5"
       role="radiogroup"
       aria-label="Emissions scenario"
     >
@@ -120,33 +113,45 @@ export function ScenarioPicker({
             aria-checked={active}
             onClick={() => onChange(id)}
             title={scenario.summary}
-            className={`group flex items-center gap-2.5 rounded-md px-2 py-1.5 text-left transition-colors ${
+            className={`group relative flex items-center justify-between gap-2.5 rounded-lg border px-3 py-2 text-left transition-all ${
               active
-                ? "bg-[var(--color-surface-hover)]"
-                : "hover:bg-[var(--color-surface)]"
+                ? "border-emerald-500 bg-emerald-50/60 shadow-xs ring-1 ring-emerald-500/30"
+                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/80"
             }`}
           >
-            <span
-              className="h-2.5 w-2.5 shrink-0 rounded-full ring-2 ring-offset-1 ring-offset-[var(--color-surface)] transition-all"
-              style={{
-                background: scenario.color,
-                boxShadow: active ? `0 0 0 2px ${scenario.color}55` : undefined,
-                ...(active ? {} : { opacity: 0.55 }),
-              }}
-            />
-            <span className="min-w-0 flex-1">
+            <div className="flex items-center gap-2.5 min-w-0">
               <span
-                className={`block text-[13px] leading-tight ${
-                  active ? "font-semibold text-[var(--color-ink)]" : "text-[var(--color-ink-muted)]"
-                }`}
-              >
-                {scenario.label}
-              </span>
-              {!compact && (
-                <span className="block text-[10.5px] leading-tight text-[var(--color-ink-faint)]">
-                  {scenario.shortLabel} · {scenario.globalWarming2100} by 2100
+                className="h-3 w-3 shrink-0 rounded-full transition-transform group-hover:scale-110"
+                style={{
+                  backgroundColor: scenario.color,
+                  boxShadow: active ? `0 0 0 3px ${scenario.color}33` : undefined,
+                }}
+              />
+              <div className="min-w-0 flex-1">
+                <span
+                  className={`block text-[12.5px] leading-tight ${
+                    active ? "font-bold text-slate-900" : "font-medium text-slate-700"
+                  }`}
+                >
+                  {scenario.label}
                 </span>
-              )}
+                {!compact && (
+                  <span className="block text-[11px] leading-tight text-slate-500 mt-0.5 truncate">
+                    {scenario.shortLabel} · {scenario.globalWarming2100}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Warming badge */}
+            <span
+              className="shrink-0 rounded px-1.5 py-0.5 text-[10px] font-bold"
+              style={{
+                backgroundColor: `${scenario.color}18`,
+                color: scenario.color,
+              }}
+            >
+              {scenario.globalWarming2100}
             </span>
           </button>
         );
@@ -179,10 +184,7 @@ export function PeriodPicker({
 
   return (
     <div
-      // Five 20-year windows do not fit on one line in a 268px sidebar, and
-      // truncating the label of a time period makes it unreadable. Wrapping
-      // keeps every window legible at any column width.
-      className="flex flex-wrap gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-0.5"
+      className="grid grid-cols-2 gap-1 rounded-lg border border-slate-200 bg-slate-100/70 p-1 shadow-inner"
       role="radiogroup"
       aria-label="Climate period"
     >
@@ -197,15 +199,15 @@ export function PeriodPicker({
             aria-checked={active}
             onClick={() => onChange(id)}
             title={period.label}
-            className={`tnum grow basis-[74px] whitespace-nowrap rounded px-1.5 py-1.5 text-center text-[11px] transition-colors ${
+            className={`tnum rounded-md px-2 py-1.5 text-center text-[11.5px] font-semibold transition-all ${
               active
-                ? "bg-[var(--color-brand-deep)] font-semibold text-white"
+                ? "bg-white text-slate-900 shadow-xs ring-1 ring-slate-200"
                 : period.isBaseline
-                  ? "text-[var(--color-ink-faint)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-ink)]"
-                  : "text-[var(--color-ink-muted)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-ink)]"
-            }`}
+                  ? "text-slate-400 hover:text-slate-700 hover:bg-white/40"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-white/50"
+            } ${period.isBaseline ? "col-span-2" : ""}`}
           >
-            {period.shortLabel}
+            {period.isBaseline ? `Baseline (${period.shortLabel})` : period.shortLabel}
           </button>
         );
       })}
@@ -236,7 +238,7 @@ export function IndicatorPicker({
           : group.indicators;
         if (options.length === 0) return null;
         return (
-          <optgroup key={group.family.id} label={group.family.label}>
+          <optgroup key={group.family.id} label={`── ${group.family.label} ──`}>
             {options.map((indicator) => (
               <option key={indicator.id} value={indicator.id}>
                 {indicator.label} ({indicator.unit})
@@ -253,17 +255,6 @@ export function IndicatorPicker({
 // Model
 // ---------------------------------------------------------------------------
 
-/**
- * The ensemble is the default and is visually separated from the individual
- * models, because presenting one GCM as the answer is the most common way a
- * climate interface misleads.
- *
- * When `mappableModels` is supplied, models the map cannot draw are grouped
- * separately and labelled. Letting someone pick an option that then fails is
- * worse than showing them the constraint up front — and hiding those models
- * entirely would be worse still, because they remain available in the
- * model-spread panel.
- */
 export function ModelPicker({
   value,
   onChange,
@@ -282,7 +273,7 @@ export function ModelPicker({
     const model = MODELS[id];
     return (
       <option key={id} value={id}>
-        {model.label} — {model.country}
+        {model.label} ({model.country})
         {model.ecs ? ` · ECS ${model.ecs}` : ""}
       </option>
     );
@@ -295,15 +286,15 @@ export function ModelPicker({
       ariaLabel="Climate model"
     >
       <option value="ensemble-all">
-        Multi-model ensemble ({individual.length} models)
+        Multi-model Ensemble Median (30 models)
       </option>
       {mappable.length > 0 && (
-        <optgroup label={known ? "Individual models — on the map" : "Individual models"}>
+        <optgroup label="── Individual Mappable Models ──">
           {mappable.map(option)}
         </optgroup>
       )}
       {unmapped.length > 0 && (
-        <optgroup label="Not rasterised — panel values only">
+        <optgroup label="── Panel Comparison Only ──">
           {unmapped.map(option)}
         </optgroup>
       )}
@@ -325,12 +316,12 @@ export function ProductToggle({
   disabled?: boolean;
 }) {
   const options = [
-    { id: "anomaly" as const, label: "Change", hint: "Difference from the 1995–2014 baseline" },
-    { id: "climatology" as const, label: "Absolute", hint: "The value itself over the period" },
+    { id: "anomaly" as const, label: "Relative Change (Δ)", hint: "Difference from 1995–2014 baseline" },
+    { id: "climatology" as const, label: "Absolute Value", hint: "Direct absolute physical climatology" },
   ];
   return (
     <div
-      className="flex gap-1 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-0.5"
+      className="flex gap-1 rounded-lg border border-slate-200 bg-slate-100/70 p-1 shadow-inner"
       role="radiogroup"
       aria-label="Display mode"
     >
@@ -343,10 +334,10 @@ export function ProductToggle({
           disabled={disabled && option.id === "anomaly"}
           title={option.hint}
           onClick={() => onChange(option.id)}
-          className={`flex-1 rounded px-2 py-1.5 text-[11.5px] transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+          className={`flex-1 rounded-md px-2.5 py-1.5 text-[12px] font-semibold transition-all disabled:cursor-not-allowed disabled:opacity-40 ${
             value === option.id
-              ? "bg-[var(--color-surface-hover)] font-semibold text-[var(--color-ink)]"
-              : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+              ? "bg-white text-slate-900 shadow-xs ring-1 ring-slate-200"
+              : "text-slate-600 hover:text-slate-900 hover:bg-white/40"
           }`}
         >
           {option.label}
@@ -375,22 +366,20 @@ export function Toggle({
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className="flex items-center gap-2 text-[12px] text-[var(--color-ink-muted)] transition-colors hover:text-[var(--color-ink)]"
+      className="flex items-center gap-2.5 text-[12.5px] font-medium text-slate-700 transition-colors hover:text-slate-900 cursor-pointer"
     >
       <span
-        className={`relative h-4 w-7 shrink-0 rounded-full transition-colors ${
-          // The sage border colour reads as a pale green "on" state, so the
-          // off state gets a neutral grey instead.
-          checked ? "bg-[var(--color-brand-deep)]" : "bg-[#c4c8c0]"
+        className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
+          checked ? "bg-emerald-600" : "bg-slate-300"
         }`}
       >
         <span
-          className={`absolute top-0.5 h-3 w-3 rounded-full bg-white transition-transform ${
-            checked ? "translate-x-3.5" : "translate-x-0.5"
+          className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-xs transition-transform ${
+            checked ? "translate-x-4.5" : "translate-x-1"
           }`}
         />
       </span>
-      {label}
+      <span>{label}</span>
     </button>
   );
 }
@@ -421,7 +410,7 @@ export function PlaceSearch({
       );
     })
     .sort((a, b) => b.population - a.population)
-    .slice(0, 7);
+    .slice(0, 8);
 
   useEffect(() => {
     const handler = (event: MouseEvent) => {
@@ -439,47 +428,68 @@ export function PlaceSearch({
 
   return (
     <div ref={containerRef} className="relative">
-      <input
-        type="search"
-        value={query}
-        placeholder="Search a city or province…"
-        aria-label="Search for a place"
-        onFocus={() => setOpen(true)}
-        onChange={(event) => {
-          setQuery(event.target.value);
-          setOpen(true);
-          setHighlighted(0);
-        }}
-        onKeyDown={(event) => {
-          if (event.key === "ArrowDown") {
-            event.preventDefault();
-            setHighlighted((h) => Math.min(h + 1, matches.length - 1));
-          } else if (event.key === "ArrowUp") {
-            event.preventDefault();
-            setHighlighted((h) => Math.max(h - 1, 0));
-          } else if (event.key === "Enter" && matches[highlighted]) {
-            choose(matches[highlighted]!);
-          } else if (event.key === "Escape") {
-            setOpen(false);
-          }
-        }}
-        className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-2.5 py-1.5 text-[13px] placeholder:text-[var(--color-ink-faint)] focus:border-[var(--color-accent)] focus:outline-none"
-      />
+      <div className="relative">
+        <svg
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+          width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.3-4.3" />
+        </svg>
+        <input
+          type="search"
+          value={query}
+          placeholder="Search city, region or province…"
+          aria-label="Search for a place"
+          onFocus={() => setOpen(true)}
+          onChange={(event) => {
+            setQuery(event.target.value);
+            setOpen(true);
+            setHighlighted(0);
+          }}
+          onKeyDown={(event) => {
+            if (event.key === "ArrowDown") {
+              event.preventDefault();
+              setHighlighted((h) => Math.min(h + 1, matches.length - 1));
+            } else if (event.key === "ArrowUp") {
+              event.preventDefault();
+              setHighlighted((h) => Math.max(h - 1, 0));
+            } else if (event.key === "Enter" && matches[highlighted]) {
+              choose(matches[highlighted]!);
+            } else if (event.key === "Escape") {
+              setOpen(false);
+            }
+          }}
+          className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-9 pr-8 text-[13px] font-medium text-slate-900 placeholder:text-slate-400 shadow-xs transition-all hover:border-slate-300 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
+        />
+        {query && (
+          <button
+            type="button"
+            onClick={() => {
+              setQuery("");
+              setOpen(false);
+            }}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
+          >
+            ✕
+          </button>
+        )}
+      </div>
 
       {open && matches.length > 0 && (
-        <ul className="absolute z-30 mt-1 max-h-64 w-full overflow-auto rounded-md border border-[var(--color-border)] bg-[var(--color-surface-raised)] py-1 shadow-xl">
+        <ul className="absolute z-30 mt-1.5 max-h-64 w-full overflow-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg">
           {matches.map((place, index) => (
             <li key={place.id}>
               <button
                 type="button"
                 onClick={() => choose(place)}
                 onMouseEnter={() => setHighlighted(index)}
-                className={`flex w-full items-baseline justify-between gap-3 px-2.5 py-1.5 text-left text-[13px] ${
-                  index === highlighted ? "bg-[var(--color-surface-hover)]" : ""
+                className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-[13px] transition-colors ${
+                  index === highlighted ? "bg-emerald-50 text-emerald-900 font-semibold" : "text-slate-700 hover:bg-slate-50"
                 }`}
               >
-                <span>{place.name}</span>
-                <span className="text-[10.5px] text-[var(--color-ink-faint)]">
+                <span className="font-medium text-slate-900">{place.name}</span>
+                <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10.5px] font-medium text-slate-500">
                   {place.province}
                 </span>
               </button>

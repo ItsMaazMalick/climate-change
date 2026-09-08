@@ -1,61 +1,47 @@
 @import "tailwindcss";
 
 /*
- * Earth Scan Systems — light theme.
- *
- * The palette is taken from the ESS wordmark itself: the brown of "EARTH
- * SCAN" and the green of "SYSTEMS", sampled from the logo artwork rather
- * than approximated. Green leads because it carries the brand's meaning —
- * agriculture, growth, a carbon-neutral planet — and brown anchors the
- * typography the way it anchors the mark.
- *
- * The interface is light. On a data platform this is the harder choice: the
- * map is the primary object, and a white ground gives a diverging
- * temperature ramp less room than a dark one. It is the right choice anyway,
- * because this sits next to the rest of the ESS estate and must not read as
- * a different product — and because these charts are printed and pasted into
- * decks far more often than they are looked at in a dark room.
+ * Climate Intelligence Platform — Earth Scan Systems
+ * Modernized, high-clarity scientific data visualization design system.
  */
 @theme {
-  /* --- ESS brand, sampled from the logo ------------------------------- */
-  --color-brand: #8dc63e;          /* "SYSTEMS", satellite, orbit ring */
-  --color-brand-dark: #6ea62c;     /* hover / pressed */
-  --color-brand-deep: #3c8c1e;     /* text on light green, chart accents */
-  --color-brand-tint: #f2f8e8;     /* selected rows, callout grounds */
-  --color-earth: #8b5e3b;          /* "EARTH SCAN" wordmark */
+  /* --- ESS brand & accents --------------------------------------------- */
+  --color-brand: #7cb82f;          /* Vibrant nature green */
+  --color-brand-dark: #5c961e;     /* Hover / pressed state */
+  --color-brand-deep: #2f7514;     /* Deep contrast green */
+  --color-brand-tint: #f0f7e6;     /* Subtle tinted background */
+  --color-brand-glow: rgba(124, 184, 47, 0.25);
+  
+  --color-earth: #8b5e3b;          /* Earth warm tone */
   --color-earth-dark: #6f4a2e;
-  --color-earth-tint: #f8f3ee;
+  --color-earth-tint: #fbf7f4;
 
-  /* --- Surfaces -------------------------------------------------------- */
-  --color-ground: #ffffff;
-  --color-surface: #f7f9f5;
+  /* --- Premium Neutral Surfaces ---------------------------------------- */
+  --color-ground: #f8fafc;
+  --color-surface: #ffffff;
   --color-surface-raised: #ffffff;
-  --color-surface-hover: #eef3e8;
-  --color-border: #e3e8dd;
-  --color-border-strong: #c8d2bd;
+  --color-surface-hover: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
 
-  /* --- Ink ------------------------------------------------------------- */
-  --color-ink: #1f2a1b;
-  --color-ink-muted: #55604f;
-  --color-ink-faint: #8a9384;
+  /* --- Ink & High Contrast Typography ---------------------------------- */
+  --color-ink: #0f172a;
+  --color-ink-muted: #475569;
+  --color-ink-faint: #94a3b8;
 
   --color-accent: var(--color-brand-deep);
   --color-accent-dim: var(--color-brand);
 
-  /* --- Scenario identity ------------------------------------------------
-   * Deliberately NOT the brand palette. A scenario ramp has to read as an
-   * ordered sequence from low to very high forcing, and brand green would
-   * put "our colour" on one arbitrary rung of that ladder. These are tuned
-   * for contrast on a white ground. */
-  --color-ssp119: #0e7490;
-  --color-ssp126: #15803d;
-  --color-ssp245: #b45309;
-  --color-ssp370: #c2410c;
-  --color-ssp585: #991b1b;
-  --color-historical: #6b7280;
+  /* --- Scenario identity ------------------------------------------------ */
+  --color-ssp119: #0284c7;
+  --color-ssp126: #16a34a;
+  --color-ssp245: #d97706;
+  --color-ssp370: #ea580c;
+  --color-ssp585: #dc2626;
+  --color-historical: #64748b;
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Fira Code", Menlo, monospace;
 }
 
 @layer base {
@@ -74,40 +60,38 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    letter-spacing: -0.011em;
   }
 
-  /* Numbers in tables and readouts must align vertically and not jitter as
-     they update, so everything numeric is tabular by default. */
   .tnum {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--color-brand) 35%, transparent);
+    background: color-mix(in srgb, var(--color-brand) 30%, transparent);
     color: var(--color-ink);
   }
 
   :focus-visible {
     outline: 2px solid var(--color-brand-deep);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: 4px;
   }
 
   ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--color-border-strong);
-    border-radius: 5px;
-    border: 2px solid var(--color-ground);
+    background: #cbd5e1;
+    border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-ink-faint);
+    background: #94a3b8;
   }
 }
 
@@ -115,39 +99,60 @@
   .panel {
     background: var(--color-surface-raised);
     border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
+    border-radius: 0.875rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.04);
   }
 
   .panel-raised {
     background: var(--color-surface-raised);
     border: 1px solid var(--color-border);
+    border-radius: 0.875rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(226, 232, 240, 0.9);
     border-radius: 0.75rem;
-    box-shadow: 0 1px 2px rgb(31 42 27 / 0.04);
+    box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.06);
   }
 
   .label {
     font-size: 0.6875rem;
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-ink-faint);
+    color: var(--color-ink-muted);
   }
 
   .hairline {
     border-top: 1px solid var(--color-border);
   }
 
-  /* The ESS wordmark, set in type rather than shipped as an image so it
-     stays crisp at every size and inherits the page's own rendering. */
   .wordmark-earth {
     color: var(--color-earth);
     font-weight: 800;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
   }
   .wordmark-systems {
     color: var(--color-brand);
     font-weight: 800;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
+  }
+
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
   }
 }
 

@@ -106,17 +106,24 @@ export function LocationPanel({
   const nearest = point.data?.location.nearestPlace;
 
   return (
-    <div className="flex flex-col divide-y divide-[var(--color-border)]">
+    <div className="flex flex-col divide-y divide-slate-100">
       {/* ---- header ---- */}
-      <section className="p-4">
+      <section className="p-4 bg-gradient-to-b from-slate-50/80 to-white">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="truncate text-[17px] font-semibold leading-tight">
-              {nearest && nearest.distanceKm < 40
-                ? nearest.name
-                : `${Math.abs(lat).toFixed(2)}°N, ${Math.abs(lon).toFixed(2)}°E`}
-            </h2>
-            <p className="tnum mt-0.5 text-[11.5px] text-[var(--color-ink-faint)]">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="truncate text-[18px] font-bold tracking-tight text-slate-900 leading-tight">
+                {nearest && nearest.distanceKm < 40
+                  ? nearest.name
+                  : `${Math.abs(lat).toFixed(2)}°N, ${Math.abs(lon).toFixed(2)}°E`}
+              </h2>
+              {nearest && nearest.province && (
+                <span className="rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                  {nearest.province}
+                </span>
+              )}
+            </div>
+            <p className="tnum mt-1 text-[11.5px] font-medium text-slate-500">
               {lat.toFixed(3)}°N, {lon.toFixed(3)}°E
               {nearest && nearest.distanceKm >= 40 && (
                 <> · {nearest.distanceKm} km from {nearest.name}</>
@@ -126,16 +133,16 @@ export function LocationPanel({
           {nearest && nearest.distanceKm < 40 && (
             <Link
               href={`/places/${nearest.id}?scenario=${scenario}&period=${period}`}
-              className="shrink-0 rounded-md border border-[var(--color-border)] px-2 py-1 text-[11px] text-[var(--color-ink-muted)] transition-colors hover:border-[var(--color-brand)] hover:text-[var(--color-ink)]"
+              className="shrink-0 rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[11.5px] font-bold text-emerald-800 transition-all hover:bg-emerald-100 hover:shadow-xs"
             >
-              Full story →
+              Full Profile →
             </Link>
           )}
         </div>
 
         {point.data?.meta?.note && (
-          <p className="mt-2.5 rounded border-l-2 border-[var(--color-border-strong)] bg-[var(--color-surface)] py-1.5 pl-2.5 pr-2 text-[11px] leading-snug text-[var(--color-ink-faint)]">
-            {point.data.meta.note}
+          <p className="mt-2.5 rounded-lg border border-slate-200 bg-white/90 p-2 text-[11px] leading-snug text-slate-600 shadow-xs">
+            ℹ️ {point.data.meta.note}
           </p>
         )}
       </section>
@@ -145,33 +152,37 @@ export function LocationPanel({
         {point.error ? (
           <ErrorNote message={point.error} />
         ) : (
-          <div className="grid grid-cols-3 gap-3">
-            <Stat
-              label="1995–2014"
-              value={formatValue(point.data?.baseline?.value ?? null, indicator)}
-              caption="baseline"
-              loading={point.loading}
-            />
-            <Stat
-              label={PERIODS[period].shortLabel}
-              value={formatValue(point.data?.projected?.value ?? null, indicator)}
-              caption="projected"
-              loading={point.loading}
-            />
-            <Stat
-              label="Change"
-              value={
-                isBaseline
-                  ? "—"
-                  : formatValue(point.data?.anomaly?.value ?? null, indicator, "anomaly")
-              }
-              caption={isBaseline ? "n/a at baseline" : "vs baseline"}
-              emphasis
-              // Colour by direction of concern, not by brand. Printing a
-              // +2.3 °C warming in the brand green would read as good news.
-              tone={toneFor(point.data?.anomaly?.value ?? null, point.data?.indicator)}
-              loading={point.loading}
-            />
+          <div className="grid grid-cols-3 gap-2.5">
+            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-xs">
+              <Stat
+                label="Baseline"
+                value={formatValue(point.data?.baseline?.value ?? null, indicator)}
+                caption="1995–2014"
+                loading={point.loading}
+              />
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-xs">
+              <Stat
+                label="Projected"
+                value={formatValue(point.data?.projected?.value ?? null, indicator)}
+                caption={PERIODS[period].shortLabel}
+                loading={point.loading}
+              />
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 shadow-xs ring-1 ring-slate-200">
+              <Stat
+                label="Change (Δ)"
+                value={
+                  isBaseline
+                    ? "—"
+                    : formatValue(point.data?.anomaly?.value ?? null, indicator, "anomaly")
+                }
+                caption={isBaseline ? "Baseline period" : `vs 1995–2014`}
+                emphasis
+                tone={toneFor(point.data?.anomaly?.value ?? null, point.data?.indicator)}
+                loading={point.loading}
+              />
+            </div>
           </div>
         )}
       </section>

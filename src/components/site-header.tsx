@@ -19,26 +19,26 @@ export function SiteHeader() {
   const { country, config, setCountry } = useCountry();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-white/90 backdrop-blur-md">
-      <div className="mx-auto flex h-14 max-w-[1800px] items-center gap-4 px-4 sm:gap-6">
-        <Link href="/" className="group flex items-center gap-2.5" aria-label="Earth Scan Systems">
-          <EssMark />
-          <span className="flex items-baseline gap-1.5">
-            <span className="text-[15px] leading-none">
-              <span className="wordmark-earth">EARTH SCAN</span>{" "}
-              <span className="wordmark-systems">SYSTEMS</span>
+    <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-white/95 backdrop-blur-md shadow-xs">
+      <div className="mx-auto flex h-14 max-w-[1800px] items-center justify-between gap-3 px-4 sm:gap-6 sm:px-6">
+        {/* Brand */}
+        <div className="flex items-center gap-4">
+          <Link href="/" className="group flex items-center gap-2.5 transition-transform hover:scale-[1.01]" aria-label="Earth Scan Systems">
+            <EssMark />
+            <span className="flex items-baseline gap-2">
+              <span className="text-[15px] tracking-tight">
+                <span className="wordmark-earth">EARTH SCAN</span>{" "}
+                <span className="wordmark-systems">SYSTEMS</span>
+              </span>
+              <span className="hidden rounded-full bg-[var(--color-brand-tint)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-brand-deep)] border border-[var(--color-border)] md:inline-flex items-center gap-1">
+                <span>{config.flag}</span>
+                <span>{config.shortName}</span>
+              </span>
             </span>
-            <span
-              className="hidden border-l border-[var(--color-border-strong)] pl-1.5 text-[13px] font-medium text-[var(--color-ink-muted)] sm:inline"
-            >
-              Climate {config.shortName}
-            </span>
-          </span>
-        </Link>
+          </Link>
 
-        {/* Country Selector Switcher */}
-        <div className="flex items-center">
-          <div className="flex items-center rounded-lg border border-[var(--color-border-strong)] bg-[var(--color-surface)] p-0.5 shadow-xs">
+          {/* Country Switcher Segment */}
+          <div className="flex items-center rounded-lg border border-[var(--color-border-strong)] bg-slate-100/80 p-0.5 shadow-inner">
             {COUNTRY_CODES.map((code) => {
               const c = COUNTRIES[code];
               const isSelected = country === code;
@@ -50,20 +50,21 @@ export function SiteHeader() {
                   aria-pressed={isSelected}
                   className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-all ${
                     isSelected
-                      ? "bg-white font-semibold text-[var(--color-ink)] shadow-xs ring-1 ring-[var(--color-border)]"
-                      : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                      ? "bg-white font-bold text-[var(--color-ink)] shadow-xs ring-1 ring-slate-200"
+                      : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] hover:bg-white/50"
                   }`}
-                  title={`Switch view to ${c.name}`}
+                  title={`Switch active country to ${c.name}`}
                 >
                   <span className="text-sm leading-none">{c.flag}</span>
-                  <span className="hidden sm:inline">{c.shortName}</span>
+                  <span className="font-semibold">{c.shortName}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        <nav className="flex items-center gap-0.5" aria-label="Primary">
+        {/* Navigation */}
+        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
           {NAV.map((item) => {
             const active = item.exact
               ? pathname === item.href
@@ -73,10 +74,10 @@ export function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`rounded-md px-2.5 py-1.5 text-[13px] transition-colors ${
+                className={`rounded-lg px-3 py-1.5 text-[13px] font-medium transition-all ${
                   active
-                    ? "bg-[var(--color-brand-tint)] font-semibold text-[var(--color-brand-deep)]"
-                    : "text-[var(--color-ink-muted)] hover:bg-[var(--color-surface)] hover:text-[var(--color-ink)]"
+                    ? "bg-[var(--color-brand-tint)] font-semibold text-[var(--color-brand-deep)] ring-1 ring-[var(--color-brand)]/20 shadow-xs"
+                    : "text-[var(--color-ink-muted)] hover:bg-slate-100 hover:text-[var(--color-ink)]"
                 }`}
               >
                 {item.label}
@@ -85,11 +86,15 @@ export function SiteHeader() {
           })}
         </nav>
 
-        <div className="ml-auto hidden items-center gap-2 text-[11px] text-[var(--color-ink-faint)] lg:flex">
-          <span className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-1.5 py-0.5 font-mono">
-            CMIP6
-          </span>
-          <span>World Bank CCKP · 0.25°</span>
+        {/* Metadata / Live Status Pill */}
+        <div className="flex items-center gap-2 text-[11.5px]">
+          <div className="hidden items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-emerald-800 lg:flex font-medium">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+            </span>
+            <span>CMIP6 0.25° Downscaled</span>
+          </div>
         </div>
       </div>
     </header>

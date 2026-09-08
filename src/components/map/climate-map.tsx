@@ -478,25 +478,30 @@ export function ClimateMap({
       </svg>
 
       {/* ---- controls ---- */}
-      <div className="absolute right-3 top-3 flex flex-col overflow-hidden rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)]">
-        <MapButton label="Zoom in" onClick={() => zoomButton(1.5)}>+</MapButton>
-        <MapButton label="Zoom out" onClick={() => zoomButton(1 / 1.5)}>−</MapButton>
+      <div className="absolute right-3 top-3 flex flex-col overflow-hidden rounded-xl border border-slate-200/90 bg-white/95 backdrop-blur-md shadow-md">
+        <MapButton label="Zoom in" onClick={() => zoomButton(1.5)}>
+          <span className="text-base font-bold leading-none text-slate-700">+</span>
+        </MapButton>
+        <MapButton label="Zoom out" onClick={() => zoomButton(1 / 1.5)}>
+          <span className="text-base font-bold leading-none text-slate-700">−</span>
+        </MapButton>
         <MapButton label="Reset view" onClick={resetView}>
-          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
-            <rect x="1.5" y="1.5" width="9" height="9" rx="1.5" stroke="currentColor" strokeWidth="1.3" />
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-slate-600">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
           </svg>
         </MapButton>
       </div>
 
       {/* ---- hover readout ---- */}
       {hover && field && scale && (
-        <div className="pointer-events-none absolute bottom-3 left-3 rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)]/95 px-3 py-2 backdrop-blur">
-          <div className="tnum text-[11px] text-[var(--color-ink-faint)]">
+        <div className="pointer-events-none absolute bottom-3 left-3 rounded-xl border border-slate-200/90 bg-white/95 px-3.5 py-2.5 backdrop-blur-md shadow-lg">
+          <div className="tnum text-[11px] font-medium text-slate-500">
             {hover.lat.toFixed(2)}°N, {hover.lon.toFixed(2)}°E
           </div>
-          <div className="tnum mt-0.5 flex items-center gap-2 text-[15px] font-semibold">
+          <div className="tnum mt-1 flex items-center gap-2 text-[15px] font-bold text-slate-900">
             <span
-              className="inline-block h-3 w-3 rounded-sm"
+              className="inline-block h-3.5 w-3.5 rounded-sm ring-1 ring-slate-300"
               style={{ background: hover.value === null ? NO_DATA_COLOR : scale(hover.value) }}
             />
             {hover.value === null
@@ -507,16 +512,17 @@ export function ClimateMap({
       )}
 
       {loading && (
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-raised)]/90 px-4 py-2 text-xs text-[var(--color-ink-muted)] backdrop-blur">
-          Loading field…
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-slate-200 bg-white/95 px-4 py-2 text-xs font-semibold text-slate-700 backdrop-blur-md shadow-md flex items-center gap-2">
+          <span className="inline-block h-3 w-3 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent"></span>
+          Rendering Downscaled Field…
         </div>
       )}
 
       {!field && !loading && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="max-w-sm rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)]/95 px-4 py-3 text-center text-xs text-[var(--color-ink-muted)] backdrop-blur">
+          <div className="max-w-sm rounded-xl border border-slate-200 bg-white/95 px-4 py-3 text-center text-xs font-medium text-slate-600 backdrop-blur-md shadow-md">
             No gridded field for this combination. Point and national values are
-            still available in the panel.
+            still available in the location panel.
           </div>
         </div>
       )}
@@ -540,7 +546,7 @@ function MapButton({
       title={label}
       onClick={onClick}
       onPointerDown={(event) => event.stopPropagation()}
-      className="flex h-8 w-8 items-center justify-center border-b border-[var(--color-border)] text-sm text-[var(--color-ink-muted)] transition-colors last:border-b-0 hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-ink)]"
+      className="flex h-8 w-8 items-center justify-center border-b border-slate-100 text-slate-600 transition-colors last:border-b-0 hover:bg-slate-100 hover:text-slate-900 cursor-pointer"
     >
       {children}
     </button>
