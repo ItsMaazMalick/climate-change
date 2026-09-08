@@ -78,22 +78,23 @@ export function ScenarioComparison({
             </span>
 
             <div
-              className="relative flex-1 rounded-sm bg-[var(--color-surface)]"
+              className="relative flex-1 rounded-lg bg-slate-900/80 border border-slate-800 overflow-hidden"
               style={{ height }}
             >
               <div
-                className="absolute inset-y-0 w-px bg-[var(--color-border-strong)]"
+                className="absolute inset-y-0 w-px bg-slate-600"
                 style={{ left: `${zeroPct}%` }}
                 aria-hidden
               />
               {value !== null && (
                 <div
-                  className="absolute inset-y-[3px] rounded-sm transition-all duration-200"
+                  className="absolute inset-y-[2px] rounded-md transition-all duration-200"
                   style={{
                     left: `${leftPct}%`,
-                    width: `${Math.max(widthPct, 0.4)}%`,
+                    width: `${Math.max(widthPct, 0.6)}%`,
                     background: scenario.color,
-                    opacity: dimmed ? 0.3 : uncertain ? 0.5 : 1,
+                    opacity: dimmed ? 0.25 : uncertain ? 0.6 : 0.95,
+                    boxShadow: dimmed ? undefined : `0 0 8px ${scenario.color}66`,
                     backgroundImage: uncertain
                       ? "repeating-linear-gradient(45deg, rgba(255,255,255,0.55) 0 2px, transparent 2px 5px)"
                       : undefined,
@@ -108,8 +109,8 @@ export function ScenarioComparison({
             </div>
 
             <span
-              className={`tnum w-[68px] shrink-0 text-right text-[12px] transition-colors ${
-                active === bar.scenario ? "font-bold" : "font-semibold"
+              className={`tnum w-[68px] shrink-0 text-right text-[12px] font-mono transition-colors ${
+                active === bar.scenario ? "font-black text-white" : "font-bold text-slate-300"
               }`}
             >
               {formatValue(value, indicatorId, "anomaly")}

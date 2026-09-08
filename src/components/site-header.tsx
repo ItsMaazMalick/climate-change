@@ -19,26 +19,26 @@ export function SiteHeader() {
   const { country, config, setCountry } = useCountry();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--color-border)] bg-white/95 backdrop-blur-md shadow-xs">
+    <header className="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-xl shadow-2xl">
       <div className="mx-auto flex h-14 max-w-[1800px] items-center justify-between gap-3 px-4 sm:gap-6 sm:px-6">
-        {/* Brand */}
+        {/* Brand & Orbit Mark */}
         <div className="flex items-center gap-4">
-          <Link href="/" className="group flex items-center gap-2.5 transition-transform hover:scale-[1.01]" aria-label="Earth Scan Systems">
+          <Link href="/" className="group flex items-center gap-2.5 transition-transform hover:scale-[1.02]" aria-label="Earth Scan Systems">
             <EssMark />
             <span className="flex items-baseline gap-2">
-              <span className="text-[15px] tracking-tight">
-                <span className="wordmark-earth">EARTH SCAN</span>{" "}
-                <span className="wordmark-systems">SYSTEMS</span>
+              <span className="text-[15px] font-extrabold tracking-tight text-white">
+                <span className="text-orange-400">EARTH SCAN</span>{" "}
+                <span className="text-emerald-400">SYSTEMS</span>
               </span>
-              <span className="hidden rounded-full bg-[var(--color-brand-tint)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-brand-deep)] border border-[var(--color-border)] md:inline-flex items-center gap-1">
+              <span className="hidden rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-bold text-emerald-400 border border-emerald-500/30 md:inline-flex items-center gap-1.5 shadow-xs">
                 <span>{config.flag}</span>
                 <span>{config.shortName}</span>
               </span>
             </span>
           </Link>
 
-          {/* Country Switcher Segment */}
-          <div className="flex items-center rounded-lg border border-[var(--color-border-strong)] bg-slate-100/80 p-0.5 shadow-inner">
+          {/* Glowing Country Segment Switcher */}
+          <div className="flex items-center rounded-xl border border-slate-700/80 bg-slate-900/90 p-1 shadow-inner ring-1 ring-slate-800">
             {COUNTRY_CODES.map((code) => {
               const c = COUNTRIES[code];
               const isSelected = country === code;
@@ -48,22 +48,22 @@ export function SiteHeader() {
                   type="button"
                   onClick={() => setCountry(code)}
                   aria-pressed={isSelected}
-                  className={`flex items-center gap-1.5 rounded-md px-2.5 py-1 text-[12px] font-medium transition-all ${
+                  className={`flex items-center gap-1.5 rounded-lg px-3 py-1 text-[12px] font-bold transition-all ${
                     isSelected
-                      ? "bg-white font-bold text-[var(--color-ink)] shadow-xs ring-1 ring-slate-200"
-                      : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)] hover:bg-white/50"
+                      ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-900/40 ring-1 ring-emerald-400/50"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/60"
                   }`}
                   title={`Switch active country to ${c.name}`}
                 >
                   <span className="text-sm leading-none">{c.flag}</span>
-                  <span className="font-semibold">{c.shortName}</span>
+                  <span className="font-bold">{c.shortName}</span>
                 </button>
               );
             })}
           </div>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation Tabs */}
         <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
           {NAV.map((item) => {
             const active = item.exact
@@ -74,10 +74,10 @@ export function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 aria-current={active ? "page" : undefined}
-                className={`rounded-lg px-3 py-1.5 text-[13px] font-medium transition-all ${
+                className={`rounded-lg px-3 py-1.5 text-[13px] font-bold transition-all ${
                   active
-                    ? "bg-[var(--color-brand-tint)] font-semibold text-[var(--color-brand-deep)] ring-1 ring-[var(--color-brand)]/20 shadow-xs"
-                    : "text-[var(--color-ink-muted)] hover:bg-slate-100 hover:text-[var(--color-ink)]"
+                    ? "bg-slate-800 text-emerald-400 ring-1 ring-emerald-500/30 shadow-xs"
+                    : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
                 }`}
               >
                 {item.label}
@@ -86,14 +86,14 @@ export function SiteHeader() {
           })}
         </nav>
 
-        {/* Metadata / Live Status Pill */}
+        {/* Live Satellite Status Radar */}
         <div className="flex items-center gap-2 text-[11.5px]">
-          <div className="hidden items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-emerald-800 lg:flex font-medium">
+          <div className="hidden items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950/40 px-3 py-1 text-emerald-300 lg:flex font-mono text-[11px] font-bold shadow-xs">
             <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-80"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500 shadow-sm shadow-emerald-400"></span>
             </span>
-            <span>CMIP6 0.25° Downscaled</span>
+            <span>CMIP6 0.25° TELEMETRY</span>
           </div>
         </div>
       </div>

@@ -141,11 +141,11 @@ export function Explorer({ places }: { places: Place[] }) {
   );
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col lg:flex-row bg-slate-100">
+    <div className="flex h-[calc(100vh-3.5rem)] flex-col lg:flex-row bg-[#070a12] text-slate-100">
       {/* ------------------------------------------------ controls ---- */}
-      <aside className="w-full shrink-0 overflow-y-auto border-b border-slate-200 bg-white lg:w-[280px] lg:border-b-0 lg:border-r shadow-xs">
+      <aside className="w-full shrink-0 overflow-y-auto border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-xl lg:w-[290px] lg:border-b-0 lg:border-r shadow-2xl">
         <div className="space-y-4 p-4">
-          <Field label="Location Search">
+          <Field label="Target Coordinate / City">
             <PlaceSearch
               places={countryPlaces}
               onSelect={(place) =>
@@ -207,10 +207,10 @@ export function Explorer({ places }: { places: Place[] }) {
             />
             {model !== "ensemble-all" &&
               !perModelVariables.includes(indicator) && (
-                <p className="mt-1.5 text-[11px] leading-snug text-slate-500">
+                <p className="mt-1.5 text-[11px] leading-snug text-slate-400">
                   The map draws the ensemble for {INDICATORS[indicator]?.shortLabel};
                   individual models are available on{" "}
-                  <a href="/compare" className="text-emerald-700 underline font-medium">
+                  <a href="/compare" className="text-emerald-400 underline font-semibold">
                     Compare
                   </a>
                   .
@@ -253,7 +253,7 @@ export function Explorer({ places }: { places: Place[] }) {
       </aside>
 
       {/* ----------------------------------------------------- map ---- */}
-      <div className="relative min-h-[420px] flex-1 bg-slate-50">
+      <div className="relative min-h-[420px] flex-1 bg-[#060810]">
         <ClimateMap
           bbox={config.bbox}
           field={field.data ?? null}
@@ -273,42 +273,45 @@ export function Explorer({ places }: { places: Place[] }) {
           loading={field.loading}
         />
 
-        {/* headline floating card */}
-        <div className="pointer-events-none absolute left-3 top-3 max-w-[min(100%-4rem,420px)] rounded-xl border border-slate-200/80 bg-white/95 p-3.5 backdrop-blur-md shadow-md">
-          <div className="flex items-center gap-2 mb-1">
+        {/* Floating Futuristic HUD Card */}
+        <div className="pointer-events-none absolute left-3.5 top-3.5 max-w-[min(100%-4rem,440px)] rounded-2xl border border-slate-700/80 bg-slate-950/90 p-4 backdrop-blur-2xl shadow-2xl ring-1 ring-white/10">
+          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             <span
-              className="inline-block h-2.5 w-2.5 rounded-full ring-2 ring-white"
-              style={{ background: SCENARIOS[scenario].color }}
+              className="inline-block h-2.5 w-2.5 rounded-full shadow-lg"
+              style={{
+                background: SCENARIOS[scenario].color,
+                boxShadow: `0 0 10px ${SCENARIOS[scenario].color}`,
+              }}
             />
             <span
-              className="rounded px-1.5 py-0.5 text-[10.5px] font-bold"
+              className="rounded-md px-2 py-0.5 text-[11px] font-mono font-bold"
               style={{
-                backgroundColor: `${SCENARIOS[scenario].color}18`,
+                backgroundColor: `${SCENARIOS[scenario].color}25`,
                 color: SCENARIOS[scenario].color,
+                border: `1px solid ${SCENARIOS[scenario].color}44`,
               }}
             >
               {SCENARIOS[scenario].label} · {SCENARIOS[scenario].globalWarming2100}
             </span>
-            <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10.5px] font-semibold text-slate-600">
+            <span className="rounded-md bg-slate-800 border border-slate-700 px-2 py-0.5 text-[11px] font-mono font-bold text-slate-300">
               {PERIODS[period].shortLabel}
             </span>
           </div>
-          <h1 className="text-[14px] font-bold text-slate-900 leading-tight">
+          <h1 className="text-[15px] font-extrabold text-white tracking-tight leading-tight">
             {INDICATORS[indicator]?.label}
             {product === "anomaly" && (
-              <span className="font-medium text-slate-500">
-                {" "}
-                (Relative Change)
+              <span className="font-medium text-emerald-400 ml-1.5">
+                (Relative Change Δ)
               </span>
             )}
           </h1>
-          <p className="mt-1 text-[11px] text-slate-500 font-medium">
+          <p className="mt-1 text-[11px] font-mono text-slate-400">
             {model === "ensemble-all" ? "30-Model CMIP6 Ensemble Median" : model} · 0.25° Spatial Grid
           </p>
         </div>
 
         {field.data && (
-          <div className="absolute bottom-3 right-3 w-[270px]">
+          <div className="absolute bottom-3.5 right-3.5 w-[280px]">
             <Legend
               min={field.data.stats.p02 ?? field.data.stats.min}
               max={field.data.stats.p98 ?? field.data.stats.max}
@@ -321,21 +324,22 @@ export function Explorer({ places }: { places: Place[] }) {
         )}
 
         {field.error && !field.loading && (
-          <div className="absolute bottom-3 left-3 max-w-sm rounded-xl border border-rose-200 bg-white/95 px-3.5 py-2.5 text-[12px] leading-snug text-rose-700 backdrop-blur-md shadow-md">
+          <div className="absolute bottom-3.5 left-3.5 max-w-sm rounded-2xl border border-rose-500/40 bg-slate-950/95 px-4 py-3 text-[12px] leading-snug text-rose-300 backdrop-blur-2xl shadow-2xl">
             ⚠️ {field.error}
           </div>
         )}
       </div>
 
       {/* --------------------------------------------------- panel ---- */}
-      <aside className="w-full shrink-0 overflow-y-auto border-t border-slate-200 bg-white lg:w-[370px] lg:border-l lg:border-t-0 shadow-xs">
+      <aside className="w-full shrink-0 overflow-y-auto border-t border-slate-800/80 bg-slate-950/90 backdrop-blur-xl lg:w-[380px] lg:border-l lg:border-t-0 shadow-2xl">
         {/* Quick city pill shortcuts */}
-        <div className="border-b border-slate-100 bg-slate-50/70 px-4 py-2.5">
-          <div className="text-[10.5px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-            Quick Cities ({config.shortName})
+        <div className="border-b border-slate-800/80 bg-slate-900/60 px-4 py-3">
+          <div className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-slate-400 mb-2 flex items-center justify-between">
+            <span>CITY ORBIT ({config.shortName})</span>
+            <span className="text-emerald-400 font-bold">1-CLICK</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {countryPlaces.slice(0, 6).map((p) => {
+            {countryPlaces.slice(0, 7).map((p) => {
               const isActive =
                 selection &&
                 Math.abs(selection.lat - p.lat) < 0.05 &&
@@ -347,10 +351,10 @@ export function Explorer({ places }: { places: Place[] }) {
                   onClick={() =>
                     setState({ lat: String(p.lat), lon: String(p.lon), area: "" })
                   }
-                  className={`rounded-md px-2 py-1 text-[11px] font-semibold transition-all ${
+                  className={`rounded-lg px-2.5 py-1 text-[11.5px] font-bold transition-all ${
                     isActive
-                      ? "bg-emerald-600 text-white shadow-xs"
-                      : "bg-white border border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-100/70"
+                      ? "bg-gradient-to-r from-emerald-600 to-teal-600 text-white shadow-lg shadow-emerald-950/50 ring-1 ring-emerald-400"
+                      : "bg-slate-900/90 border border-slate-700/80 text-slate-300 hover:border-slate-500 hover:bg-slate-800 hover:text-white"
                   }`}
                 >
                   {p.name}
@@ -391,10 +395,10 @@ function ChipButton({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`rounded-lg border px-2.5 py-1 text-[11px] font-medium transition-all ${
+      className={`rounded-lg border px-2.5 py-1 text-[11px] font-bold transition-all ${
         active
-          ? "border-emerald-600 bg-emerald-50 text-emerald-900 font-bold shadow-xs ring-1 ring-emerald-500/30"
-          : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+          ? "border-emerald-500/80 bg-emerald-950/60 text-emerald-300 shadow-md ring-1 ring-emerald-400/50"
+          : "border-slate-800 bg-slate-900/80 text-slate-400 hover:border-slate-700 hover:bg-slate-800 hover:text-slate-200"
       }`}
     >
       {label}

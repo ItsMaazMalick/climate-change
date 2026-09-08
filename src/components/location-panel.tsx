@@ -106,24 +106,24 @@ export function LocationPanel({
   const nearest = point.data?.location.nearestPlace;
 
   return (
-    <div className="flex flex-col divide-y divide-slate-100">
+    <div className="flex flex-col divide-y divide-slate-800/80">
       {/* ---- header ---- */}
-      <section className="p-4 bg-gradient-to-b from-slate-50/80 to-white">
+      <section className="p-4 bg-gradient-to-b from-slate-900/90 to-slate-950/80">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="truncate text-[18px] font-bold tracking-tight text-slate-900 leading-tight">
+              <h2 className="truncate text-[19px] font-extrabold tracking-tight text-white leading-tight">
                 {nearest && nearest.distanceKm < 40
                   ? nearest.name
                   : `${Math.abs(lat).toFixed(2)}°N, ${Math.abs(lon).toFixed(2)}°E`}
               </h2>
               {nearest && nearest.province && (
-                <span className="rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                <span className="rounded-full bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-0.5 text-[11px] font-mono font-bold text-emerald-300">
                   {nearest.province}
                 </span>
               )}
             </div>
-            <p className="tnum mt-1 text-[11.5px] font-medium text-slate-500">
+            <p className="tnum mt-1 text-[11.5px] font-mono text-slate-400">
               {lat.toFixed(3)}°N, {lon.toFixed(3)}°E
               {nearest && nearest.distanceKm >= 40 && (
                 <> · {nearest.distanceKm} km from {nearest.name}</>
@@ -133,7 +133,7 @@ export function LocationPanel({
           {nearest && nearest.distanceKm < 40 && (
             <Link
               href={`/places/${nearest.id}?scenario=${scenario}&period=${period}`}
-              className="shrink-0 rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[11.5px] font-bold text-emerald-800 transition-all hover:bg-emerald-100 hover:shadow-xs"
+              className="shrink-0 rounded-xl border border-emerald-500/40 bg-emerald-950/60 px-3 py-1.5 text-[11.5px] font-bold text-emerald-300 transition-all hover:bg-emerald-900/60 hover:shadow-lg hover:shadow-emerald-950/50 ring-1 ring-emerald-400/40"
             >
               Full Profile →
             </Link>
@@ -141,7 +141,7 @@ export function LocationPanel({
         </div>
 
         {point.data?.meta?.note && (
-          <p className="mt-2.5 rounded-lg border border-slate-200 bg-white/90 p-2 text-[11px] leading-snug text-slate-600 shadow-xs">
+          <p className="mt-3 rounded-xl border border-slate-700/80 bg-slate-900/90 p-2.5 text-[11px] leading-snug text-slate-300 shadow-md">
             ℹ️ {point.data.meta.note}
           </p>
         )}
@@ -153,7 +153,7 @@ export function LocationPanel({
           <ErrorNote message={point.error} />
         ) : (
           <div className="grid grid-cols-3 gap-2.5">
-            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-xs">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-3 shadow-md">
               <Stat
                 label="Baseline"
                 value={formatValue(point.data?.baseline?.value ?? null, indicator)}
@@ -161,7 +161,7 @@ export function LocationPanel({
                 loading={point.loading}
               />
             </div>
-            <div className="rounded-xl border border-slate-200 bg-white p-3 shadow-xs">
+            <div className="rounded-2xl border border-slate-800 bg-slate-900/90 p-3 shadow-md">
               <Stat
                 label="Projected"
                 value={formatValue(point.data?.projected?.value ?? null, indicator)}
@@ -169,7 +169,7 @@ export function LocationPanel({
                 loading={point.loading}
               />
             </div>
-            <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3 shadow-xs ring-1 ring-slate-200">
+            <div className="rounded-2xl border border-emerald-500/40 bg-emerald-950/30 p-3 shadow-lg shadow-emerald-950/30 ring-1 ring-emerald-400/40">
               <Stat
                 label="Change (Δ)"
                 value={
@@ -177,7 +177,7 @@ export function LocationPanel({
                     ? "—"
                     : formatValue(point.data?.anomaly?.value ?? null, indicator, "anomaly")
                 }
-                caption={isBaseline ? "Baseline period" : `vs 1995–2014`}
+                caption={isBaseline ? "Baseline" : `vs 1995–2014`}
                 emphasis
                 tone={toneFor(point.data?.anomaly?.value ?? null, point.data?.indicator)}
                 loading={point.loading}
@@ -190,7 +190,7 @@ export function LocationPanel({
       {/* ---- model uncertainty ---- */}
       {!isBaseline && (
         <section className="p-4">
-          <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-md">
             <SectionTitle
               title="Multi-Model Uncertainty"
               hint="The spread across the 30 downscaled models, at this point, for this pathway and horizon."
@@ -206,12 +206,12 @@ export function LocationPanel({
                   indicatorId={indicator}
                   color={SCENARIOS[scenario].color}
                 />
-                <p className="mt-2 text-[11.5px] leading-relaxed text-slate-600">
+                <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-300">
                   {spread.data.description}
                 </p>
               </>
             ) : (
-              <p className="text-[11.5px] text-slate-400">
+              <p className="text-[11.5px] text-slate-500">
                 Percentile bounds are not published for this combination.
               </p>
             )}
@@ -222,7 +222,7 @@ export function LocationPanel({
       {/* ---- scenario comparison ---- */}
       {!isBaseline && (
         <section className="p-4">
-          <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-md">
             <SectionTitle
               title={`All Policy Pathways · ${PERIODS[period].shortLabel}`}
               hint="The same place and horizon under every emissions pathway. The gap between them is the part still determined by choices."
@@ -240,7 +240,7 @@ export function LocationPanel({
                   indicatorId={indicator}
                 />
                 {scenarios.data.divergence && (
-                  <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-600">
+                  <p className="mt-3 text-[11.5px] leading-relaxed text-slate-300">
                     {scenarios.data.divergence}
                   </p>
                 )}
@@ -253,7 +253,7 @@ export function LocationPanel({
       {/* ---- seasonal cycle ---- */}
       {!isBaseline && cycle.data && (
         <section className="p-4">
-          <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-md">
             <SectionTitle
               title="Annual Seasonality & Cycles"
               hint="Monthly climatology at this point, baseline against projection."
@@ -268,35 +268,27 @@ export function LocationPanel({
             {cycle.data.monsoonSharePercent &&
               cycle.data.monsoonSharePercent.baseline !== null &&
               cycle.data.monsoonSharePercent.projected !== null && (
-                <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-600">
+                <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-300">
                   July–September accounts for{" "}
-                  <span className="tnum font-bold text-slate-900">
+                  <span className="tnum font-bold text-white">
                     {cycle.data.monsoonSharePercent.baseline}%
                   </span>{" "}
                   of the annual total in the baseline and{" "}
-                  <span className="tnum font-bold text-slate-900">
+                  <span className="tnum font-bold text-emerald-400">
                     {cycle.data.monsoonSharePercent.projected}%
                   </span>{" "}
                   by {PERIODS[period].shortLabel}.
                 </p>
               )}
             {cycle.data.extremes?.baseline && cycle.data.extremes.projected && (
-              <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-600">
-                The warmest month shifts from{" "}
-                <span className="tnum font-bold text-slate-900">
+              <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-300">
+                Warmest month shifts from{" "}
+                <span className="tnum font-bold text-white">
                   {formatValue(cycle.data.extremes.baseline.max, indicator)}
                 </span>{" "}
                 to{" "}
-                <span className="tnum font-bold text-slate-900">
+                <span className="tnum font-bold text-emerald-400">
                   {formatValue(cycle.data.extremes.projected.max, indicator)}
-                </span>
-                , and annual temperature range changes by{" "}
-                <span className="tnum font-bold text-slate-900">
-                  {formatValue(
-                    cycle.data.extremes.projected.range - cycle.data.extremes.baseline.range,
-                    indicator,
-                    "anomaly",
-                  )}
                 </span>
                 .
               </p>
@@ -305,16 +297,54 @@ export function LocationPanel({
         </section>
       )}
 
+      {/* ---- sector impact intelligence ---- */}
+      {!isBaseline && point.data?.anomaly?.value !== null && point.data?.anomaly?.value !== undefined && (
+        <section className="p-4">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/80 p-4 shadow-md">
+            <SectionTitle
+              title="Sector Impact & Vulnerability Intelligence"
+              hint="Domain-specific risk assessment for this location under the selected climate pathway."
+            />
+            <div className="grid grid-cols-2 gap-2 mt-2">
+              <SectorRiskCard
+                icon="💧"
+                title="Water & Basins"
+                risk={getRiskLevel(indicator, point.data.anomaly.value, "water")}
+                detail="Runoff timing shift & canal evaporative loss."
+              />
+              <SectorRiskCard
+                icon="🌾"
+                title="Agriculture"
+                risk={getRiskLevel(indicator, point.data.anomaly.value, "agri")}
+                detail="Crop heat stress & growing season shifts."
+              />
+              <SectorRiskCard
+                icon="🌡️"
+                title="Urban & Health"
+                risk={getRiskLevel(indicator, point.data.anomaly.value, "urban")}
+                detail="Urban heat island & heat-index exposure."
+              />
+              <SectorRiskCard
+                icon="⚡"
+                title="Energy Grid"
+                risk={getRiskLevel(indicator, point.data.anomaly.value, "energy")}
+                detail="Peak cooling demand & thermal line derating."
+              />
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* ---- indicator context ---- */}
       {point.data?.indicator && (
         <section className="p-4">
-          <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3.5 shadow-xs">
-            <SectionTitle title="About Indicator & Science" />
-            <p className="text-[12px] leading-relaxed text-slate-700 font-medium">
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow-md">
+            <SectionTitle title="Scientific Variable Methodology" />
+            <p className="text-[12px] leading-relaxed text-slate-300 font-medium">
               {point.data.indicator.description}
             </p>
             {point.data.indicator.pakistanNote && (
-              <p className="mt-2.5 rounded-lg border-l-3 border-emerald-500 bg-white p-2.5 text-[11.5px] leading-relaxed text-slate-600 shadow-xs">
+              <p className="mt-2.5 rounded-xl border-l-3 border-emerald-400 bg-slate-900 p-3 text-[11.5px] leading-relaxed text-slate-300 shadow-md">
                 {point.data.indicator.pakistanNote}
               </p>
             )}
@@ -325,17 +355,73 @@ export function LocationPanel({
   );
 }
 
+function getRiskLevel(
+  indicator: string,
+  anomaly: number,
+  sector: "water" | "agri" | "urban" | "energy",
+): "Low" | "Moderate" | "High" | "Severe" {
+  const abs = Math.abs(anomaly);
+  if (indicator === "tas") {
+    if (abs < 1.5) return "Low";
+    if (abs < 2.5) return sector === "urban" ? "High" : "Moderate";
+    if (abs < 4.0) return "High";
+    return "Severe";
+  }
+  if (indicator === "tx40") {
+    if (abs < 5) return "Low";
+    if (abs < 15) return "Moderate";
+    if (abs < 30) return "High";
+    return "Severe";
+  }
+  if (indicator === "cdd") {
+    if (abs < 5) return "Low";
+    if (abs < 12) return "Moderate";
+    return "High";
+  }
+  return abs > 15 ? "High" : abs > 5 ? "Moderate" : "Low";
+}
+
+const RISK_BADGES: Record<"Low" | "Moderate" | "High" | "Severe", { bg: string; text: string; ring: string }> = {
+  Low: { bg: "bg-emerald-950/60", text: "text-emerald-400", ring: "ring-emerald-500/30" },
+  Moderate: { bg: "bg-amber-950/60", text: "text-amber-400", ring: "ring-amber-500/30" },
+  High: { bg: "bg-orange-950/60", text: "text-orange-400", ring: "ring-orange-500/30" },
+  Severe: { bg: "bg-rose-950/60", text: "text-rose-400", ring: "ring-rose-500/30" },
+};
+
+function SectorRiskCard({
+  icon,
+  title,
+  risk,
+  detail,
+}: {
+  icon: string;
+  title: string;
+  risk: "Low" | "Moderate" | "High" | "Severe";
+  detail: string;
+}) {
+  const badge = RISK_BADGES[risk];
+  return (
+    <div className="rounded-xl border border-slate-800/90 bg-slate-950/60 p-2.5 shadow-sm">
+      <div className="flex items-center justify-between gap-1 mb-1">
+        <span className="text-[11.5px] font-bold text-white flex items-center gap-1.5 truncate">
+          <span>{icon}</span>
+          <span className="truncate">{title}</span>
+        </span>
+        <span
+          className={`shrink-0 rounded-md px-1.5 py-0.5 text-[9.5px] font-mono font-bold ring-1 ${badge.bg} ${badge.text} ${badge.ring}`}
+        >
+          {risk}
+        </span>
+      </div>
+      <p className="text-[10px] leading-tight text-slate-400">{detail}</p>
+    </div>
+  );
+}
+
 // ---------------------------------------------------------------------------
 
 type Tone = "adverse" | "benign" | "neutral";
 
-/**
- * Which way a change points for this indicator.
- *
- * `higherIsWorse` carries the direction of concern; "more rain" is not
- * straightforwardly good or bad, so indicators where the sign is genuinely
- * ambiguous resolve to neutral rather than being forced into a colour.
- */
 function toneFor(value: number | null | undefined, indicator?: Indicator): Tone {
   if (value === null || value === undefined || !indicator) return "neutral";
   if (Math.abs(value) < 1e-9) return "neutral";
@@ -344,9 +430,9 @@ function toneFor(value: number | null | undefined, indicator?: Indicator): Tone 
 }
 
 const TONE_COLOR: Record<Tone, string> = {
-  adverse: "#b91c1c",
-  benign: "var(--color-brand-deep)",
-  neutral: "var(--color-ink)",
+  adverse: "#f87171",
+  benign: "#34d399",
+  neutral: "#f8fafc",
 };
 
 function Stat({
@@ -366,38 +452,34 @@ function Stat({
 }) {
   return (
     <div>
-      <div className="label mb-1">{label}</div>
+      <div className="label mb-1 text-slate-400">{label}</div>
       {loading ? (
-        <div className="h-6 w-16 animate-pulse rounded bg-[var(--color-surface-hover)]" />
+        <div className="h-6 w-16 animate-pulse rounded bg-slate-800" />
       ) : (
         <div
-          // A three-up stat row is 100px per column; "+211 mm" at 22px
-          // overflows and wraps mid-value. Shrinking the emphasised figure
-          // only when the string is long keeps the headline number large in
-          // the common case and legible in every case.
-          className={`tnum whitespace-nowrap leading-none ${
+          className={`tnum whitespace-nowrap leading-none font-mono ${
             emphasis
-              ? `font-bold ${value.length > 7 ? "text-[17px]" : "text-[22px]"}`
-              : `font-semibold ${value.length > 7 ? "text-[15px]" : "text-[19px]"}`
+              ? `font-black ${value.length > 7 ? "text-[17px]" : "text-[23px]"}`
+              : `font-extrabold ${value.length > 7 ? "text-[15px]" : "text-[20px]"} text-white`
           }`}
-          style={emphasis ? { color: TONE_COLOR[tone] } : undefined}
+          style={emphasis ? { color: TONE_COLOR[tone], textShadow: `0 0 15px ${TONE_COLOR[tone]}66` } : undefined}
         >
           {value}
         </div>
       )}
-      <div className="mt-1 text-[10px] text-[var(--color-ink-faint)]">{caption}</div>
+      <div className="mt-1 text-[10px] font-mono text-slate-400">{caption}</div>
     </div>
   );
 }
 
 function SectionTitle({ title, hint }: { title: string; hint?: string }) {
   return (
-    <h3 className="label mb-2.5 flex items-center gap-1.5">
+    <h3 className="label mb-2.5 flex items-center gap-1.5 text-slate-300 font-bold">
       {title}
       {hint && (
         <span
           title={hint}
-          className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-full border border-[var(--color-border-strong)] text-[8px] font-bold normal-case"
+          className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-full border border-slate-700 bg-slate-800 text-[8px] font-bold normal-case text-slate-400"
         >
           ?
         </span>
@@ -409,7 +491,7 @@ function SectionTitle({ title, hint }: { title: string; hint?: string }) {
 function Skeleton({ height }: { height: number }) {
   return (
     <div
-      className="animate-pulse rounded bg-[var(--color-surface-hover)]"
+      className="animate-pulse rounded-xl bg-slate-800/80"
       style={{ height }}
     />
   );
@@ -417,7 +499,7 @@ function Skeleton({ height }: { height: number }) {
 
 function ErrorNote({ message }: { message: string }) {
   return (
-    <p className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-2 text-[11.5px] leading-snug text-[var(--color-ink-muted)]">
+    <p className="rounded-xl border border-rose-500/40 bg-slate-900 px-3.5 py-2 text-[11.5px] leading-snug text-rose-300 shadow-md">
       {message}
     </p>
   );
