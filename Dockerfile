@@ -23,6 +23,7 @@ COPY . .
 # Environment variables needed during build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
+ENV DOCKER_BUILD=1
 
 RUN npm run db:generate
 RUN npm run build

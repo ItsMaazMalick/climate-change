@@ -1,14 +1,9 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
-  output: "standalone",
+  output: process.env.DOCKER_BUILD === "1" ? "standalone" : undefined,
   reactStrictMode: true,
   poweredByHeader: false,
-  // The grid documents are read from disk at request time; keep them out of
-  // the bundle and out of the trace analysis.
-  outputFileTracingIncludes: {
-    "/api/climate/**": ["./data/grid/**", "./data/geo/**"],
-  },
   experimental: {
     optimizePackageImports: ["d3-array", "d3-scale", "d3-shape"],
   },
