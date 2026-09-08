@@ -1,0 +1,38 @@
+services:
+  climate-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: climate-intelligence-platform
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - CCKP_API_BASE=https://cckpapi.worldbank.org/cckp/v1
+      - CCKP_S3_BASE=https://wbg-cckp.s3.amazonaws.com
+      - OPEN_METEO_BASE=https://api.open-meteo.com/v1
+      - CLIMATE_STORE_MODE=auto
+      - RATE_LIMIT_PER_MINUTE=240
+      - NEXT_PUBLIC_APP_NAME="Climate Intelligence Explorer"
+      # Optional: Uncomment if connecting to a PostgreSQL database
+      # - DATABASE_URL=postgresql://user:password@db:5432/climate_db
+    env_file:
+      - path: .env
+        required: false
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2048M
+        reservations:
+          cpus: "0.5"
+          memory: 512M

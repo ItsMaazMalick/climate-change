@@ -1,0 +1,298 @@
+// Climate Pakistan — warehouse schema.
+//
+// The database is not a copy of the NetCDF archive. It stores
+// application-ready climate *products* along the eight dimensions every query
+// in the platform travels: location, dataset, model, scenario, period,
+// variable, statistic, value. Raw model output stays in the object store,
+// where it belongs.
+
+// Prisma 7 ships the ESM-first `prisma-client` generator. The client is
+// emitted into the repository rather than into node_modules, so its types are
+// versioned with the schema that produced them and a stale install can never
+// silently disagree with the migration history.
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  runtime         = "nodejs"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+// Connection details live in prisma.config.ts in v7; the datasource block
+// carries only the provider and the extensions the schema depends on.
+datasource db {
+  provider   = "postgresql"
+  extensions = [postgis]
+}
+
+// ---------------------------------------------------------------------------
+// Dimensions
+// ---------------------------------------------------------------------------
+
+/// A distinct scientific product (CMIP6 projections, ERA5 reanalysis, …).
+/// Kept as a dimension rather than assumed, so a projection can never be
+/// joined to an observation by accident.
+model Dataset {
+  id            String   @id
+  kind          String // projection | observation | forecast
+  label         String
+  /// The question this dataset can legitimately answer.
+  answers       String   @db.Text
+  provider      String
+  resolution    String
+  temporalRange String
+  citation      String   @db.Text
+  url           String
+  createdAt     DateTime @default(now())
+
+  projections Projection[]
+
+  @@index([kind])
+  @@map("datasets")
+}
+
+model Scenario {
+  id                String  @id
+  label             String
+  shortLabel        String
+  /// Radiative forcing at 2100 in W/m². Null for the historical run.
+  forcing           Float?
+  narrative         String
+  summary           String  @db.Text
+  globalWarming2100 String?
+  rank              Int
+  color             String
+
+  projections Projection[]
+
+  @@index([rank])
+  @@map("scenarios")
+}
+
+model ClimateModel {
+  id          String  @id
+  label       String
+  institution String
+  country     String
+  /// Equilibrium climate sensitivity, °C per CO₂ doubling.
+  ecs         Float?
+  isEnsemble  Boolean @default(false)
+
+  projections Projection[]
+
+  @@index([isEnsemble])
+  @@map("climate_models")
+}
+
+model Period {
+  id         String  @id
+  label      String
+  shortLabel String
+  startYear  Int
+  endYear    Int
+  isBaseline Boolean @default(false)
+
+  projections Projection[]
+
+  @@index([startYear])
+  @@map("periods")
+}
+
+model Indicator {
+  id            String  @id
+  label         String
+  shortLabel    String
+  unit          String
+  anomalyUnit   String?
+  family        String
+  description   String  @db.Text
+  higherIsWorse Boolean @default(true)
+  precision     Int     @default(1)
+  pakistanNote  String? @db.Text
+
+  projections Projection[]
+
+  @@index([family])
+  @@map("indicators")
+}
+
+// ---------------------------------------------------------------------------
+// Geography
+// ---------------------------------------------------------------------------
+
+/// An administrative unit — country, province or district.
+///
+/// `geometry` is a PostGIS MultiPolygon in EPSG:4326. It is declared as
+/// Unsupported because Prisma has no native geometry type; all spatial
+/// predicates run through raw SQL, which is where they belong anyway.
+model Area {
+  id          String                                       @id
+  name        String
+  level       Int // 0 = country, 1 = province, 2 = district
+  parentId    String?
+  centroidLat Float
+  centroidLon Float
+  bboxMinLon  Float
+  bboxMinLat  Float
+  bboxMaxLon  Float
+  bboxMaxLat  Float
+  population  Int?
+  geometry    Unsupported("geometry(MultiPolygon, 4326)")?
+
+  parent   Area?  @relation("AreaHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Area[] @relation("AreaHierarchy")
+
+  cells       GridCell[]
+  projections Projection[]
+
+  @@index([level])
+  @@index([parentId])
+  @@map("areas")
+}
+
+/// One 0.25° cell of the Pakistan lattice.
+///
+/// `index` is the canonical row-major position from the south-west corner and
+/// is what the flat value arrays in the object store are keyed by, so a cell
+/// can be resolved either spatially (PostGIS) or positionally (array offset).
+model GridCell {
+  id     Int                                   @id @default(autoincrement())
+  /// Row-major index: row * nLon + col, counting from the south-west corner.
+  index  Int                                   @unique
+  row    Int
+  col    Int
+  lat    Float
+  lon    Float
+  areaId String?
+  /// Cell centre as a PostGIS point, for nearest-neighbour lookup.
+  point  Unsupported("geometry(Point, 4326)")?
+
+  area   Area?             @relation(fields: [areaId], references: [id], onDelete: SetNull)
+  values ProjectionValue[]
+
+  @@index([areaId])
+  @@index([row, col])
+  @@map("grid_cells")
+}
+
+/// Named settlement, for search and the story pages.
+model Place {
+  id         String  @id
+  name       String
+  province   String
+  lat        Float
+  lon        Float
+  population Int
+  elevation  Int
+  setting    String
+  note       String? @db.Text
+
+  @@index([population])
+  @@index([province])
+  @@map("places")
+}
+
+// ---------------------------------------------------------------------------
+// Facts
+// ---------------------------------------------------------------------------
+
+/// One climate field: a fully-specified point in the query space, aggregated
+/// to an area. Cell-level detail hangs off it in `ProjectionValue`.
+model Projection {
+  id          String  @id @default(cuid())
+  datasetId   String
+  indicatorId String
+  scenarioId  String
+  modelId     String
+  periodId    String
+  areaId      String?
+
+  /// climatology | anomaly | timeseries
+  product     String
+  /// annual | seasonal | monthly
+  aggregation String
+  /// mean | median | p10 | p90
+  percentile  String
+
+  /// Area mean. Null where the field exists but the area is fully masked.
+  value     Float?
+  unit      String
+  /// Spread of cell values inside the area.
+  minValue  Float?
+  maxValue  Float?
+  cellCount Int    @default(0)
+  /// Fraction of cells where models agree on the sign of change, 0–1.
+  agreement Float?
+
+  sourceUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dataset   Dataset      @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  indicator Indicator    @relation(fields: [indicatorId], references: [id], onDelete: Cascade)
+  scenario  Scenario     @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  model     ClimateModel @relation(fields: [modelId], references: [id], onDelete: Cascade)
+  period    Period       @relation(fields: [periodId], references: [id], onDelete: Cascade)
+  area      Area?        @relation(fields: [areaId], references: [id], onDelete: Cascade)
+
+  values ProjectionValue[]
+
+  // The natural key of the fact table. A given combination exists at most
+  // once, which makes ingestion idempotent and lookups a single index probe.
+  @@unique([datasetId, indicatorId, scenarioId, modelId, periodId, product, aggregation, percentile, areaId], name: "projection_identity")
+  @@index([indicatorId, scenarioId, periodId])
+  @@index([areaId, indicatorId])
+  @@map("projections")
+}
+
+/// Per-cell value within a projection. Written only for fields that need
+/// cell-level querying from SQL; the map itself reads the flat arrays.
+model ProjectionValue {
+  id           BigInt @id @default(autoincrement())
+  projectionId String
+  cellIndex    Int
+  value        Float
+  /// CCKP model-agreement class: 1 = no change, 2 = conflicting signal.
+  significance Int?
+
+  projection Projection @relation(fields: [projectionId], references: [id], onDelete: Cascade)
+  cell       GridCell   @relation(fields: [cellIndex], references: [index], onDelete: Cascade)
+
+  @@unique([projectionId, cellIndex])
+  @@index([cellIndex])
+  @@map("projection_values")
+}
+
+/// Annual national trace, 1950–2100.
+model TimeSeriesPoint {
+  id          BigInt @id @default(autoincrement())
+  datasetId   String
+  indicatorId String
+  scenarioId  String
+  modelId     String
+  geography   String @default("PAK")
+  year        Int
+  month       Int    @default(7)
+  value       Float?
+  unit        String
+
+  @@unique([datasetId, indicatorId, scenarioId, modelId, geography, year, month], name: "series_identity")
+  @@index([indicatorId, scenarioId, year])
+  @@map("time_series_points")
+}
+
+/// Record of each pipeline run, so a deployment can report what its data
+/// actually is rather than what it was intended to be.
+model IngestionRun {
+  id            String    @id @default(cuid())
+  plan          String
+  startedAt     DateTime  @default(now())
+  finishedAt    DateTime?
+  status        String    @default("running")
+  fieldsOk      Int       @default(0)
+  fieldsMissing Int       @default(0)
+  fieldsFailed  Int       @default(0)
+  notes         String?   @db.Text
+
+  @@index([startedAt])
+  @@map("ingestion_runs")
+}

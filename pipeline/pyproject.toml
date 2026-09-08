@@ -1,0 +1,16 @@
+[project]
+name = "cckp-pipeline"
+version = "1.0.0"
+description = "Extract World Bank CCKP CMIP6 0.25 degree climate fields for Pakistan"
+requires-python = ">=3.10"
+dependencies = ["netCDF4>=1.6", "numpy>=1.24"]
+
+[project.optional-dependencies]
+db = ["psycopg[binary]>=3.1"]
+
+[project.scripts]
+cckp = "cckp_pipeline.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"

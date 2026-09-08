@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+/*
+ * Earth Scan Systems — light theme.
+ *
+ * The palette is taken from the ESS wordmark itself: the brown of "EARTH
+ * SCAN" and the green of "SYSTEMS", sampled from the logo artwork rather
+ * than approximated. Green leads because it carries the brand's meaning —
+ * agriculture, growth, a carbon-neutral planet — and brown anchors the
+ * typography the way it anchors the mark.
+ *
+ * The interface is light. On a data platform this is the harder choice: the
+ * map is the primary object, and a white ground gives a diverging
+ * temperature ramp less room than a dark one. It is the right choice anyway,
+ * because this sits next to the rest of the ESS estate and must not read as
+ * a different product — and because these charts are printed and pasted into
+ * decks far more often than they are looked at in a dark room.
+ */
+@theme {
+  /* --- ESS brand, sampled from the logo ------------------------------- */
+  --color-brand: #8dc63e;          /* "SYSTEMS", satellite, orbit ring */
+  --color-brand-dark: #6ea62c;     /* hover / pressed */
+  --color-brand-deep: #3c8c1e;     /* text on light green, chart accents */
+  --color-brand-tint: #f2f8e8;     /* selected rows, callout grounds */
+  --color-earth: #8b5e3b;          /* "EARTH SCAN" wordmark */
+  --color-earth-dark: #6f4a2e;
+  --color-earth-tint: #f8f3ee;
+
+  /* --- Surfaces -------------------------------------------------------- */
+  --color-ground: #ffffff;
+  --color-surface: #f7f9f5;
+  --color-surface-raised: #ffffff;
+  --color-surface-hover: #eef3e8;
+  --color-border: #e3e8dd;
+  --color-border-strong: #c8d2bd;
+
+  /* --- Ink ------------------------------------------------------------- */
+  --color-ink: #1f2a1b;
+  --color-ink-muted: #55604f;
+  --color-ink-faint: #8a9384;
+
+  --color-accent: var(--color-brand-deep);
+  --color-accent-dim: var(--color-brand);
+
+  /* --- Scenario identity ------------------------------------------------
+   * Deliberately NOT the brand palette. A scenario ramp has to read as an
+   * ordered sequence from low to very high forcing, and brand green would
+   * put "our colour" on one arbitrary rung of that ladder. These are tuned
+   * for contrast on a white ground. */
+  --color-ssp119: #0e7490;
+  --color-ssp126: #15803d;
+  --color-ssp245: #b45309;
+  --color-ssp370: #c2410c;
+  --color-ssp585: #991b1b;
+  --color-historical: #6b7280;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    background: var(--color-ground);
+    color-scheme: light;
+  }
+
+  body {
+    background: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Numbers in tables and readouts must align vertically and not jitter as
+     they update, so everything numeric is tabular by default. */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-brand) 35%, transparent);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-deep);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: 5px;
+    border: 2px solid var(--color-ground);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-ink-faint);
+  }
+}
+
+@layer components {
+  .panel {
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+  }
+
+  .panel-raised {
+    background: var(--color-surface-raised);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 2px rgb(31 42 27 / 0.04);
+  }
+
+  .label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+  }
+
+  .hairline {
+    border-top: 1px solid var(--color-border);
+  }
+
+  /* The ESS wordmark, set in type rather than shipped as an image so it
+     stays crisp at every size and inherits the page's own rendering. */
+  .wordmark-earth {
+    color: var(--color-earth);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+  .wordmark-systems {
+    color: var(--color-brand);
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
