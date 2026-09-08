@@ -242,6 +242,62 @@ export const PLACES: Place[] = [
     setting: "irrigated-plain",
     note: "Syr Darya irrigated plain; high groundwater table salinity and summer heat stress.",
   },
+
+  // =========================================================================
+  // Australia Places
+  // =========================================================================
+  { id: "sydney", name: "Sydney", province: "New South Wales", country: "AUS", lat: -33.8688, lon: 151.2093, population: 5_300_000, elevation: 39, setting: "coastal",
+    note: "Harbour megacity with extreme heat event frequency rising rapidly; eastern seaboard fire weather driver." },
+  { id: "melbourne", name: "Melbourne", province: "Victoria", country: "AUS", lat: -37.8136, lon: 144.9631, population: 5_100_000, elevation: 31, setting: "coastal",
+    note: "Temperate maritime capital with 'four seasons in one day'; heatwaves intensifying under SSP3-7.0 and above." },
+  { id: "brisbane", name: "Brisbane", province: "Queensland", country: "AUS", lat: -27.4698, lon: 153.0251, population: 2_600_000, elevation: 27, setting: "coastal",
+    note: "Subtropical east coast; compound heat-humidity events and intensifying east-coast lows drive flood risk." },
+  { id: "perth", name: "Perth", province: "Western Australia", country: "AUS", lat: -31.9505, lon: 115.8605, population: 2_100_000, elevation: 25, setting: "coastal",
+    note: "Mediterranean climate under severe drying trend; winter rainfall has halved since 1970." },
+  { id: "adelaide", name: "Adelaide", province: "South Australia", country: "AUS", lat: -34.9285, lon: 138.6007, population: 1_400_000, elevation: 50, setting: "coastal",
+    note: "Driest capital; acute risk of concurrent heatwave, wildfire smoke, and power grid failure." },
+  { id: "canberra", name: "Canberra", province: "Australian Capital Territory", country: "AUS", lat: -35.2809, lon: 149.1300, population: 470_000, elevation: 577, setting: "plateau",
+    note: "Inland capital at 577 m; warmer and drier trend with 2020 haze event shrinking winter snowpack on nearby ranges." },
+  { id: "darwin", name: "Darwin", province: "Northern Territory", country: "AUS", lat: -12.4634, lon: 130.8456, population: 150_000, elevation: 30, setting: "coastal",
+    note: "Tropical monsoon; wet-season intensification and dry-season lengthening compress the productive agriculture window." },
+  { id: "hobart", name: "Hobart", province: "Tasmania", country: "AUS", lat: -42.8821, lon: 147.3272, population: 240_000, elevation: 54, setting: "coastal",
+    note: "Coolest capital, but warming 0.3°C/decade; kelp forest collapse in warming Southern Ocean waters already documented." },
+  { id: "gold-coast", name: "Gold Coast", province: "Queensland", country: "AUS", lat: -28.0167, lon: 153.4000, population: 680_000, elevation: 10, setting: "coastal",
+    note: "Low-lying beachfront city; sea-level rise of 0.5–1.0 m by 2100 threatens coastal real estate and infrastructure." },
+  { id: "townsville", name: "Townsville", province: "Queensland", country: "AUS", lat: -19.2590, lon: 146.8169, population: 200_000, elevation: 15, setting: "coastal",
+    note: "Gateway to the Great Barrier Reef; mass bleaching events linked directly to sea surface temperature anomalies." },
+  { id: "cairns", name: "Cairns", province: "Queensland", country: "AUS", lat: -16.9186, lon: 145.7781, population: 165_000, elevation: 8, setting: "coastal",
+    note: "Tropical rainforest edge; cyclone intensity amplifying as Coral Sea warms beyond 1.5°C above pre-industrial." },
+  { id: "alice-springs", name: "Alice Springs", province: "Northern Territory", country: "AUS", lat: -23.6980, lon: 133.8807, population: 27_000, elevation: 547, setting: "arid-lowland",
+    note: "Arid continental centre; 50°C heat extremes projected for mid-century under SSP5-8.5." },
+  { id: "broken-hill", name: "Broken Hill", province: "New South Wales", country: "AUS", lat: -31.9537, lon: 141.4535, population: 17_000, elevation: 299, setting: "arid-lowland",
+    note: "Far-west outback town with chronic water insecurity as the Darling–Baaka system faces record low flows." },
+  { id: "port-hedland", name: "Port Hedland", province: "Western Australia", country: "AUS", lat: -20.3103, lon: 118.5961, population: 16_000, elevation: 7, setting: "coastal",
+    note: "Pilbara port exposed to tropical cyclones; recorded Australia's highest non-fire radiative temperature at 50.7°C in 2003." },
+
+  // =========================================================================
+  // New Zealand Places
+  // =========================================================================
+  { id: "auckland", name: "Auckland", province: "Auckland", country: "NZL", lat: -36.8485, lon: 174.7633, population: 1_700_000, elevation: 7, setting: "coastal",
+    note: "Largest NZ city on a volcanic field isthmus; sea-level rise threatens low-lying suburbs and critical harbour infrastructure." },
+  { id: "wellington", name: "Wellington", province: "Wellington", country: "NZL", lat: -41.2865, lon: 174.7762, population: 440_000, elevation: 10, setting: "coastal",
+    note: "Capital perched on Cook Strait; among the world's windiest cities and highly exposed to subduction-zone tsunami risk." },
+  { id: "christchurch", name: "Christchurch", province: "Canterbury", country: "NZL", lat: -43.5321, lon: 172.6362, population: 400_000, elevation: 10, setting: "irrigated-plain",
+    note: "Canterbury Plains hub in the South Island rain shadow; hotter, drier summers and increasing irrigation demand on alpine-fed rivers." },
+  { id: "hamilton", name: "Hamilton", province: "Waikato", country: "NZL", lat: -37.7870, lon: 175.2793, population: 180_000, elevation: 39, setting: "irrigated-plain",
+    note: "Waikato River dairy heartland; nitrogen-driven water quality crisis compounded by intensifying drought cycles." },
+  { id: "tauranga", name: "Tauranga", province: "Bay of Plenty", country: "NZL", lat: -37.6878, lon: 176.1651, population: 160_000, elevation: 5, setting: "coastal",
+    note: "Fastest-growing NZ city; Bay of Plenty coastline exposed to rising sea levels and more intense ex-tropical cyclones." },
+  { id: "napier", name: "Napier", province: "Hawke's Bay", country: "NZL", lat: -39.4928, lon: 176.9120, population: 65_000, elevation: 8, setting: "coastal",
+    note: "Art Deco capital on Hawke Bay; severe drought episodes and intensifying Cyclone Gabrielle-type events." },
+  { id: "dunedin", name: "Dunedin", province: "Otago", country: "NZL", lat: -45.8788, lon: 170.5028, population: 135_000, elevation: 15, setting: "coastal",
+    note: "Southern university city; harbourside low-lying areas already experiencing tidal flooding (king tides)." },
+  { id: "palmerston-north", name: "Palmerston North", province: "Manawatū-Whanganui", country: "NZL", lat: -40.3523, lon: 175.6082, population: 92_000, elevation: 37, setting: "irrigated-plain",
+    note: "Manawatū plains agricultural hub; river flooding risk amplified by more intense westerly storm sequences." },
+  { id: "queenstown", name: "Queenstown", province: "Otago", country: "NZL", lat: -45.0312, lon: 168.6626, population: 15_000, elevation: 310, setting: "mountain",
+    note: "Ski and adventure tourism capital; declining snowpack in Remarkables and Cecil Peak threatens winter-season viability." },
+  { id: "nelson", name: "Nelson", province: "Nelson", country: "NZL", lat: -41.2706, lon: 173.2840, population: 55_000, elevation: 10, setting: "coastal",
+    note: "Sunniest NZ city; top-of-South viticulture and horticulture exposed to water-scarcity risk as Waimea basin tightens." },
 ];
 
 const byId = new Map(PLACES.map((place) => [place.id, place]));
@@ -315,6 +371,8 @@ export function nearestPlace(
 
 export const PAKISTAN_BOUNDS = COUNTRIES.PAK.bbox;
 export const UZBEKISTAN_BOUNDS = COUNTRIES.UZB.bbox;
+export const AUSTRALIA_BOUNDS = COUNTRIES.AUS.bbox;
+export const NEW_ZEALAND_BOUNDS = COUNTRIES.NZL.bbox;
 
 export function isInsidePakistanBounds(lat: number, lon: number): boolean {
   return isInsideCountryBounds(lat, lon, "PAK");
@@ -322,4 +380,12 @@ export function isInsidePakistanBounds(lat: number, lon: number): boolean {
 
 export function isInsideUzbekistanBounds(lat: number, lon: number): boolean {
   return isInsideCountryBounds(lat, lon, "UZB");
+}
+
+export function isInsideAustraliaBounds(lat: number, lon: number): boolean {
+  return isInsideCountryBounds(lat, lon, "AUS");
+}
+
+export function isInsideNewZealandBounds(lat: number, lon: number): boolean {
+  return isInsideCountryBounds(lat, lon, "NZL");
 }

@@ -35,7 +35,7 @@ export function CountryProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY) as CountryCode | null;
-      if (saved && (saved === "PAK" || saved === "UZB")) {
+      if (saved && (saved === "PAK" || saved === "UZB" || saved === "AUS" || saved === "NZL")) {
         setCountryState(saved);
       }
     } catch {

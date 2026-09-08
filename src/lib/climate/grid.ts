@@ -356,6 +356,8 @@ export async function loadCellIndex(): Promise<Map<string, number[]>> {
     "districts-cells.json",
     "uzb-regions-cells.json",
     "uzb-districts-cells.json",
+    "aus-states-cells.json",
+    "nzl-regions-cells.json",
   ]) {
     try {
       const raw = await readFile(path.join(GEO_DIR, file), "utf8");

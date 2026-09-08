@@ -5,7 +5,7 @@
  * administrative hierarchy for each supported country.
  */
 
-export type CountryCode = "PAK" | "UZB";
+export type CountryCode = "PAK" | "UZB" | "AUS" | "NZL";
 
 export interface CountryConfig {
   code: CountryCode;
@@ -114,9 +114,77 @@ export const COUNTRIES: Record<CountryCode, CountryConfig> = {
     description:
       "Central Asian double-landlocked nation: Aral Sea basin, Kyzylkum desert, Fergana Valley, and Tien Shan foothill oases.",
   },
+  AUS: {
+    code: "AUS",
+    name: "Australia",
+    shortName: "Australia",
+    flag: "🇦🇺",
+    bbox: {
+      lonMin: 112.0,
+      latMin: -44.0,
+      lonMax: 154.0,
+      latMax: -9.5,
+    },
+    standardParallelLat: -25.0,
+    grid: {
+      resolution: 0.25,
+      nLon: 168,
+      nLat: 139,
+      cellCount: 23352,
+    },
+    adminLevels: {
+      level0: "Country",
+      level1: "States & Territories",
+      level2: "Local Government Areas",
+    },
+    geoFiles: {
+      country: "/geo/australia.geojson",
+      level1: "/geo/australia-states.geojson",
+      level2: "/geo/australia-states.geojson",
+      level1Cells: "aus-states-cells.json",
+      level2Cells: "aus-states-cells.json",
+    },
+    defaultCityId: "canberra",
+    description:
+      "World's largest arid zone, Great Barrier Reef, Great Dividing Range, and highly variable ENSO-driven rainfall patterns.",
+  },
+  NZL: {
+    code: "NZL",
+    name: "New Zealand",
+    shortName: "New Zealand",
+    flag: "🇳🇿",
+    bbox: {
+      lonMin: 166.0,
+      latMin: -47.5,
+      lonMax: 178.5,
+      latMax: -33.5,
+    },
+    standardParallelLat: -41.0,
+    grid: {
+      resolution: 0.25,
+      nLon: 51,
+      nLat: 57,
+      cellCount: 2907,
+    },
+    adminLevels: {
+      level0: "Country",
+      level1: "Regions",
+      level2: "Territorial Authorities",
+    },
+    geoFiles: {
+      country: "/geo/new-zealand.geojson",
+      level1: "/geo/new-zealand-regions.geojson",
+      level2: "/geo/new-zealand-regions.geojson",
+      level1Cells: "nzl-regions-cells.json",
+      level2Cells: "nzl-regions-cells.json",
+    },
+    defaultCityId: "wellington",
+    description:
+      "Tectonically active archipelago across the Roaring Forties: Southern Alps glaciers, volcanic plateau, and maritime westerly climate.",
+  },
 };
 
-export const COUNTRY_CODES: CountryCode[] = ["UZB", "PAK"];
+export const COUNTRY_CODES: CountryCode[] = ["UZB", "PAK", "AUS", "NZL"];
 
 export const DEFAULT_COUNTRY: CountryCode = "UZB";
 
@@ -141,6 +209,8 @@ export function isInsideCountryBounds(
 }
 
 export function detectCountryFromCoords(lat: number, lon: number): CountryCode {
+  if (isInsideCountryBounds(lat, lon, "AUS")) return "AUS";
+  if (isInsideCountryBounds(lat, lon, "NZL")) return "NZL";
   if (isInsideCountryBounds(lat, lon, "UZB")) return "UZB";
   if (isInsideCountryBounds(lat, lon, "PAK")) return "PAK";
   return DEFAULT_COUNTRY;

@@ -23,6 +23,8 @@ import {
   isInsideCountryBounds,
 } from "./countries";
 import { getUzbekistanField } from "./uzb-grid";
+import { getAustraliaField } from "./aus-grid";
+import { getNZField } from "./nzl-grid";
 import {
   BASELINE_PERIOD,
   ENSEMBLE_ID,
@@ -178,7 +180,7 @@ export async function resolvePoint(query: PointQuery): Promise<ClimateValue> {
   const country = detectCountryFromCoords(query.lat, query.lon);
   if (!isInsideCountryBounds(query.lat, query.lon, country)) {
     throw ApiError.badRequest(
-      "Coordinates fall outside supported country extents (Pakistan and Uzbekistan).",
+      "Coordinates fall outside supported country extents (Pakistan, Uzbekistan, Australia and New Zealand).",
       { coordinates: { lat: query.lat, lon: query.lon } },
     );
   }
@@ -195,17 +197,18 @@ export async function resolvePoint(query: PointQuery): Promise<ClimateValue> {
     aggregation: n.aggregation,
   };
 
-  if (country === "UZB") {
-    const uzbField = getUzbekistanField({
-      variable: n.indicator.id,
-      scenario: n.scenario,
-      period: n.period,
-      model: n.model,
-      percentile: n.percentile,
-      product: n.product,
-      aggregation: n.aggregation,
-    });
-    const hit = nearestValued(uzbField, query.lon, query.lat);
+  // Synthetic grid resolution for countries that use generated fields
+  const syntheticField =
+    country === "UZB"
+      ? getUzbekistanField({ variable: n.indicator.id, scenario: n.scenario, period: n.period, model: n.model, percentile: n.percentile, product: n.product, aggregation: n.aggregation })
+      : country === "AUS"
+        ? getAustraliaField({ variable: n.indicator.id, scenario: n.scenario, period: n.period, model: n.model, percentile: n.percentile, product: n.product, aggregation: n.aggregation })
+        : country === "NZL"
+          ? getNZField({ variable: n.indicator.id, scenario: n.scenario, period: n.period, model: n.model, percentile: n.percentile, product: n.product, aggregation: n.aggregation })
+          : null;
+
+  if (syntheticField) {
+    const hit = nearestValued(syntheticField, query.lon, query.lat);
     if (hit) {
       return {
         ...base,
@@ -382,62 +385,39 @@ export async function resolveArea(query: AreaQuery): Promise<ClimateValue> {
     }
   }
 
-  const isUzbArea = [
-    "tashkent-city",
-    "tashkent-region",
-    "samarkand",
-    "bukhara",
-    "karakalpakstan",
-    "andijan",
-    "fergana",
-    "namangan",
-    "qashqadaryo",
-    "surxondaryo",
-    "khorezm",
-    "navoiy",
-    "jizzakh",
-    "sirdaryo",
-    "d-yunusabad",
-    "d-chilangzor",
-    "d-samarkand-city",
-    "d-pastdargom",
-    "d-bukhara-city",
-    "d-gijduvon",
-    "d-nukus-city",
-    "d-muynak",
-    "d-andijan-city",
-    "d-asaka",
-    "d-fergana-city",
-    "d-kokand",
-    "d-namangan-city",
-    "d-chust",
-    "d-qarshi-city",
-    "d-shahrisabz",
-    "d-termez-city",
-    "d-denov",
-    "d-urgench-city",
-    "d-khiva",
-    "d-navoiy-city",
-    "d-zarafshan",
-    "d-jizzakh-city",
-    "d-zaamin",
-    "d-guliston-city",
-    "d-yangiyer",
-  ].includes(query.areaId);
+  const UZB_AREA_IDS_SET = new Set([
+    "tashkent-city", "tashkent-region", "samarkand", "bukhara",
+    "karakalpakstan", "andijan", "fergana", "namangan", "qashqadaryo",
+    "surxondaryo", "khorezm", "navoiy", "jizzakh", "sirdaryo",
+    "d-yunusabad", "d-chilangzor", "d-samarkand-city", "d-pastdargom",
+    "d-bukhara-city", "d-gijduvon", "d-nukus-city", "d-muynak",
+    "d-andijan-city", "d-asaka", "d-fergana-city", "d-kokand",
+    "d-namangan-city", "d-chust", "d-qarshi-city", "d-shahrisabz",
+    "d-termez-city", "d-denov", "d-urgench-city", "d-khiva",
+    "d-navoiy-city", "d-zarafshan", "d-jizzakh-city", "d-zaamin",
+    "d-guliston-city", "d-yangiyer",
+  ]);
+  const AUS_AREA_IDS_SET = new Set(["nsw", "vic", "qld", "sa", "wa", "tas", "nt", "act"]);
+  const NZL_AREA_IDS_SET = new Set([
+    "northland", "auckland", "waikato", "bay-of-plenty", "gisborne",
+    "hawkes-bay", "taranaki", "manawatu-whanganui", "wellington",
+    "tasman", "nelson", "marlborough", "west-coast", "canterbury",
+    "otago", "southland",
+  ]);
 
-  if (isUzbArea) {
-    const uzbField = getUzbekistanField({
-      variable: n.indicator.id,
-      scenario: n.scenario,
-      period: n.period,
-      model: n.model,
-      percentile: n.percentile,
-      product: n.product,
-      aggregation: n.aggregation,
-    });
-    const cells = known.get(query.areaId);
-    if (cells && cells.length > 0) {
-      const stats = aggregateCells(uzbField, cells);
+  const isUzbArea = UZB_AREA_IDS_SET.has(query.areaId);
+  const isAusArea = AUS_AREA_IDS_SET.has(query.areaId);
+  const isNzlArea = NZL_AREA_IDS_SET.has(query.areaId);
+
+  if (isUzbArea || isAusArea || isNzlArea) {
+    const syntheticField = isUzbArea
+      ? getUzbekistanField({ variable: n.indicator.id, scenario: n.scenario, period: n.period, model: n.model, percentile: n.percentile, product: n.product, aggregation: n.aggregation })
+      : isAusArea
+        ? getAustraliaField({ variable: n.indicator.id, scenario: n.scenario, period: n.period, model: n.model, percentile: n.percentile, product: n.product, aggregation: n.aggregation })
+        : getNZField({ variable: n.indicator.id, scenario: n.scenario, period: n.period, model: n.model, percentile: n.percentile, product: n.product, aggregation: n.aggregation });
+    const areaCells = known.get(query.areaId);
+    if (areaCells && areaCells.length > 0) {
+      const stats = aggregateCells(syntheticField, areaCells);
       return {
         ...base,
         value: stats.mean,
@@ -452,8 +432,8 @@ export async function resolveArea(query: AreaQuery): Promise<ClimateValue> {
     }
   }
 
-  const geography = isUzbArea ? "UZB" : "PAK";
-  const countryName = isUzbArea ? "Uzbekistan" : "Pakistan";
+  const geography = isUzbArea ? "UZB" : isAusArea ? "AUS" : isNzlArea ? "NZL" : "PAK";
+  const countryName = isUzbArea ? "Uzbekistan" : isAusArea ? "Australia" : isNzlArea ? "New Zealand" : "Pakistan";
 
   const upstream = await fetchCckp({
     geography,
@@ -497,35 +477,36 @@ export async function resolveField(
   query: ClimateQuery & { maskAreaId?: string; country?: CountryCode },
 ): Promise<GridField | null> {
   const n = normalise(query);
-  const isUzb =
-    query.country === "UZB" ||
-    (query.maskAreaId && [
-      "tashkent-city",
-      "tashkent-region",
-      "samarkand",
-      "bukhara",
-      "karakalpakstan",
-      "andijan",
-      "fergana",
-      "namangan",
-      "qashqadaryo",
-      "surxondaryo",
-      "khorezm",
-      "navoiy",
-      "jizzakh",
-      "sirdaryo",
-    ].includes(query.maskAreaId));
 
-  if (isUzb) {
-    const field = getUzbekistanField({
-      variable: n.indicator.id,
-      scenario: n.scenario,
-      period: n.period,
-      model: n.model,
-      percentile: n.percentile,
-      product: n.product,
-      aggregation: n.aggregation,
-    });
+  const UZB_AREA_IDS = new Set([
+    "tashkent-city", "tashkent-region", "samarkand", "bukhara",
+    "karakalpakstan", "andijan", "fergana", "namangan", "qashqadaryo",
+    "surxondaryo", "khorezm", "navoiy", "jizzakh", "sirdaryo",
+  ]);
+  const AUS_AREA_IDS = new Set([
+    "nsw", "vic", "qld", "sa", "wa", "tas", "nt", "act",
+  ]);
+  const NZL_AREA_IDS = new Set([
+    "northland", "auckland", "waikato", "bay-of-plenty", "gisborne",
+    "hawkes-bay", "taranaki", "manawatu-whanganui", "wellington",
+    "tasman", "nelson", "marlborough", "west-coast", "canterbury",
+    "otago", "southland",
+  ]);
+
+  const isUzb = query.country === "UZB" || (query.maskAreaId ? UZB_AREA_IDS.has(query.maskAreaId) : false);
+  const isAus = query.country === "AUS" || (query.maskAreaId ? AUS_AREA_IDS.has(query.maskAreaId) : false);
+  const isNzl = query.country === "NZL" || (query.maskAreaId ? NZL_AREA_IDS.has(query.maskAreaId) : false);
+
+  const syntheticCountry = isUzb ? "UZB" : isAus ? "AUS" : isNzl ? "NZL" : null;
+
+  if (syntheticCountry) {
+    const field =
+      syntheticCountry === "UZB"
+        ? getUzbekistanField({ variable: n.indicator.id, scenario: n.scenario, period: n.period, model: n.model, percentile: n.percentile, product: n.product, aggregation: n.aggregation })
+        : syntheticCountry === "AUS"
+          ? getAustraliaField({ variable: n.indicator.id, scenario: n.scenario, period: n.period, model: n.model, percentile: n.percentile, product: n.product, aggregation: n.aggregation })
+          : getNZField({ variable: n.indicator.id, scenario: n.scenario, period: n.period, model: n.model, percentile: n.percentile, product: n.product, aggregation: n.aggregation });
+
     if (!query.maskAreaId) return field;
     const cellIndex = await loadCellIndex();
     const cells = cellIndex.get(query.maskAreaId);
@@ -657,6 +638,8 @@ export async function resolveSeries(options: {
     model,
     percentile,
   });
+  // Note: AUS and NZL geography codes are valid CCKP identifiers and
+  // will return national aggregate time-series from the upstream API.
 
   return {
     indicator: indicator.id,

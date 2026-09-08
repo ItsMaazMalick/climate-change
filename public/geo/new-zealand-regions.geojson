@@ -1,0 +1,657 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "northland",
+        "name": "Northland",
+        "bbox": {
+          "lonMin": 172.7,
+          "latMin": -36,
+          "lonMax": 174.6,
+          "latMax": -34.4
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              172.7,
+              -34.4
+            ],
+            [
+              173.4,
+              -34.4
+            ],
+            [
+              174.5,
+              -35
+            ],
+            [
+              174.6,
+              -36
+            ],
+            [
+              174,
+              -36.5
+            ],
+            [
+              173,
+              -36.2
+            ],
+            [
+              172.7,
+              -35.5
+            ],
+            [
+              172.7,
+              -34.4
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "auckland",
+        "name": "Auckland",
+        "bbox": {
+          "lonMin": 174.5,
+          "latMin": -37.3,
+          "lonMax": 175.3,
+          "latMax": -36
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              174.5,
+              -36
+            ],
+            [
+              175.3,
+              -36
+            ],
+            [
+              175.3,
+              -37.3
+            ],
+            [
+              174.5,
+              -37.3
+            ],
+            [
+              174.5,
+              -36
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "waikato",
+        "name": "Waikato",
+        "bbox": {
+          "lonMin": 174.5,
+          "latMin": -38.7,
+          "lonMax": 176.5,
+          "latMax": -37.3
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              174.5,
+              -37.3
+            ],
+            [
+              176.5,
+              -37.3
+            ],
+            [
+              176.5,
+              -38.7
+            ],
+            [
+              174.5,
+              -38.7
+            ],
+            [
+              174.5,
+              -37.3
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "bay-of-plenty",
+        "name": "Bay of Plenty",
+        "bbox": {
+          "lonMin": 175.5,
+          "latMin": -38.5,
+          "lonMax": 178,
+          "latMax": -37
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              175.5,
+              -37
+            ],
+            [
+              178,
+              -37
+            ],
+            [
+              178,
+              -38.5
+            ],
+            [
+              175.5,
+              -38.5
+            ],
+            [
+              175.5,
+              -37
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "gisborne",
+        "name": "Gisborne",
+        "bbox": {
+          "lonMin": 177.5,
+          "latMin": -39,
+          "lonMax": 178.5,
+          "latMax": -37.5
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              177.5,
+              -37.5
+            ],
+            [
+              178.5,
+              -37.5
+            ],
+            [
+              178.5,
+              -39
+            ],
+            [
+              177.5,
+              -39
+            ],
+            [
+              177.5,
+              -37.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "hawkes-bay",
+        "name": "Hawke's Bay",
+        "bbox": {
+          "lonMin": 176,
+          "latMin": -40,
+          "lonMax": 178,
+          "latMax": -38.5
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              176,
+              -38.5
+            ],
+            [
+              178,
+              -38.5
+            ],
+            [
+              178,
+              -40
+            ],
+            [
+              176,
+              -40
+            ],
+            [
+              176,
+              -38.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "taranaki",
+        "name": "Taranaki",
+        "bbox": {
+          "lonMin": 173.5,
+          "latMin": -40,
+          "lonMax": 175,
+          "latMax": -38.7
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              173.5,
+              -38.7
+            ],
+            [
+              175,
+              -38.7
+            ],
+            [
+              175,
+              -40
+            ],
+            [
+              173.5,
+              -40
+            ],
+            [
+              173.5,
+              -38.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "manawatu-whanganui",
+        "name": "Manawatū-Whanganui",
+        "bbox": {
+          "lonMin": 174.5,
+          "latMin": -40.8,
+          "lonMax": 176.5,
+          "latMax": -38.7
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              174.5,
+              -38.7
+            ],
+            [
+              176.5,
+              -38.7
+            ],
+            [
+              176.5,
+              -40.8
+            ],
+            [
+              174.5,
+              -40.8
+            ],
+            [
+              174.5,
+              -38.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "wellington",
+        "name": "Wellington",
+        "bbox": {
+          "lonMin": 174.7,
+          "latMin": -41.6,
+          "lonMax": 176.2,
+          "latMax": -40.8
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              174.7,
+              -40.8
+            ],
+            [
+              176.2,
+              -40.8
+            ],
+            [
+              176.2,
+              -41.6
+            ],
+            [
+              174.7,
+              -41.6
+            ],
+            [
+              174.7,
+              -40.8
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "tasman",
+        "name": "Tasman",
+        "bbox": {
+          "lonMin": 172,
+          "latMin": -42.5,
+          "lonMax": 173.8,
+          "latMax": -40.7
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              172,
+              -40.7
+            ],
+            [
+              173.8,
+              -40.7
+            ],
+            [
+              173.8,
+              -42.5
+            ],
+            [
+              172,
+              -42.5
+            ],
+            [
+              172,
+              -40.7
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "nelson",
+        "name": "Nelson",
+        "bbox": {
+          "lonMin": 173,
+          "latMin": -41.6,
+          "lonMax": 174,
+          "latMax": -41
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              173,
+              -41
+            ],
+            [
+              174,
+              -41
+            ],
+            [
+              174,
+              -41.6
+            ],
+            [
+              173,
+              -41.6
+            ],
+            [
+              173,
+              -41
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "marlborough",
+        "name": "Marlborough",
+        "bbox": {
+          "lonMin": 173.5,
+          "latMin": -42,
+          "lonMax": 174.5,
+          "latMax": -41
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              173.5,
+              -41
+            ],
+            [
+              174.5,
+              -41
+            ],
+            [
+              174.5,
+              -42
+            ],
+            [
+              173.5,
+              -42
+            ],
+            [
+              173.5,
+              -41
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "west-coast",
+        "name": "West Coast",
+        "bbox": {
+          "lonMin": 166.5,
+          "latMin": -44.5,
+          "lonMax": 172,
+          "latMax": -41.5
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              166.5,
+              -41.5
+            ],
+            [
+              172,
+              -41.5
+            ],
+            [
+              172,
+              -44.5
+            ],
+            [
+              166.5,
+              -44.5
+            ],
+            [
+              166.5,
+              -41.5
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "canterbury",
+        "name": "Canterbury",
+        "bbox": {
+          "lonMin": 170.5,
+          "latMin": -44.5,
+          "lonMax": 174.2,
+          "latMax": -42
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              170.5,
+              -42
+            ],
+            [
+              174.2,
+              -42
+            ],
+            [
+              174.2,
+              -44.5
+            ],
+            [
+              170.5,
+              -44.5
+            ],
+            [
+              170.5,
+              -42
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "otago",
+        "name": "Otago",
+        "bbox": {
+          "lonMin": 168,
+          "latMin": -46.5,
+          "lonMax": 171.5,
+          "latMax": -44
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              168,
+              -44
+            ],
+            [
+              171.5,
+              -44
+            ],
+            [
+              171.5,
+              -46.5
+            ],
+            [
+              168,
+              -46.5
+            ],
+            [
+              168,
+              -44
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "southland",
+        "name": "Southland",
+        "bbox": {
+          "lonMin": 166,
+          "latMin": -47.5,
+          "lonMax": 170,
+          "latMax": -45.5
+        }
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              166,
+              -45.5
+            ],
+            [
+              170,
+              -45.5
+            ],
+            [
+              170,
+              -47.5
+            ],
+            [
+              166,
+              -47.5
+            ],
+            [
+              166,
+              -45.5
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

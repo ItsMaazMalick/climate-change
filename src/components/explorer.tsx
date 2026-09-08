@@ -56,6 +56,28 @@ const REGIONS_BY_COUNTRY: Record<string, Array<{ id: string; name: string }>> = 
     { id: "jizzakh", name: "Jizzakh" },
     { id: "sirdaryo", name: "Sirdaryo" },
   ],
+  AUS: [
+    { id: "nsw", name: "New South Wales" },
+    { id: "vic", name: "Victoria" },
+    { id: "qld", name: "Queensland" },
+    { id: "sa", name: "South Australia" },
+    { id: "wa", name: "Western Australia" },
+    { id: "tas", name: "Tasmania" },
+    { id: "nt", name: "Northern Territory" },
+    { id: "act", name: "ACT" },
+  ],
+  NZL: [
+    { id: "northland", name: "Northland" },
+    { id: "auckland", name: "Auckland" },
+    { id: "waikato", name: "Waikato" },
+    { id: "bay-of-plenty", name: "Bay of Plenty" },
+    { id: "wellington", name: "Wellington" },
+    { id: "canterbury", name: "Canterbury" },
+    { id: "otago", name: "Otago" },
+    { id: "southland", name: "Southland" },
+    { id: "west-coast", name: "West Coast" },
+    { id: "marlborough", name: "Marlborough" },
+  ],
 };
 
 interface MetaResponse {
@@ -131,6 +153,12 @@ export function Explorer({ places }: { places: Place[] }) {
     // Default to country capital on initial load
     if (countryCode === "UZB") {
       return { lat: 41.2995, lon: 69.2401 }; // Tashkent
+    }
+    if (countryCode === "AUS") {
+      return { lat: -35.2809, lon: 149.1300 }; // Canberra
+    }
+    if (countryCode === "NZL") {
+      return { lat: -41.2865, lon: 174.7762 }; // Wellington
     }
     return { lat: 33.6844, lon: 73.0479 }; // Islamabad
   }, [state.lat, state.lon, countryCode]);
