@@ -91,7 +91,7 @@ export const fieldQuerySchema = z.object({
   aggregation: aggregationSchema.default("annual"),
   /** Clip the returned field to one admin unit. */
   area: z.string().min(1).max(64).optional(),
-  country: z.enum(["PAK", "UZB"]).default("PAK"),
+  country: z.enum(["PAK", "UZB", "AUS", "NZL"]).default("PAK"),
 });
 
 export const seriesQuerySchema = z.object({
