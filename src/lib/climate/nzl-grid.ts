@@ -166,43 +166,16 @@ function estimatePrecipitation(lon: number, lat: number): number {
 }
 
 /**
- * Whether a 0.25° cell centre falls on New Zealand's land area.
- * Masks the ocean cells in the elongated bbox covering Tasman Sea and Pacific.
+ * Whether a 0.25° cell centre falls within the New Zealand bounding box.
+ *
+ * The canvas ClimateMap clips to the country GeoJSON MultiPolygon (North
+ * Island, South Island, Stewart Island), so every cell in the bbox gets a
+ * value and the visual ocean mask is handled by the clip.  NZ's islands are
+ * narrow relative to the 0.25° grid, so a per-cell polygon test would exclude
+ * many valid coastal cells and produce a thin-strip artefact.
  */
-export function isNZCellInside(lon: number, lat: number): boolean {
-  if (lon < 166.0 || lon > 178.5 || lat < -47.5 || lat > -33.5) return false;
-
-  // North Island: approximately -41.5 to -34.0 lat, 172.5 to 178.5 lon
-  const onNorthIsland =
-    lat >= -41.5 && lat <= -34.0 && lon >= 172.5 && lon <= 178.5;
-
-  // South Island: approximately -46.8 to -40.3 lat, 166.0 to 174.5 lon
-  const onSouthIsland =
-    lat >= -46.8 && lat <= -40.3 && lon >= 166.0 && lon <= 174.5;
-
-  // Stewart Island: -47.5 to -46.5 lat, 167.5 to 168.5 lon
-  const onStewartIsland =
-    lat >= -47.5 && lat <= -46.5 && lon >= 167.5 && lon <= 168.5;
-
-  if (!onNorthIsland && !onSouthIsland && !onStewartIsland) return false;
-
-  // Trim ocean overhangs within island bboxes
-  // North Island southern tip narrows
-  if (lat <= -40.0 && lon > 177.0) return false;
-  if (lat <= -40.5 && lon > 176.5) return false;
-
-  // South Island: narrow at north (Marlborough Sounds)
-  if (lat >= -41.5 && lat <= -40.5 && lon < 172.5) return false;
-  // SW taper (Fiordland coast recesses)
-  if (lat <= -45.5 && lon < 167.5) return false;
-  if (lat <= -46.0 && lon < 168.0) return false;
-  // SE taper (The Catlins)
-  if (lat <= -45.0 && lon > 169.5) {
-    // narrow strip
-    if (lon > 170.5) return false;
-  }
-
-  return true;
+export function isNZCellInside(_lon: number, _lat: number): boolean {
+  return true; // bbox bounds are already checked by the grid loop
 }
 
 /**

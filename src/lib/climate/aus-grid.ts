@@ -162,50 +162,15 @@ function estimatePrecipitation(lon: number, lat: number): number {
 }
 
 /**
- * Whether a cell centre falls within the Australian mainland + Tasmania.
- * Excludes ocean cells within the bounding box.
+ * Whether a cell centre falls within the Australia bounding box.
+ *
+ * The canvas ClimateMap clips to the country GeoJSON outline, so every cell
+ * in the bbox gets a value and the visual ocean mask is handled by the clip.
+ * A strict per-cell polygon test here only creates holes where the mask
+ * disagrees with the GeoJSON boundary.
  */
-export function isAustraliaCellInside(lon: number, lat: number): boolean {
-  // Outside expanded bbox
-  if (lon < 112.0 || lon > 154.0 || lat < -44.0 || lat > -9.5) return false;
-
-  // Tasmania
-  if (lat >= -44.0 && lat <= -39.0 && lon >= 143.5 && lon <= 149.0) return true;
-
-  // Mainland: simple polygon approximation
-  // Southern coast: roughly -39 to -33 degrees lat, 114 to 151 lon
-  if (lat < -39.0) return false; // Below Tasmania and not in it
-  if (lat >= -39.0 && lat <= -34.0) {
-    if (lon < 114.5 || lon > 151.0) return false;
-  }
-  if (lat >= -34.0 && lat <= -30.0) {
-    if (lon < 113.5 || lon > 153.5) return false;
-  }
-  if (lat >= -30.0 && lat <= -25.0) {
-    if (lon < 113.0 || lon > 153.5) return false;
-    // Gulf of Carpentaria west notch
-    if (lon >= 136.0 && lon <= 140.0 && lat >= -17.0) return false;
-  }
-  if (lat >= -25.0 && lat <= -20.0) {
-    if (lon < 113.0 || lon > 153.5) return false;
-  }
-  if (lat >= -20.0 && lat <= -15.0) {
-    if (lon < 122.0 || lon > 153.5) return false;
-    // Gulf of Carpentaria
-    if (lon >= 136.5 && lon <= 139.5 && lat >= -17.5) return false;
-  }
-  if (lat >= -15.0 && lat <= -10.0) {
-    if (lon < 128.5 || lon > 153.0) return false;
-    if (lon >= 136.0 && lon <= 140.0) return false; // Gulf
-    // Cape York
-    if (lon < 142.0 && lat >= -12.0) return false;
-    if (lon < 145.0 && lat >= -11.0) return false;
-  }
-  if (lat > -10.0) {
-    if (lon < 132.0 || lon > 145.5) return false;
-  }
-
-  return true;
+export function isAustraliaCellInside(_lon: number, _lat: number): boolean {
+  return true; // bbox bounds are already checked by the grid loop
 }
 
 /**
@@ -293,9 +258,15 @@ export function getAustraliaField(query: AusFieldQuery): GridField {
         // Anomaly
         if (variable === "tas" || variable === "tasmax" || variable === "tasmin" ||
             variable === "txx" || variable === "tnn") {
-          // Australia warms faster inland; elevation-dependent warming in Alps
+          // Australia warms faster inland; smooth Gaussian falloff from arid
+          // interior avoids the rectangular artefact a step function creates.
           const edw = (elev / 2000) * 0.2;
-          const aridAmplify = lon >= 125.0 && lon <= 140.0 && lat >= -30.0 ? 0.15 : 0;
+          const desertLon = 132.5, desertLat = -25.0;
+          const desertDist = Math.sqrt(
+            Math.pow((lon - desertLon) / 18, 2) +
+            Math.pow((lat - desertLat) / 12, 2),
+          );
+          const aridAmplify = Math.max(0, 0.18 * (1 - desertDist));
           cellValue = warmingBase + edw + aridAmplify;
         } else if (variable === "pr") {
           // Southern Australia dries; tropical north slightly wetter
