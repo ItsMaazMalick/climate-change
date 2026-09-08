@@ -190,128 +190,135 @@ export function LocationPanel({
       {/* ---- model uncertainty ---- */}
       {!isBaseline && (
         <section className="p-4">
-          <SectionTitle
-            title="Model uncertainty"
-            hint="The spread across the 30 downscaled models, at this point, for this pathway and horizon."
-          />
-          {spread.loading ? (
-            <Skeleton height={64} />
-          ) : spread.data ? (
-            <>
-              <ModelSpread
-                median={spread.data.spread.median}
-                p10={spread.data.spread.p10}
-                p90={spread.data.spread.p90}
-                indicatorId={indicator}
-                color={SCENARIOS[scenario].color}
-              />
-              <p className="mt-2 text-[11.5px] leading-relaxed text-[var(--color-ink-muted)]">
-                {spread.data.description}
+          <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
+            <SectionTitle
+              title="Multi-Model Uncertainty"
+              hint="The spread across the 30 downscaled models, at this point, for this pathway and horizon."
+            />
+            {spread.loading ? (
+              <Skeleton height={64} />
+            ) : spread.data ? (
+              <>
+                <ModelSpread
+                  median={spread.data.spread.median}
+                  p10={spread.data.spread.p10}
+                  p90={spread.data.spread.p90}
+                  indicatorId={indicator}
+                  color={SCENARIOS[scenario].color}
+                />
+                <p className="mt-2 text-[11.5px] leading-relaxed text-slate-600">
+                  {spread.data.description}
+                </p>
+              </>
+            ) : (
+              <p className="text-[11.5px] text-slate-400">
+                Percentile bounds are not published for this combination.
               </p>
-            </>
-          ) : (
-            <p className="text-[11.5px] text-[var(--color-ink-faint)]">
-              Percentile bounds are not published for this combination.
-            </p>
-          )}
+            )}
+          </div>
         </section>
       )}
 
       {/* ---- scenario comparison ---- */}
       {!isBaseline && (
         <section className="p-4">
-          <SectionTitle
-            title={`All pathways · ${PERIODS[period].shortLabel}`}
-            hint="The same place and horizon under every emissions pathway. The gap between them is the part still determined by choices."
-          />
-          {scenarios.loading ? (
-            <Skeleton height={110} />
-          ) : scenarios.data ? (
-            <>
-              <ScenarioComparison
-                bars={scenarios.data.results.map((result) => ({
-                  scenario: result.scenario.id,
-                  value: result.anomaly,
-                  agreement: result.agreement,
-                }))}
-                indicatorId={indicator}
-              />
-              {scenarios.data.divergence && (
-                <p className="mt-2.5 text-[11.5px] leading-relaxed text-[var(--color-ink-muted)]">
-                  {scenarios.data.divergence}
-                </p>
-              )}
-            </>
-          ) : null}
+          <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
+            <SectionTitle
+              title={`All Policy Pathways · ${PERIODS[period].shortLabel}`}
+              hint="The same place and horizon under every emissions pathway. The gap between them is the part still determined by choices."
+            />
+            {scenarios.loading ? (
+              <Skeleton height={110} />
+            ) : scenarios.data ? (
+              <>
+                <ScenarioComparison
+                  bars={scenarios.data.results.map((result) => ({
+                    scenario: result.scenario.id,
+                    value: result.anomaly,
+                    agreement: result.agreement,
+                  }))}
+                  indicatorId={indicator}
+                />
+                {scenarios.data.divergence && (
+                  <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-600">
+                    {scenarios.data.divergence}
+                  </p>
+                )}
+              </>
+            ) : null}
+          </div>
         </section>
       )}
 
       {/* ---- seasonal cycle ---- */}
       {!isBaseline && cycle.data && (
         <section className="p-4">
-          <SectionTitle
-            title="The shape of the year"
-            hint="Monthly climatology at this point, baseline against projection."
-          />
-          <SeasonalCycle
-            months={cycle.data.months}
-            unit={cycle.data.unit}
-            indicatorId={indicator}
-            color={SCENARIOS[scenario].color}
-            height={168}
-          />
-          {cycle.data.monsoonSharePercent &&
-            cycle.data.monsoonSharePercent.baseline !== null &&
-            cycle.data.monsoonSharePercent.projected !== null && (
-              <p className="mt-2.5 text-[11.5px] leading-relaxed text-[var(--color-ink-muted)]">
-                July–September accounts for{" "}
-                <span className="tnum font-semibold">
-                  {cycle.data.monsoonSharePercent.baseline}%
+          <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
+            <SectionTitle
+              title="Annual Seasonality & Cycles"
+              hint="Monthly climatology at this point, baseline against projection."
+            />
+            <SeasonalCycle
+              months={cycle.data.months}
+              unit={cycle.data.unit}
+              indicatorId={indicator}
+              color={SCENARIOS[scenario].color}
+              height={168}
+            />
+            {cycle.data.monsoonSharePercent &&
+              cycle.data.monsoonSharePercent.baseline !== null &&
+              cycle.data.monsoonSharePercent.projected !== null && (
+                <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-600">
+                  July–September accounts for{" "}
+                  <span className="tnum font-bold text-slate-900">
+                    {cycle.data.monsoonSharePercent.baseline}%
+                  </span>{" "}
+                  of the annual total in the baseline and{" "}
+                  <span className="tnum font-bold text-slate-900">
+                    {cycle.data.monsoonSharePercent.projected}%
+                  </span>{" "}
+                  by {PERIODS[period].shortLabel}.
+                </p>
+              )}
+            {cycle.data.extremes?.baseline && cycle.data.extremes.projected && (
+              <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-600">
+                The warmest month shifts from{" "}
+                <span className="tnum font-bold text-slate-900">
+                  {formatValue(cycle.data.extremes.baseline.max, indicator)}
                 </span>{" "}
-                of the annual total in the baseline and{" "}
-                <span className="tnum font-semibold">
-                  {cycle.data.monsoonSharePercent.projected}%
-                </span>{" "}
-                by {PERIODS[period].shortLabel}. A shift here changes exposure
-                even when the annual total barely moves.
+                to{" "}
+                <span className="tnum font-bold text-slate-900">
+                  {formatValue(cycle.data.extremes.projected.max, indicator)}
+                </span>
+                , and annual temperature range changes by{" "}
+                <span className="tnum font-bold text-slate-900">
+                  {formatValue(
+                    cycle.data.extremes.projected.range - cycle.data.extremes.baseline.range,
+                    indicator,
+                    "anomaly",
+                  )}
+                </span>
+                .
               </p>
             )}
-          {cycle.data.extremes?.baseline && cycle.data.extremes.projected && (
-            <p className="mt-2.5 text-[11.5px] leading-relaxed text-[var(--color-ink-muted)]">
-              The warmest month shifts from{" "}
-              <span className="tnum font-semibold">
-                {formatValue(cycle.data.extremes.baseline.max, indicator)}
-              </span>{" "}
-              to{" "}
-              <span className="tnum font-semibold">
-                {formatValue(cycle.data.extremes.projected.max, indicator)}
-              </span>
-              , and the spread between the warmest and coolest month changes by{" "}
-              <span className="tnum font-semibold">
-                {formatValue(
-                  cycle.data.extremes.projected.range - cycle.data.extremes.baseline.range,
-                  indicator,
-                  "anomaly",
-                )}
-              </span>
-              .
-            </p>
-          )}
+          </div>
         </section>
       )}
 
       {/* ---- indicator context ---- */}
       {point.data?.indicator && (
         <section className="p-4">
-          <SectionTitle title="About this indicator" />
-          <p className="text-[12px] leading-relaxed text-[var(--color-ink-muted)]">
-            {point.data.indicator.description}
-          </p>
-          {point.data.indicator.pakistanNote && (
-            <p className="mt-2 border-l-2 border-[var(--color-brand)] pl-2.5 text-[12px] leading-relaxed text-[var(--color-ink-muted)]">
-              {point.data.indicator.pakistanNote}
+          <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3.5 shadow-xs">
+            <SectionTitle title="About Indicator & Science" />
+            <p className="text-[12px] leading-relaxed text-slate-700 font-medium">
+              {point.data.indicator.description}
             </p>
-          )}
+            {point.data.indicator.pakistanNote && (
+              <p className="mt-2.5 rounded-lg border-l-3 border-emerald-500 bg-white p-2.5 text-[11.5px] leading-relaxed text-slate-600 shadow-xs">
+                {point.data.indicator.pakistanNote}
+              </p>
+            )}
+          </div>
         </section>
       )}
     </div>

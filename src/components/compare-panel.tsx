@@ -97,20 +97,23 @@ export function ComparePanel({ places }: { places: Place[] }) {
   );
 
   return (
-    <div className="mx-auto max-w-6xl px-5 py-9">
-      <header className="mb-7 max-w-2xl">
-        <h1 className="text-2xl font-semibold tracking-tight">Compare — {config.name}</h1>
-        <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--color-ink-muted)]">
-          Three different things are uncertain about the future climate of a
-          place, and they are not interchangeable: which emissions pathway the
-          world follows, how the models differ from one another, and how far
-          ahead you are looking. This page separates them.
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      <header className="mb-8 max-w-2xl">
+        <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[12px] font-bold text-emerald-800 mb-3 shadow-xs">
+          <span>{config.flag}</span>
+          <span>Climate Uncertainty Workspace · {config.name}</span>
+        </div>
+        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Multi-Dimensional Climate Comparison</h1>
+        <p className="mt-2 text-[14px] leading-relaxed text-slate-600 font-medium">
+          Three different scientific factors shape the future climate of a
+          place: which global emissions pathway humanity follows, how independent
+          climate models differ, and how far ahead you look.
         </p>
       </header>
 
       {/* ---------------------------------------------------- controls -- */}
-      <div className="mb-8 grid gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 md:grid-cols-3">
-        <Field label="Place">
+      <div className="mb-8 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:grid-cols-3">
+        <Field label="Target Location">
           <PlaceSearch
             places={countryPlaces}
             onSelect={(selected) => {
@@ -118,14 +121,14 @@ export function ComparePanel({ places }: { places: Place[] }) {
               if (match) setPlace(match);
             }}
           />
-          <p className="tnum mt-1.5 text-[11px] text-[var(--color-ink-faint)]">
-            {place.name} ({place.province}) · {place.lat.toFixed(2)}°N, {place.lon.toFixed(2)}°E
+          <p className="tnum mt-1.5 text-[11.5px] font-medium text-slate-500">
+            📍 {place.name} ({place.province}) · {place.lat.toFixed(2)}°N, {place.lon.toFixed(2)}°E
           </p>
         </Field>
-        <Field label="Indicator">
+        <Field label="Climate Indicator">
           <IndicatorPicker value={indicator} onChange={setIndicator} />
         </Field>
-        <Field label="Horizon">
+        <Field label="Future Horizon">
           <PeriodPicker value={period} onChange={setPeriod} includeBaseline={false} />
         </Field>
       </div>
@@ -133,45 +136,45 @@ export function ComparePanel({ places }: { places: Place[] }) {
       {/* ------------------------------------------- 1. pathways -------- */}
       <Section
         index={1}
-        title="Uncertainty about the pathway"
-        subtitle="Same place, same models, same horizon — only the emissions assumption changes. This gap is not scientific uncertainty; it is the range of futures still available."
+        title="Uncertainty about Policy Pathway"
+        subtitle="Same place, same models, same horizon — only the emissions assumption changes. This gap represents policy choices, not model error."
       >
         {scenarios.data ? (
-          <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
-            <div className="overflow-x-auto">
+          <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
               <table className="w-full min-w-[420px] text-[13px]">
                 <thead>
-                  <tr className="border-b border-[var(--color-border)]">
-                    <th className="label py-2 text-left font-semibold">Pathway</th>
-                    <th className="label py-2 text-left font-semibold">Storyline</th>
-                    <th className="label py-2 text-right font-semibold">Value</th>
-                    <th className="label py-2 text-right font-semibold">Change</th>
+                  <tr className="border-b border-slate-100">
+                    <th className="py-2.5 text-left font-bold text-slate-500 text-[11px] uppercase tracking-wider">Pathway</th>
+                    <th className="py-2.5 text-left font-bold text-slate-500 text-[11px] uppercase tracking-wider">Storyline</th>
+                    <th className="py-2.5 text-right font-bold text-slate-500 text-[11px] uppercase tracking-wider">Value</th>
+                    <th className="py-2.5 text-right font-bold text-slate-500 text-[11px] uppercase tracking-wider">Change (Δ)</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-slate-100">
                   {scenarios.data.results.map((row) => {
                     const meta = SCENARIOS[row.scenario.id];
                     return (
                       <tr
                         key={row.scenario.id}
-                        className="border-b border-[var(--color-border)] last:border-0"
+                        className="hover:bg-slate-50/70 transition-colors"
                       >
-                        <td className="py-2.5 pr-3">
-                          <span className="flex items-center gap-1.5 font-medium">
+                        <td className="py-3 pr-3">
+                          <span className="flex items-center gap-2 font-bold text-slate-900">
                             <span
-                              className="inline-block h-2 w-2 shrink-0 rounded-full"
+                              className="inline-block h-3 w-3 shrink-0 rounded-full shadow-xs ring-2 ring-white"
                               style={{ background: meta.color }}
                             />
                             {meta.label}
                           </span>
                         </td>
-                        <td className="py-2.5 pr-3 text-[11.5px] text-[var(--color-ink-faint)]">
+                        <td className="py-3 pr-3 text-[12px] text-slate-500">
                           {meta.narrative}
                         </td>
-                        <td className="tnum py-2.5 text-right text-[var(--color-ink-muted)]">
+                        <td className="tnum py-3 text-right text-slate-600 font-medium">
                           {formatValue(row.value, indicator)}
                         </td>
-                        <td className="tnum py-2.5 text-right font-semibold">
+                        <td className="tnum py-3 text-right font-bold text-slate-900">
                           {formatValue(row.anomaly, indicator, "anomaly")}
                         </td>
                       </tr>
@@ -181,9 +184,9 @@ export function ComparePanel({ places }: { places: Place[] }) {
               </table>
             </div>
 
-            <aside className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3.5">
-              <div className="label mb-2">What this means</div>
-              <p className="text-[12px] leading-relaxed text-[var(--color-ink-muted)]">
+            <aside className="rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-5 shadow-xs">
+              <div className="label mb-2 text-slate-500 font-bold">Policy Implication</div>
+              <p className="text-[12.5px] leading-relaxed text-slate-700 font-medium">
                 {scenarios.data.divergence ??
                   "The pathways have not meaningfully diverged for this indicator at this horizon."}
               </p>
@@ -197,8 +200,8 @@ export function ComparePanel({ places }: { places: Place[] }) {
       {/* ------------------------------------------- 2. models ---------- */}
       <Section
         index={2}
-        title="Uncertainty between models"
-        subtitle="Same place, same pathway, same horizon — thirty different global climate models. Each is a self-consistent simulation, not an error bar around a true answer."
+        title="Uncertainty between 30 Downscaled Models"
+        subtitle="Same place, same pathway, same horizon — thirty different global climate models from international modeling centers."
       >
         <div className="mb-4 flex flex-wrap items-center gap-2">
           {HEADLINE_SCENARIO_IDS.map((id) => (
@@ -207,10 +210,10 @@ export function ComparePanel({ places }: { places: Place[] }) {
               type="button"
               onClick={() => setScenario(id)}
               aria-pressed={scenario === id}
-              className={`rounded-md border px-2.5 py-1 text-[12px] transition-colors ${
+              className={`rounded-lg border px-3 py-1.5 text-[12px] font-bold transition-all shadow-xs ${
                 scenario === id
-                  ? "border-transparent font-semibold text-white"
-                  : "border-[var(--color-border)] text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                  ? "border-transparent text-white ring-2 ring-offset-1 ring-slate-300"
+                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
               }`}
               style={
                 scenario === id ? { background: SCENARIOS[id].color } : undefined
@@ -222,7 +225,7 @@ export function ComparePanel({ places }: { places: Place[] }) {
           <button
             type="button"
             onClick={() => setShowMembers((current) => !current)}
-            className="ml-auto rounded-md border border-[var(--color-border)] px-2.5 py-1 text-[12px] text-[var(--color-ink-muted)] transition-colors hover:text-[var(--color-ink)]"
+            className="ml-auto rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 shadow-xs"
           >
             {showMembers ? "Hide individual models" : "Show all 30 models"}
           </button>
