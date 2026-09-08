@@ -11,6 +11,7 @@ const NAV = [
   { href: "/hotspots", label: "Hotspots" },
   { href: "/places", label: "Places" },
   { href: "/learn", label: "Learn" },
+  // { href: "/user-guide", label: "User Guide" },
   { href: "/methodology", label: "Methodology" },
 ];
 
@@ -49,8 +50,8 @@ export function SiteHeader() {
                   onClick={() => setCountry(code)}
                   aria-pressed={isSelected}
                   className={`flex items-center gap-1.5 rounded-lg px-3 py-1 text-[12px] font-bold transition-all cursor-pointer ${isSelected
-                      ? "bg-white text-emerald-700 shadow-sm border border-slate-200/80 ring-1 ring-emerald-500/20"
-                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                    ? "bg-white text-emerald-700 shadow-sm border border-slate-200/80 ring-1 ring-emerald-500/20"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
                     }`}
                   title={`Switch active country to ${c.name}`}
                 >
@@ -74,8 +75,8 @@ export function SiteHeader() {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={`rounded-lg px-3 py-1.5 text-[13px] font-bold transition-all ${active
-                    ? "bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                  ? "bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
                   }`}
               >
                 {item.label}
