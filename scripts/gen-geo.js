@@ -1,14 +1,19 @@
 #!/usr/bin/env node
 /**
  * Generate simplified GeoJSON boundary files for Australia and New Zealand.
- * Uses approximate polygon coordinates based on official boundary data.
- * Run: node scripts/gen-geo.js
+ * Properties format matches the existing Pakistan/Uzbekistan files:
+ *   { id, name, level, centroid: [lon, lat], bbox: [minLon, minLat, maxLon, maxLat] }
  */
 
 const fs = require("fs");
 const path = require("path");
 
 const GEO_DIR = path.join(__dirname, "../public/geo");
+
+// Helper to compute centroid of a bounding box
+function centroid(lonMin, latMin, lonMax, latMax) {
+  return [(lonMin + lonMax) / 2, (latMin + latMax) / 2];
+}
 
 // ============================================================
 // AUSTRALIA — Country Outline
@@ -18,7 +23,13 @@ const australiaCountry = {
   features: [
     {
       type: "Feature",
-      properties: { id: "AUS", name: "Australia" },
+      properties: {
+        id: "AUS",
+        name: "Australia",
+        level: 0,
+        centroid: centroid(112.0, -44.0, 154.0, -9.5),
+        bbox: [112.0, -44.0, 154.0, -9.5],
+      },
       geometry: {
         type: "MultiPolygon",
         coordinates: [
@@ -74,108 +85,69 @@ const australiaCountry = {
 // ============================================================
 // AUSTRALIA — States & Territories
 // ============================================================
+function ausState(id, name, lonMin, latMin, lonMax, latMax, coords) {
+  return {
+    type: "Feature",
+    properties: {
+      id,
+      name,
+      level: 1,
+      centroid: centroid(lonMin, latMin, lonMax, latMax),
+      bbox: [lonMin, latMin, lonMax, latMax],
+    },
+    geometry: { type: "Polygon", coordinates: [coords] }
+  };
+}
+
 const australiaStates = {
   type: "FeatureCollection",
   features: [
-    {
-      type: "Feature",
-      properties: {
-        id: "nsw",
-        name: "New South Wales",
-        bbox: { lonMin: 140.9, latMin: -37.5, lonMax: 153.6, latMax: -28.2 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [141.00, -34.00], [141.00, -29.00], [148.90, -29.00], [149.70, -28.20],
-          [150.30, -28.20], [153.60, -28.20], [153.60, -37.50], [150.50, -37.50],
-          [149.50, -37.00], [148.20, -37.30], [147.00, -36.00], [145.80, -36.00],
-          [144.80, -36.10], [143.00, -35.00], [141.80, -34.00], [141.00, -34.00]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "vic",
-        name: "Victoria",
-        bbox: { lonMin: 140.9, latMin: -39.2, lonMax: 149.7, latMax: -33.9 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [141.00, -34.00], [141.80, -34.00], [143.00, -35.00], [144.80, -36.10],
-          [145.80, -36.00], [147.00, -36.00], [148.20, -37.30], [149.50, -37.00],
-          [150.50, -37.50], [149.70, -38.50], [148.20, -38.80], [146.50, -38.80],
-          [145.00, -38.60], [144.00, -38.40], [143.00, -38.80], [141.80, -39.00],
-          [141.00, -38.00], [141.00, -34.00]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "qld",
-        name: "Queensland",
-        bbox: { lonMin: 137.9, latMin: -29.0, lonMax: 153.6, latMax: -10.0 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [138.00, -26.00], [138.00, -17.00], [139.00, -17.00], [140.00, -17.50],
-          [141.00, -15.00], [141.50, -12.50], [142.00, -11.00], [143.00, -11.50],
-          [144.00, -12.00], [145.00, -14.00], [145.50, -15.00], [146.00, -17.00],
-          [147.00, -18.00], [148.00, -19.50], [149.00, -20.00], [150.00, -22.00],
-          [150.50, -22.50], [151.00, -23.50], [152.00, -24.50], [153.00, -25.50],
-          [153.60, -26.00], [153.00, -27.50], [153.00, -28.00], [150.50, -28.20],
-          [149.70, -28.20], [148.90, -29.00], [141.00, -29.00], [138.00, -26.00]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "sa",
-        name: "South Australia",
-        bbox: { lonMin: 128.9, latMin: -38.1, lonMax: 141.0, latMax: -25.9 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [129.00, -26.00], [129.00, -31.50], [130.00, -33.00], [131.00, -34.00],
-          [132.00, -34.50], [133.50, -35.50], [135.00, -35.20], [136.00, -35.80],
-          [137.00, -35.90], [137.50, -35.50], [138.50, -35.70], [138.00, -34.80],
-          [138.50, -34.50], [139.00, -35.00], [140.00, -35.00], [141.00, -34.00],
-          [141.00, -29.00], [141.00, -26.00], [129.00, -26.00]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "wa",
-        name: "Western Australia",
-        bbox: { lonMin: 112.0, latMin: -35.2, lonMax: 129.0, latMax: -13.7 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [113.00, -22.00], [114.00, -21.80], [115.00, -21.50], [116.00, -20.60],
-          [118.00, -20.40], [120.00, -19.90], [122.00, -18.00], [122.50, -17.00],
-          [123.50, -17.50], [124.00, -16.40], [125.00, -15.50], [127.00, -14.50],
-          [128.00, -14.80], [128.50, -14.50], [129.00, -14.80], [129.00, -26.00],
-          [124.00, -33.50], [122.00, -33.90], [119.00, -34.40], [117.00, -34.00],
-          [115.00, -34.50], [114.00, -34.00], [114.00, -31.50], [113.50, -29.50],
-          [113.00, -27.00], [113.00, -22.00]
-        ]]
-      }
-    },
+    ausState("nsw", "New South Wales", 140.9, -37.5, 153.6, -28.2, [
+      [141.00, -34.00], [141.00, -29.00], [148.90, -29.00], [149.70, -28.20],
+      [150.30, -28.20], [153.60, -28.20], [153.60, -37.50], [150.50, -37.50],
+      [149.50, -37.00], [148.20, -37.30], [147.00, -36.00], [145.80, -36.00],
+      [144.80, -36.10], [143.00, -35.00], [141.80, -34.00], [141.00, -34.00]
+    ]),
+    ausState("vic", "Victoria", 140.9, -39.2, 149.7, -33.9, [
+      [141.00, -34.00], [141.80, -34.00], [143.00, -35.00], [144.80, -36.10],
+      [145.80, -36.00], [147.00, -36.00], [148.20, -37.30], [149.50, -37.00],
+      [150.50, -37.50], [149.70, -38.50], [148.20, -38.80], [146.50, -38.80],
+      [145.00, -38.60], [144.00, -38.40], [143.00, -38.80], [141.80, -39.00],
+      [141.00, -38.00], [141.00, -34.00]
+    ]),
+    ausState("qld", "Queensland", 137.9, -29.0, 153.6, -10.0, [
+      [138.00, -26.00], [138.00, -17.00], [139.00, -17.00], [140.00, -17.50],
+      [141.00, -15.00], [141.50, -12.50], [142.00, -11.00], [143.00, -11.50],
+      [144.00, -12.00], [145.00, -14.00], [145.50, -15.00], [146.00, -17.00],
+      [147.00, -18.00], [148.00, -19.50], [149.00, -20.00], [150.00, -22.00],
+      [150.50, -22.50], [151.00, -23.50], [152.00, -24.50], [153.00, -25.50],
+      [153.60, -26.00], [153.00, -27.50], [153.00, -28.00], [150.50, -28.20],
+      [149.70, -28.20], [148.90, -29.00], [141.00, -29.00], [138.00, -26.00]
+    ]),
+    ausState("sa", "South Australia", 128.9, -38.1, 141.0, -25.9, [
+      [129.00, -26.00], [129.00, -31.50], [130.00, -33.00], [131.00, -34.00],
+      [132.00, -34.50], [133.50, -35.50], [135.00, -35.20], [136.00, -35.80],
+      [137.00, -35.90], [137.50, -35.50], [138.50, -35.70], [138.00, -34.80],
+      [138.50, -34.50], [139.00, -35.00], [140.00, -35.00], [141.00, -34.00],
+      [141.00, -29.00], [141.00, -26.00], [129.00, -26.00]
+    ]),
+    ausState("wa", "Western Australia", 112.0, -35.2, 129.0, -13.7, [
+      [113.00, -22.00], [114.00, -21.80], [115.00, -21.50], [116.00, -20.60],
+      [118.00, -20.40], [120.00, -19.90], [122.00, -18.00], [122.50, -17.00],
+      [123.50, -17.50], [124.00, -16.40], [125.00, -15.50], [127.00, -14.50],
+      [128.00, -14.80], [128.50, -14.50], [129.00, -14.80], [129.00, -26.00],
+      [124.00, -33.50], [122.00, -33.90], [119.00, -34.40], [117.00, -34.00],
+      [115.00, -34.50], [114.00, -34.00], [114.00, -31.50], [113.50, -29.50],
+      [113.00, -27.00], [113.00, -22.00]
+    ]),
     {
       type: "Feature",
       properties: {
         id: "tas",
         name: "Tasmania",
-        bbox: { lonMin: 143.8, latMin: -43.7, lonMax: 148.5, latMax: -39.6 }
+        level: 1,
+        centroid: [146.5, -42.0],
+        bbox: [143.8, -43.7, 148.5, -39.6],
       },
       geometry: {
         type: "Polygon",
@@ -187,37 +159,15 @@ const australiaStates = {
         ]]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        id: "nt",
-        name: "Northern Territory",
-        bbox: { lonMin: 128.9, latMin: -26.0, lonMax: 138.0, latMax: -10.9 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [129.00, -14.80], [129.00, -26.00], [138.00, -26.00], [138.00, -17.00],
-          [137.00, -17.00], [136.50, -15.60], [136.00, -14.50], [135.50, -14.70],
-          [134.50, -14.60], [133.20, -15.50], [132.50, -14.90], [131.80, -15.20],
-          [130.80, -14.70], [130.00, -14.90], [129.50, -14.60], [129.00, -14.80]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "act",
-        name: "Australian Capital Territory",
-        bbox: { lonMin: 148.7, latMin: -35.9, lonMax: 149.4, latMax: -35.1 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [148.75, -35.15], [149.40, -35.15], [149.40, -35.92], [148.75, -35.92], [148.75, -35.15]
-        ]]
-      }
-    }
+    ausState("nt", "Northern Territory", 128.9, -26.0, 138.0, -10.9, [
+      [129.00, -14.80], [129.00, -26.00], [138.00, -26.00], [138.00, -17.00],
+      [137.00, -17.00], [136.50, -15.60], [136.00, -14.50], [135.50, -14.70],
+      [134.50, -14.60], [133.20, -15.50], [132.50, -14.90], [131.80, -15.20],
+      [130.80, -14.70], [130.00, -14.90], [129.50, -14.60], [129.00, -14.80]
+    ]),
+    ausState("act", "Australian Capital Territory", 148.7, -35.9, 149.4, -35.1, [
+      [148.75, -35.12], [149.40, -35.12], [149.40, -35.92], [148.75, -35.92], [148.75, -35.12]
+    ]),
   ]
 };
 
@@ -229,7 +179,13 @@ const newZealandCountry = {
   features: [
     {
       type: "Feature",
-      properties: { id: "NZL", name: "New Zealand" },
+      properties: {
+        id: "NZL",
+        name: "New Zealand",
+        level: 0,
+        centroid: centroid(166.0, -47.5, 178.5, -33.5),
+        bbox: [166.0, -47.5, 178.5, -33.5],
+      },
       geometry: {
         type: "MultiPolygon",
         coordinates: [
@@ -283,234 +239,72 @@ const newZealandCountry = {
 // ============================================================
 // NEW ZEALAND — Regions
 // ============================================================
+function nzlRegion(id, name, lonMin, latMin, lonMax, latMax, coords) {
+  return {
+    type: "Feature",
+    properties: {
+      id,
+      name,
+      level: 1,
+      centroid: centroid(lonMin, latMin, lonMax, latMax),
+      bbox: [lonMin, latMin, lonMax, latMax],
+    },
+    geometry: { type: "Polygon", coordinates: [coords] }
+  };
+}
+
 const newZealandRegions = {
   type: "FeatureCollection",
   features: [
-    {
-      type: "Feature",
-      properties: {
-        id: "northland",
-        name: "Northland",
-        bbox: { lonMin: 172.7, latMin: -36.0, lonMax: 174.6, latMax: -34.4 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [172.70, -34.40], [173.40, -34.40], [174.50, -35.00], [174.60, -36.00],
-          [174.00, -36.50], [173.00, -36.20], [172.70, -35.50], [172.70, -34.40]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "auckland",
-        name: "Auckland",
-        bbox: { lonMin: 174.5, latMin: -37.3, lonMax: 175.3, latMax: -36.0 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [174.50, -36.00], [175.30, -36.00], [175.30, -37.30], [174.50, -37.30], [174.50, -36.00]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "waikato",
-        name: "Waikato",
-        bbox: { lonMin: 174.5, latMin: -38.7, lonMax: 176.5, latMax: -37.3 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [174.50, -37.30], [176.50, -37.30], [176.50, -38.70], [174.50, -38.70], [174.50, -37.30]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "bay-of-plenty",
-        name: "Bay of Plenty",
-        bbox: { lonMin: 175.5, latMin: -38.5, lonMax: 178.0, latMax: -37.0 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [175.50, -37.00], [178.00, -37.00], [178.00, -38.50], [175.50, -38.50], [175.50, -37.00]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "gisborne",
-        name: "Gisborne",
-        bbox: { lonMin: 177.5, latMin: -39.0, lonMax: 178.5, latMax: -37.5 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [177.50, -37.50], [178.50, -37.50], [178.50, -39.00], [177.50, -39.00], [177.50, -37.50]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "hawkes-bay",
-        name: "Hawke's Bay",
-        bbox: { lonMin: 176.0, latMin: -40.0, lonMax: 178.0, latMax: -38.5 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [176.00, -38.50], [178.00, -38.50], [178.00, -40.00], [176.00, -40.00], [176.00, -38.50]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "taranaki",
-        name: "Taranaki",
-        bbox: { lonMin: 173.5, latMin: -40.0, lonMax: 175.0, latMax: -38.7 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [173.50, -38.70], [175.00, -38.70], [175.00, -40.00], [173.50, -40.00], [173.50, -38.70]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "manawatu-whanganui",
-        name: "Manawatū-Whanganui",
-        bbox: { lonMin: 174.5, latMin: -40.8, lonMax: 176.5, latMax: -38.7 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [174.50, -38.70], [176.50, -38.70], [176.50, -40.80], [174.50, -40.80], [174.50, -38.70]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "wellington",
-        name: "Wellington",
-        bbox: { lonMin: 174.7, latMin: -41.6, lonMax: 176.2, latMax: -40.8 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [174.70, -40.80], [176.20, -40.80], [176.20, -41.60], [174.70, -41.60], [174.70, -40.80]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "tasman",
-        name: "Tasman",
-        bbox: { lonMin: 172.0, latMin: -42.5, lonMax: 173.8, latMax: -40.7 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [172.00, -40.70], [173.80, -40.70], [173.80, -42.50], [172.00, -42.50], [172.00, -40.70]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "nelson",
-        name: "Nelson",
-        bbox: { lonMin: 173.0, latMin: -41.6, lonMax: 174.0, latMax: -41.0 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [173.00, -41.00], [174.00, -41.00], [174.00, -41.60], [173.00, -41.60], [173.00, -41.00]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "marlborough",
-        name: "Marlborough",
-        bbox: { lonMin: 173.5, latMin: -42.0, lonMax: 174.5, latMax: -41.0 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [173.50, -41.00], [174.50, -41.00], [174.50, -42.00], [173.50, -42.00], [173.50, -41.00]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "west-coast",
-        name: "West Coast",
-        bbox: { lonMin: 166.5, latMin: -44.5, lonMax: 172.0, latMax: -41.5 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [166.50, -41.50], [172.00, -41.50], [172.00, -44.50], [166.50, -44.50], [166.50, -41.50]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "canterbury",
-        name: "Canterbury",
-        bbox: { lonMin: 170.5, latMin: -44.5, lonMax: 174.2, latMax: -42.0 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [170.50, -42.00], [174.20, -42.00], [174.20, -44.50], [170.50, -44.50], [170.50, -42.00]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "otago",
-        name: "Otago",
-        bbox: { lonMin: 168.0, latMin: -46.5, lonMax: 171.5, latMax: -44.0 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [168.00, -44.00], [171.50, -44.00], [171.50, -46.50], [168.00, -46.50], [168.00, -44.00]
-        ]]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "southland",
-        name: "Southland",
-        bbox: { lonMin: 166.0, latMin: -47.5, lonMax: 170.0, latMax: -45.5 }
-      },
-      geometry: {
-        type: "Polygon",
-        coordinates: [[
-          [166.00, -45.50], [170.00, -45.50], [170.00, -47.50], [166.00, -47.50], [166.00, -45.50]
-        ]]
-      }
-    }
+    nzlRegion("northland", "Northland", 172.7, -36.0, 174.6, -34.4, [
+      [172.70, -34.40], [173.40, -34.40], [174.50, -35.00], [174.60, -36.00],
+      [174.00, -36.50], [173.00, -36.20], [172.70, -35.50], [172.70, -34.40]
+    ]),
+    nzlRegion("auckland", "Auckland", 174.5, -37.3, 175.3, -36.0, [
+      [174.50, -36.00], [175.30, -36.00], [175.30, -37.30], [174.50, -37.30], [174.50, -36.00]
+    ]),
+    nzlRegion("waikato", "Waikato", 174.5, -38.7, 176.5, -37.3, [
+      [174.50, -37.30], [176.50, -37.30], [176.50, -38.70], [174.50, -38.70], [174.50, -37.30]
+    ]),
+    nzlRegion("bay-of-plenty", "Bay of Plenty", 175.5, -38.5, 178.0, -37.0, [
+      [175.50, -37.00], [178.00, -37.00], [178.00, -38.50], [175.50, -38.50], [175.50, -37.00]
+    ]),
+    nzlRegion("gisborne", "Gisborne", 177.5, -39.0, 178.5, -37.5, [
+      [177.50, -37.50], [178.50, -37.50], [178.50, -39.00], [177.50, -39.00], [177.50, -37.50]
+    ]),
+    nzlRegion("hawkes-bay", "Hawke's Bay", 176.0, -40.0, 178.0, -38.5, [
+      [176.00, -38.50], [178.00, -38.50], [178.00, -40.00], [176.00, -40.00], [176.00, -38.50]
+    ]),
+    nzlRegion("taranaki", "Taranaki", 173.5, -40.0, 175.0, -38.7, [
+      [173.50, -38.70], [175.00, -38.70], [175.00, -40.00], [173.50, -40.00], [173.50, -38.70]
+    ]),
+    nzlRegion("manawatu-whanganui", "Manawatū-Whanganui", 174.5, -40.8, 176.5, -38.7, [
+      [174.50, -38.70], [176.50, -38.70], [176.50, -40.80], [174.50, -40.80], [174.50, -38.70]
+    ]),
+    nzlRegion("wellington", "Wellington", 174.7, -41.6, 176.2, -40.8, [
+      [174.70, -40.80], [176.20, -40.80], [176.20, -41.60], [174.70, -41.60], [174.70, -40.80]
+    ]),
+    nzlRegion("tasman", "Tasman", 172.0, -42.5, 173.8, -40.7, [
+      [172.00, -40.70], [173.80, -40.70], [173.80, -42.50], [172.00, -42.50], [172.00, -40.70]
+    ]),
+    nzlRegion("nelson", "Nelson", 173.0, -41.6, 174.0, -41.0, [
+      [173.00, -41.00], [174.00, -41.00], [174.00, -41.60], [173.00, -41.60], [173.00, -41.00]
+    ]),
+    nzlRegion("marlborough", "Marlborough", 173.5, -42.0, 174.5, -41.0, [
+      [173.50, -41.00], [174.50, -41.00], [174.50, -42.00], [173.50, -42.00], [173.50, -41.00]
+    ]),
+    nzlRegion("west-coast", "West Coast", 166.5, -44.5, 172.0, -41.5, [
+      [166.50, -41.50], [172.00, -41.50], [172.00, -44.50], [166.50, -44.50], [166.50, -41.50]
+    ]),
+    nzlRegion("canterbury", "Canterbury", 170.5, -44.5, 174.2, -42.0, [
+      [170.50, -42.00], [174.20, -42.00], [174.20, -44.50], [170.50, -44.50], [170.50, -42.00]
+    ]),
+    nzlRegion("otago", "Otago", 168.0, -46.5, 171.5, -44.0, [
+      [168.00, -44.00], [171.50, -44.00], [171.50, -46.50], [168.00, -46.50], [168.00, -44.00]
+    ]),
+    nzlRegion("southland", "Southland", 166.0, -47.5, 170.0, -45.5, [
+      [166.00, -45.50], [170.00, -45.50], [170.00, -47.50], [166.00, -47.50], [166.00, -45.50]
+    ]),
   ]
 };
 
@@ -524,8 +318,9 @@ const files = {
 
 for (const [name, data] of Object.entries(files)) {
   const filePath = path.join(GEO_DIR, name);
-  fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
-  console.log(`✓ Written ${name} (${(JSON.stringify(data).length / 1024).toFixed(1)} KB)`);
+  fs.writeFileSync(filePath, JSON.stringify(data), "utf8");
+  const size = JSON.stringify(data).length;
+  console.log(`✓ ${name} — ${(size / 1024).toFixed(1)} KB`);
 }
 
-console.log("\nAll GeoJSON files generated successfully.");
+console.log("\nAll GeoJSON files generated with correct properties format.");

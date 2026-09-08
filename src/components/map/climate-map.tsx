@@ -550,7 +550,8 @@ export function ClimateMap({
           <div className="flex items-center gap-2">
             <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
             <div className="tnum text-[11px] font-bold text-slate-500">
-              {hover.lat.toFixed(3)}°N, {hover.lon.toFixed(3)}°E
+              {Math.abs(hover.lat).toFixed(3)}°{hover.lat >= 0 ? "N" : "S"},{" "}
+              {Math.abs(hover.lon).toFixed(3)}°{hover.lon >= 0 ? "E" : "W"}
             </div>
           </div>
           <div className="tnum mt-1 flex items-center gap-2.5 text-[16px] font-extrabold text-slate-900">
