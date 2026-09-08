@@ -10,6 +10,8 @@
  * API layer, the store implementations, and the UI.
  */
 
+import type { CountryCode } from "./countries";
+
 // ---------------------------------------------------------------------------
 // Datasets
 // ---------------------------------------------------------------------------
@@ -502,8 +504,8 @@ export interface Indicator {
    * anything. Only accumulating indicators get a share readout.
    */
   accumulates: boolean;
-  /** Relevance note specific to Pakistan. */
-  pakistanNote?: string;
+  /** Relevance notes specific to countries. */
+  countryNotes?: Partial<Record<CountryCode, string>>;
 }
 
 /**
@@ -522,21 +524,26 @@ export const INDICATORS: Record<string, Indicator> = Object.fromEntries(
     // --- temperature -------------------------------------------------------
     ind({ id: "tas", label: "Average temperature", shortLabel: "Avg temp", unit: "°C", family: "temperature", precision: 1, higherIsWorse: true, gridded: true,
       description: "Mean near-surface air temperature — the headline climate variable.",
-      pakistanNote: "Pakistan has warmed faster than the global land average since 1960." }),
+      countryNotes: { 
+        PAK: "Pakistan has warmed faster than the global land average since 1960.",
+        UZB: "Uzbekistan is warming significantly faster than the global average, driving glacial retreat in the Pamir-Alay and Tien Shan.",
+        AUS: "Australia's climate has warmed on average by 1.5°C since national records began in 1910.",
+        NZL: "New Zealand's average temperature has increased by over 1.1°C since 1909, with the most rapid warming in recent decades."
+      } }),
     ind({ id: "tasmax", label: "Maximum temperature", shortLabel: "Max temp", unit: "°C", family: "temperature", precision: 1, higherIsWorse: true, gridded: true,
       description: "Average of daily maximum temperature." }),
     ind({ id: "tasmin", label: "Minimum temperature", shortLabel: "Min temp", unit: "°C", family: "temperature", precision: 1, higherIsWorse: true, gridded: true,
       description: "Average of daily minimum temperature. Rising minima suppress overnight recovery from heat." }),
     ind({ id: "txx", label: "Hottest day of the year", shortLabel: "TXx", unit: "°C", family: "temperature", precision: 1, higherIsWorse: true, gridded: true,
       description: "Annual maximum of daily maximum temperature.",
-      pakistanNote: "Jacobabad and Sibi routinely record among the highest reliably measured temperatures on Earth." }),
+      countryNotes: { PAK: "Jacobabad and Sibi routinely record among the highest reliably measured temperatures on Earth." } }),
     ind({ id: "tnn", label: "Coldest night of the year", shortLabel: "TNn", unit: "°C", family: "temperature", precision: 1, higherIsWorse: false, gridded: true,
       description: "Annual minimum of daily minimum temperature." }),
 
     // --- heat --------------------------------------------------------------
     ind({ id: "hd35", accumulates: true, label: "Hot days above 35 °C", shortLabel: "Days >35 °C", unit: "days", family: "heat", precision: 0, higherIsWorse: true, gridded: true,
       description: "Number of days per year with maximum temperature above 35 °C.",
-      pakistanNote: "Above roughly 35 °C, outdoor labour productivity in agriculture and construction falls sharply." }),
+      countryNotes: { PAK: "Above roughly 35 °C, outdoor labour productivity in agriculture and construction falls sharply." } }),
     ind({ id: "hd40", accumulates: true, label: "Very hot days above 40 °C", shortLabel: "Days >40 °C", unit: "days", family: "heat", precision: 0, higherIsWorse: true, gridded: true,
       description: "Number of days per year with maximum temperature above 40 °C." }),
     ind({ id: "hd45", accumulates: true, label: "Extreme heat days above 45 °C", shortLabel: "Days >45 °C", unit: "days", family: "heat", precision: 0, higherIsWorse: true, gridded: false,
@@ -545,12 +552,12 @@ export const INDICATORS: Record<string, Indicator> = Object.fromEntries(
       description: "Days exceeding 50 °C — currently near-unheard-of outside a handful of Sindh and southern Punjab stations." }),
     ind({ id: "tr23", accumulates: true, label: "Warm nights above 23 °C", shortLabel: "Nights >23 °C", unit: "days", family: "heat", precision: 0, higherIsWorse: true, gridded: true,
       description: "Nights when the minimum stays above 23 °C.",
-      pakistanNote: "Consecutive warm nights are the strongest predictor of heatwave mortality — the body cannot shed accumulated heat." }),
+      countryNotes: { PAK: "Consecutive warm nights are the strongest predictor of heatwave mortality — the body cannot shed accumulated heat." } }),
     ind({ id: "hi35", accumulates: true, label: "Heat-index days above 35 °C", shortLabel: "Heat index >35 °C", unit: "days", family: "heat", precision: 0, higherIsWorse: true, gridded: true,
       description: "Days on which the heat index — temperature combined with humidity — exceeds 35 °C." }),
     ind({ id: "wbt31", accumulates: true, label: "Wet-bulb days above 31 °C", shortLabel: "Wet-bulb >31 °C", unit: "days", family: "heat", precision: 0, higherIsWorse: true, gridded: false,
       description: "Days above the wet-bulb temperature at which even healthy, resting people in the shade cannot cool by sweating.",
-      pakistanNote: "The lower Indus valley is one of a small number of places worldwide already approaching this threshold." }),
+      countryNotes: { PAK: "The lower Indus valley is one of a small number of places worldwide already approaching this threshold." } }),
     ind({ id: "wsdi", accumulates: true, label: "Warm spell duration", shortLabel: "Warm spells", unit: "days", family: "heat", precision: 0, higherIsWorse: true, gridded: false,
       description: "Days in spells of at least six consecutive days above the 90th percentile of the baseline." }),
 
@@ -560,33 +567,33 @@ export const INDICATORS: Record<string, Indicator> = Object.fromEntries(
     // would misreport every rainfall change by two orders of magnitude.
     ind({ id: "pr", accumulates: true, label: "Precipitation", shortLabel: "Rainfall", unit: "mm", family: "precipitation", precision: 0, higherIsWorse: false, gridded: true,
       description: "Total precipitation over the period.",
-      pakistanNote: "Roughly 60% of Pakistan's rain falls in the July–September monsoon; annual totals hide most of the story." }),
+      countryNotes: { PAK: "Roughly 60% of Pakistan's rain falls in the July–September monsoon; annual totals hide most of the story." } }),
     ind({ id: "r95ptot", accumulates: true, label: "Share of rain from very wet days", shortLabel: "Very wet day share", unit: "%", family: "flood", precision: 1, higherIsWorse: true, gridded: true,
       description: "Share of wet-day precipitation falling on days above the 95th percentile of the baseline distribution. A rising share means the same rainfall arriving in fewer, heavier events — which is the change that matters for drainage even when annual totals hold steady.",
-      pakistanNote: "Around a fifth of Pakistan's rain already falls on its very wettest days." }),
+      countryNotes: { PAK: "Around a fifth of Pakistan's rain already falls on its very wettest days." } }),
 
     // --- heavy rainfall ----------------------------------------------------
     ind({ id: "rx1day", accumulates: true, label: "Wettest day of the year", shortLabel: "Max 1-day rain", unit: "mm", family: "flood", precision: 0, higherIsWorse: true, gridded: true,
       description: "Largest single-day precipitation total — the urban-flooding proxy.",
-      pakistanNote: "Karachi's drainage is overwhelmed well below the 1-day totals now recorded in the city." }),
+      countryNotes: { PAK: "Karachi's drainage is overwhelmed well below the 1-day totals now recorded in the city." } }),
     ind({ id: "rx5day", accumulates: true, label: "Wettest 5 days of the year", shortLabel: "Max 5-day rain", unit: "mm", family: "flood", precision: 0, higherIsWorse: true, gridded: true,
       description: "Largest five-consecutive-day total — the standard riverine-flood hazard proxy.",
-      pakistanNote: "The 2022 floods followed sustained multi-day monsoon rainfall over Sindh and Balochistan." }),
+      countryNotes: { PAK: "The 2022 floods followed sustained multi-day monsoon rainfall over Sindh and Balochistan." } }),
 
     // --- drought -----------------------------------------------------------
     ind({ id: "cdd", accumulates: true, label: "Consecutive dry days", shortLabel: "Dry spell", unit: "days", family: "drought", precision: 0, higherIsWorse: true, gridded: true,
       description: "Longest run of consecutive days receiving less than 1 mm of rain.",
-      pakistanNote: "Balochistan's rain-fed agriculture is governed by dry-spell length more than by annual totals." }),
+      countryNotes: { PAK: "Balochistan's rain-fed agriculture is governed by dry-spell length more than by annual totals." } }),
     ind({ id: "spei12", label: "Drought index (SPEI-12)", shortLabel: "SPEI-12", unit: "index", family: "drought", precision: 2, higherIsWorse: false, gridded: false,
       description: "12-month Standardised Precipitation-Evapotranspiration Index; negative means drier than baseline." }),
 
     // --- cryosphere --------------------------------------------------------
     ind({ id: "sd", accumulates: true, label: "Summer days (above 25 °C)", shortLabel: "Summer days", unit: "days", family: "heat", precision: 0, higherIsWorse: true, gridded: true,
       description: "Days per year with maximum temperature above 25 °C — the ETCCDI \"summer days\" index. Despite the code, this is not a snow variable.",
-      pakistanNote: "Already near 360 across lower Sindh and near zero in the high Karakoram; the gradient between them is where warming shows up first." }),
+      countryNotes: { PAK: "Already near 360 across lower Sindh and near zero in the high Karakoram; the gradient between them is where warming shows up first." } }),
     ind({ id: "fd", accumulates: true, label: "Frost days", shortLabel: "Frost days", unit: "days", family: "cryosphere", precision: 0, higherIsWorse: false, gridded: false,
       description: "Days with minimum temperature below 0 °C. Retreating frost is the clearest cryosphere signal the archive publishes for Pakistan.",
-      pakistanNote: "Losing frost days at altitude shifts precipitation from snow to rain, which changes when Indus water arrives rather than how much." }),
+      countryNotes: { PAK: "Losing frost days at altitude shifts precipitation from snow to rain, which changes when Indus water arrives rather than how much." } }),
     ind({ id: "id", accumulates: true, label: "Ice days", shortLabel: "Ice days", unit: "days", family: "cryosphere", precision: 0, higherIsWorse: false, gridded: false,
       description: "Days that stay below 0 °C all day — the accumulation season in the high mountains." }),
 
@@ -595,7 +602,7 @@ export const INDICATORS: Record<string, Indicator> = Object.fromEntries(
       description: "Length of the thermally suitable growing period." }),
     ind({ id: "cdd65", accumulates: true, label: "Cooling degree days", shortLabel: "Cooling demand", unit: "°F-days", family: "energy", precision: 0, higherIsWorse: true, gridded: true,
       description: "Accumulated warmth above 65 °F (18.3 °C), published in Fahrenheit degree-days — a direct proxy for air-conditioning electricity demand.",
-      pakistanNote: "Rising cooling demand collides with a grid that already struggles with summer peak load." }),
+      countryNotes: { PAK: "Rising cooling demand collides with a grid that already struggles with summer peak load." } }),
   ].map((i) => [i.id, i]),
 );
 

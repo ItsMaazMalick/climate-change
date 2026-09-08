@@ -126,7 +126,7 @@ async function seedDimensions() {
       description: indicator.description,
       higherIsWorse: indicator.higherIsWorse,
       precision: indicator.precision,
-      pakistanNote: indicator.pakistanNote ?? null,
+      pakistanNote: indicator.countryNotes?.PAK ?? null,
     };
     await prisma.indicator.upsert({ where: { id: row.id }, create: row, update: row });
   }

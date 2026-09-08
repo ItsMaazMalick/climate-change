@@ -12,6 +12,7 @@ import {
   type PeriodId,
   type ScenarioId,
 } from "@/lib/climate/taxonomy";
+import { useCountry } from "@/lib/country-context";
 
 interface PointResponse {
   location: {
@@ -85,6 +86,7 @@ export function LocationPanel({
   period: PeriodId;
   model: string;
 }) {
+  const { country } = useCountry();
   const base = `lat=${lat}&lon=${lon}&indicator=${indicator}`;
   const isBaseline = isBaselineParam(period);
 
@@ -343,9 +345,9 @@ export function LocationPanel({
             <p className="text-[12px] leading-relaxed text-slate-600 font-medium">
               {point.data.indicator.description}
             </p>
-            {point.data.indicator.pakistanNote && (
+            {point.data.indicator.countryNotes?.[country] && (
               <p className="mt-2.5 rounded-xl border-l-3 border-emerald-500 bg-white p-3 text-[11.5px] leading-relaxed text-slate-600 shadow-xs">
-                {point.data.indicator.pakistanNote}
+                {point.data.indicator.countryNotes[country]}
               </p>
             )}
           </div>
