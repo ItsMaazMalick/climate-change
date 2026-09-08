@@ -391,11 +391,10 @@ export function ClimateMap({
         role="img"
         aria-label="Map showing the selected climate indicator"
       >
-        {/* Graticule grid lines for futuristic cartography */}
         <defs>
           <radialGradient id="selectionGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#10b981" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+            <stop offset="0%" stopColor="#059669" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#059669" stopOpacity="0" />
           </radialGradient>
         </defs>
 
@@ -406,7 +405,7 @@ export function ClimateMap({
               key={feature.properties.id}
               d={featurePath(feature.geometry, projection)}
               fill="none"
-              stroke="rgba(148, 163, 184, 0.25)"
+              stroke="rgba(100, 116, 139, 0.25)"
               strokeWidth={0.6}
               pointerEvents="none"
             />
@@ -419,8 +418,8 @@ export function ClimateMap({
             <path
               key={feature.properties.id}
               d={featurePath(feature.geometry, projection)}
-              fill={active ? "rgba(16, 185, 129, 0.18)" : "none"}
-              stroke={active ? "#10b981" : "rgba(148, 163, 184, 0.45)"}
+              fill={active ? "rgba(5, 150, 105, 0.12)" : "none"}
+              stroke={active ? "#059669" : "rgba(71, 85, 105, 0.45)"}
               strokeWidth={active ? 2.2 : 1.1}
               pointerEvents="none"
             />
@@ -433,7 +432,7 @@ export function ClimateMap({
             key={feature.properties.id}
             d={featurePath(feature.geometry, projection)}
             fill="none"
-            stroke="rgba(56, 189, 248, 0.85)"
+            stroke="#334155"
             strokeWidth={2}
             strokeLinejoin="round"
             pointerEvents="none"
@@ -446,18 +445,18 @@ export function ClimateMap({
           if (x < -40 || x > size.width + 40 || y < -20 || y > size.height + 20) return null;
           return (
             <g key={place.id} pointerEvents="none" className="group">
-              <circle cx={x} cy={y} r={4.5} fill="rgba(56, 189, 248, 0.25)" />
-              <circle cx={x} cy={y} r={2.8} fill="#38bdf8" />
+              <circle cx={x} cy={y} r={4.5} fill="rgba(2, 132, 199, 0.2)" />
+              <circle cx={x} cy={y} r={2.8} fill="#0284c7" />
               <circle cx={x} cy={y} r={1.2} fill="#ffffff" />
               <text
                 x={x + 6}
                 y={y + 3.5}
                 fontSize={11}
-                fill="#f8fafc"
-                stroke="#070a13"
+                fill="#0f172a"
+                stroke="#ffffff"
                 strokeWidth={3}
                 paintOrder="stroke"
-                className="font-semibold tracking-tight"
+                className="font-bold tracking-tight"
               >
                 {place.name}
               </text>
@@ -479,7 +478,7 @@ export function ClimateMap({
               cy={selectionPoint[1]}
               r={12}
               fill="none"
-              stroke="#10b981"
+              stroke="#059669"
               strokeWidth={1.8}
               strokeDasharray="3 2"
               className="animate-spin"
@@ -489,7 +488,7 @@ export function ClimateMap({
               cx={selectionPoint[0]}
               cy={selectionPoint[1]}
               r={4.5}
-              fill="#10b981"
+              fill="#059669"
               stroke="#ffffff"
               strokeWidth={1.8}
             />
@@ -498,7 +497,7 @@ export function ClimateMap({
               x2={selectionPoint[0] - 7}
               y1={selectionPoint[1]}
               y2={selectionPoint[1]}
-              stroke="#10b981"
+              stroke="#059669"
               strokeWidth={1.2}
             />
             <line
@@ -506,7 +505,7 @@ export function ClimateMap({
               x2={selectionPoint[0] + 16}
               y1={selectionPoint[1]}
               y2={selectionPoint[1]}
-              stroke="#10b981"
+              stroke="#059669"
               strokeWidth={1.2}
             />
             <line
@@ -514,7 +513,7 @@ export function ClimateMap({
               x2={selectionPoint[0]}
               y1={selectionPoint[1] - 16}
               y2={selectionPoint[1] - 7}
-              stroke="#10b981"
+              stroke="#059669"
               strokeWidth={1.2}
             />
             <line
@@ -522,7 +521,7 @@ export function ClimateMap({
               x2={selectionPoint[0]}
               y1={selectionPoint[1] + 7}
               y2={selectionPoint[1] + 16}
-              stroke="#10b981"
+              stroke="#059669"
               strokeWidth={1.2}
             />
           </g>
@@ -530,15 +529,15 @@ export function ClimateMap({
       </svg>
 
       {/* ---- HUD Navigation Controls ---- */}
-      <div className="absolute right-3.5 top-3.5 flex flex-col overflow-hidden rounded-xl border border-slate-700/80 bg-slate-900/90 shadow-2xl backdrop-blur-xl ring-1 ring-slate-800">
+      <div className="absolute right-3.5 top-3.5 flex flex-col overflow-hidden rounded-xl border border-slate-200/90 bg-white/95 shadow-lg backdrop-blur-xl ring-1 ring-slate-100">
         <MapButton label="Zoom in" onClick={() => zoomButton(1.5)}>
-          <span className="text-base font-bold leading-none text-slate-200">+</span>
+          <span className="text-base font-bold leading-none text-slate-700">+</span>
         </MapButton>
         <MapButton label="Zoom out" onClick={() => zoomButton(1 / 1.5)}>
-          <span className="text-base font-bold leading-none text-slate-200">−</span>
+          <span className="text-base font-bold leading-none text-slate-700">−</span>
         </MapButton>
         <MapButton label="Reset view" onClick={resetView}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-slate-300">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="text-slate-600">
             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
             <path d="M3 3v5h5" />
           </svg>
@@ -547,16 +546,16 @@ export function ClimateMap({
 
       {/* ---- Hover Telemetry HUD readout ---- */}
       {hover && field && scale && (
-        <div className="pointer-events-none absolute bottom-3.5 left-3.5 rounded-xl border border-slate-700/80 bg-slate-900/90 px-4 py-3 backdrop-blur-xl shadow-2xl ring-1 ring-slate-800">
+        <div className="pointer-events-none absolute bottom-3.5 left-3.5 rounded-xl border border-slate-200/90 bg-white/95 px-4 py-3 backdrop-blur-xl shadow-xl ring-1 ring-slate-100">
           <div className="flex items-center gap-2">
-            <span className="inline-block h-2 w-2 rounded-full bg-emerald-400 animate-ping"></span>
-            <div className="tnum text-[11px] font-bold text-slate-400">
+            <span className="inline-block h-2 w-2 rounded-full bg-emerald-500 animate-ping"></span>
+            <div className="tnum text-[11px] font-bold text-slate-500">
               {hover.lat.toFixed(3)}°N, {hover.lon.toFixed(3)}°E
             </div>
           </div>
-          <div className="tnum mt-1 flex items-center gap-2.5 text-[16px] font-extrabold text-white">
+          <div className="tnum mt-1 flex items-center gap-2.5 text-[16px] font-extrabold text-slate-900">
             <span
-              className="inline-block h-4 w-4 rounded-md shadow-xs ring-1 ring-white/20"
+              className="inline-block h-4 w-4 rounded-md shadow-xs ring-1 ring-slate-300"
               style={{ background: hover.value === null ? NO_DATA_COLOR : scale(hover.value) }}
             />
             {hover.value === null
@@ -567,15 +566,15 @@ export function ClimateMap({
       )}
 
       {loading && (
-        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-500/40 bg-slate-950/90 px-5 py-2.5 text-xs font-bold text-emerald-300 backdrop-blur-xl shadow-2xl flex items-center gap-3 ring-1 ring-emerald-500/20">
-          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-emerald-400 border-t-transparent"></span>
+        <div className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-emerald-200 bg-white/95 px-5 py-2.5 text-xs font-bold text-emerald-800 backdrop-blur-xl shadow-xl flex items-center gap-3 ring-1 ring-emerald-500/20">
+          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent"></span>
           <span>DOWNLINKING CMIP6 RASTER FIELD…</span>
         </div>
       )}
 
       {!field && !loading && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="max-w-sm rounded-xl border border-slate-700 bg-slate-900/90 px-5 py-4 text-center text-xs font-medium text-slate-300 backdrop-blur-xl shadow-2xl">
+          <div className="max-w-sm rounded-xl border border-slate-200 bg-white/95 px-5 py-4 text-center text-xs font-medium text-slate-600 backdrop-blur-xl shadow-xl">
             No gridded field for this combination. Point and national telemetry are available in the location panel.
           </div>
         </div>
@@ -600,7 +599,7 @@ function MapButton({
       title={label}
       onClick={onClick}
       onPointerDown={(event) => event.stopPropagation()}
-      className="flex h-8 w-8 items-center justify-center border-b border-slate-800 text-slate-300 transition-colors last:border-b-0 hover:bg-slate-800 hover:text-emerald-400 cursor-pointer"
+      className="flex h-8 w-8 items-center justify-center border-b border-slate-100 text-slate-700 transition-colors last:border-b-0 hover:bg-slate-100 hover:text-emerald-700 cursor-pointer"
     >
       {children}
     </button>

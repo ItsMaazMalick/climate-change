@@ -31,7 +31,7 @@ export function Field({
 }) {
   return (
     <div className="min-w-0">
-      <div className="label mb-1.5 flex items-center justify-between text-[11px] font-bold tracking-wider text-slate-400">
+      <div className="label mb-1.5 flex items-center justify-between text-[11px] font-bold tracking-wider text-slate-600">
         <span>{label}</span>
         {hint && <InfoDot text={hint} />}
       </div>
@@ -44,7 +44,7 @@ export function InfoDot({ text }: { text: string }) {
   return (
     <span
       title={text}
-      className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-slate-700 bg-slate-800 text-[9px] font-bold text-slate-400 hover:bg-slate-700 hover:text-slate-100 transition-colors"
+      className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-[9px] font-bold text-slate-500 hover:bg-slate-200 hover:text-slate-800 transition-colors"
       aria-label={text}
     >
       ?
@@ -69,12 +69,12 @@ function Select({
         value={value}
         aria-label={ariaLabel}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full appearance-none rounded-xl border border-slate-700/90 bg-slate-900/90 py-2.5 pl-3.5 pr-8 text-[13px] font-semibold text-slate-100 shadow-md transition-all hover:border-slate-600 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 focus:outline-none cursor-pointer"
+        className="w-full appearance-none rounded-xl border border-slate-300 bg-white py-2.5 pl-3.5 pr-8 text-[13px] font-semibold text-slate-900 shadow-xs transition-all hover:border-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none cursor-pointer"
       >
         {children}
       </select>
       <svg
-        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500"
         width="10" height="6" viewBox="0 0 10 6" fill="none" aria-hidden
       >
         <path d="M1 1l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
@@ -113,43 +113,42 @@ export function ScenarioPicker({
             aria-checked={active}
             onClick={() => onChange(id)}
             title={scenario.summary}
-            className={`group relative flex items-center justify-between gap-2.5 rounded-xl border px-3 py-2 text-left transition-all ${
+            className={`group relative flex items-center justify-between gap-2.5 rounded-xl border px-3 py-2 text-left transition-all cursor-pointer ${
               active
-                ? "border-emerald-500/80 bg-slate-800/90 shadow-lg shadow-emerald-950/30 ring-1 ring-emerald-400/40"
-                : "border-slate-800/90 bg-slate-900/80 hover:border-slate-700 hover:bg-slate-800/60"
+                ? "border-emerald-500 bg-emerald-50/70 text-emerald-950 shadow-xs ring-1 ring-emerald-500/30"
+                : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
             }`}
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <span
-                className="h-3 w-3 shrink-0 rounded-full transition-transform group-hover:scale-125"
+                className="h-3 w-3 shrink-0 rounded-full transition-transform group-hover:scale-125 shadow-xs"
                 style={{
                   backgroundColor: scenario.color,
-                  boxShadow: active ? `0 0 10px ${scenario.color}` : undefined,
                 }}
               />
               <div className="min-w-0 flex-1">
                 <span
                   className={`block text-[12.5px] leading-tight ${
-                    active ? "font-bold text-white" : "font-semibold text-slate-300"
+                    active ? "font-bold text-slate-900" : "font-semibold text-slate-700"
                   }`}
                 >
                   {scenario.label}
                 </span>
                 {!compact && (
-                  <span className="block text-[11px] leading-tight text-slate-400 mt-0.5 truncate">
+                  <span className="block text-[11px] leading-tight text-slate-500 mt-0.5 truncate">
                     {scenario.shortLabel} · {scenario.globalWarming2100}
                   </span>
                 )}
               </div>
             </div>
 
-            {/* Glowing Warming badge */}
+            {/* Warming badge */}
             <span
               className="shrink-0 rounded-md px-2 py-0.5 text-[10.5px] font-mono font-bold shadow-xs"
               style={{
-                backgroundColor: `${scenario.color}22`,
+                backgroundColor: `${scenario.color}15`,
                 color: scenario.color,
-                border: `1px solid ${scenario.color}44`,
+                border: `1px solid ${scenario.color}35`,
               }}
             >
               {scenario.globalWarming2100}
@@ -185,7 +184,7 @@ export function PeriodPicker({
 
   return (
     <div
-      className="grid grid-cols-2 gap-1 rounded-xl border border-slate-800 bg-slate-900/90 p-1 shadow-inner"
+      className="grid grid-cols-2 gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 shadow-inner"
       role="radiogroup"
       aria-label="Climate period"
     >
@@ -200,12 +199,12 @@ export function PeriodPicker({
             aria-checked={active}
             onClick={() => onChange(id)}
             title={period.label}
-            className={`tnum rounded-lg px-2 py-1.5 text-center text-[11.5px] font-bold transition-all ${
+            className={`tnum rounded-lg px-2 py-1.5 text-center text-[11.5px] font-bold transition-all cursor-pointer ${
               active
-                ? "bg-slate-800 text-emerald-400 shadow-md ring-1 ring-emerald-500/40"
+                ? "bg-white text-emerald-800 shadow-xs border border-slate-200/80 ring-1 ring-emerald-500/20"
                 : period.isBaseline
-                  ? "text-slate-300 hover:text-white hover:bg-slate-800/50"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800/40"
+                  ? "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
             } ${period.isBaseline ? "col-span-2" : ""}`}
           >
             {period.isBaseline ? `Baseline (${period.shortLabel})` : period.shortLabel}
@@ -322,7 +321,7 @@ export function ProductToggle({
   ];
   return (
     <div
-      className="flex gap-1 rounded-xl border border-slate-800 bg-slate-900/90 p-1 shadow-inner"
+      className="flex gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1 shadow-inner"
       role="radiogroup"
       aria-label="Display mode"
     >
@@ -335,10 +334,10 @@ export function ProductToggle({
           disabled={disabled && option.id === "anomaly"}
           title={option.hint}
           onClick={() => onChange(option.id)}
-          className={`flex-1 rounded-lg px-2.5 py-1.5 text-[12px] font-bold transition-all disabled:cursor-not-allowed disabled:opacity-40 ${
+          className={`flex-1 rounded-lg px-2.5 py-1.5 text-[12px] font-bold transition-all disabled:cursor-not-allowed disabled:opacity-40 cursor-pointer ${
             value === option.id
-              ? "bg-slate-800 text-emerald-400 shadow-md ring-1 ring-emerald-500/40"
-              : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+              ? "bg-white text-emerald-800 shadow-xs border border-slate-200/80 ring-1 ring-emerald-500/20"
+              : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
           }`}
         >
           {option.label}
@@ -367,15 +366,15 @@ export function Toggle({
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className="flex items-center gap-2.5 text-[12.5px] font-semibold text-slate-300 transition-colors hover:text-white cursor-pointer"
+      className="flex items-center gap-2.5 text-[12.5px] font-semibold text-slate-700 transition-colors hover:text-slate-900 cursor-pointer"
     >
       <span
         className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors ${
-          checked ? "bg-emerald-600 ring-2 ring-emerald-400/30" : "bg-slate-800 border border-slate-700"
+          checked ? "bg-emerald-600 ring-2 ring-emerald-500/20" : "bg-slate-200 border border-slate-300"
         }`}
       >
         <span
-          className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-md transition-transform ${
+          className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm transition-transform ${
             checked ? "translate-x-4.5" : "translate-x-1"
           }`}
         />
@@ -431,7 +430,7 @@ export function PlaceSearch({
     <div ref={containerRef} className="relative">
       <div className="relative">
         <svg
-          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-400"
+          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-emerald-600"
           width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"
         >
           <circle cx="11" cy="11" r="8" />
@@ -461,7 +460,7 @@ export function PlaceSearch({
               setOpen(false);
             }
           }}
-          className="w-full rounded-xl border border-slate-700/90 bg-slate-900/90 py-2.5 pl-10 pr-8 text-[13px] font-semibold text-slate-100 placeholder:text-slate-500 shadow-md transition-all hover:border-slate-600 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30 focus:outline-none"
+          className="w-full rounded-xl border border-slate-300 bg-white py-2.5 pl-10 pr-8 text-[13px] font-semibold text-slate-900 placeholder:text-slate-400 shadow-xs transition-all hover:border-slate-400 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 focus:outline-none"
         />
         {query && (
           <button
@@ -470,7 +469,7 @@ export function PlaceSearch({
               setQuery("");
               setOpen(false);
             }}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700"
           >
             ✕
           </button>
@@ -478,19 +477,19 @@ export function PlaceSearch({
       </div>
 
       {open && matches.length > 0 && (
-        <ul className="absolute z-30 mt-1.5 max-h-64 w-full overflow-auto rounded-xl border border-slate-700/90 bg-slate-900/95 backdrop-blur-xl py-1.5 shadow-2xl">
+        <ul className="absolute z-30 mt-1.5 max-h-64 w-full overflow-auto rounded-xl border border-slate-200 bg-white py-1.5 shadow-xl">
           {matches.map((place, index) => (
             <li key={place.id}>
               <button
                 type="button"
                 onClick={() => choose(place)}
                 onMouseEnter={() => setHighlighted(index)}
-                className={`flex w-full items-center justify-between gap-2 px-3.5 py-2 text-left text-[13px] transition-colors ${
-                  index === highlighted ? "bg-emerald-950/60 text-emerald-300 font-bold border-l-2 border-emerald-400" : "text-slate-300 hover:bg-slate-800/60"
+                className={`flex w-full items-center justify-between gap-2 px-3.5 py-2 text-left text-[13px] transition-colors cursor-pointer ${
+                  index === highlighted ? "bg-emerald-50 text-emerald-900 font-bold border-l-2 border-emerald-600" : "text-slate-700 hover:bg-slate-100"
                 }`}
               >
-                <span className="font-bold text-white">{place.name}</span>
-                <span className="rounded bg-slate-800 px-1.5 py-0.5 text-[10.5px] font-mono font-medium text-slate-400">
+                <span className="font-bold text-slate-900">{place.name}</span>
+                <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10.5px] font-mono font-medium text-slate-500">
                   {place.province}
                 </span>
               </button>

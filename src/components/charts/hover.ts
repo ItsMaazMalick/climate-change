@@ -140,5 +140,5 @@ export function niceTicks(min: number, max: number, target: number): number[] {
   return ticks;
 }
 
-export const AXIS = "rgba(148, 163, 184, 0.25)";
-export const AXIS_TEXT = "#94a3b8";
+export const AXIS = "#e2e8f0";
+export const AXIS_TEXT = "#64748b";

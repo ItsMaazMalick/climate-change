@@ -78,11 +78,11 @@ export function ScenarioComparison({
             </span>
 
             <div
-              className="relative flex-1 rounded-lg bg-slate-900/80 border border-slate-800 overflow-hidden"
+              className="relative flex-1 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden"
               style={{ height }}
             >
               <div
-                className="absolute inset-y-0 w-px bg-slate-600"
+                className="absolute inset-y-0 w-px bg-slate-300"
                 style={{ left: `${zeroPct}%` }}
                 aria-hidden
               />
@@ -94,7 +94,6 @@ export function ScenarioComparison({
                     width: `${Math.max(widthPct, 0.6)}%`,
                     background: scenario.color,
                     opacity: dimmed ? 0.25 : uncertain ? 0.6 : 0.95,
-                    boxShadow: dimmed ? undefined : `0 0 8px ${scenario.color}66`,
                     backgroundImage: uncertain
                       ? "repeating-linear-gradient(45deg, rgba(255,255,255,0.55) 0 2px, transparent 2px 5px)"
                       : undefined,
@@ -110,7 +109,7 @@ export function ScenarioComparison({
 
             <span
               className={`tnum w-[68px] shrink-0 text-right text-[12px] font-mono transition-colors ${
-                active === bar.scenario ? "font-black text-white" : "font-bold text-slate-300"
+                active === bar.scenario ? "font-black text-slate-900" : "font-bold text-slate-700"
               }`}
             >
               {formatValue(value, indicatorId, "anomaly")}

@@ -50,21 +50,21 @@ export function Legend({
   const precision = indicator?.precision ?? 1;
 
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-raised)]/95 p-3 backdrop-blur">
-      <div className="label mb-2">
+    <div className="rounded-xl border border-slate-200/90 bg-white/95 p-3.5 backdrop-blur-xl shadow-lg ring-1 ring-slate-100">
+      <div className="label mb-2 text-slate-600 font-bold">
         {product === "anomaly" ? "Change vs 1995–2014" : indicator?.label}
-        <span className="ml-1.5 font-normal normal-case tracking-normal text-[var(--color-ink-faint)]">
+        <span className="ml-1.5 font-semibold normal-case tracking-normal text-slate-500">
           ({unit})
         </span>
       </div>
 
       <div
-        className="h-3 w-full rounded-sm ring-1 ring-inset ring-white/10"
+        className="h-3 w-full rounded-md ring-1 ring-inset ring-slate-200 shadow-xs"
         style={{ background: gradient }}
         role="presentation"
       />
 
-      <div className="tnum mt-1.5 flex justify-between text-[10px] text-[var(--color-ink-faint)]">
+      <div className="tnum mt-1.5 flex justify-between text-[10.5px] font-bold text-slate-600">
         {labels.map((value, index) => (
           <span key={index}>
             {value > 0 && scale.diverging ? "+" : ""}
@@ -74,12 +74,12 @@ export function Legend({
       </div>
 
       {hasDisagreement && (
-        <div className="mt-2.5 flex items-start gap-2 border-t border-[var(--color-border)] pt-2 text-[10px] leading-snug text-[var(--color-ink-faint)]">
+        <div className="mt-2.5 flex items-start gap-2 border-t border-slate-200 pt-2 text-[10px] leading-snug text-slate-500">
           <span
-            className="mt-0.5 inline-block h-3.5 w-3.5 shrink-0 rounded-sm border border-[var(--color-border-strong)]"
+            className="mt-0.5 inline-block h-3.5 w-3.5 shrink-0 rounded-sm border border-slate-400"
             style={{
               backgroundImage:
-                "repeating-linear-gradient(45deg, rgba(31,42,27,0.55) 0 0.7px, transparent 0.7px 3px)",
+                "repeating-linear-gradient(45deg, rgba(31,42,27,0.4) 0 0.7px, transparent 0.7px 3px)",
             }}
           />
           <span>
