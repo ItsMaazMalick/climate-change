@@ -35,17 +35,23 @@ export function Landing({
     PERIODS[headlineContext.period as keyof typeof PERIODS]?.shortLabel ?? headlineContext.period;
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:py-12">
-      {/* ---- hero (inverted deep band) ------------------------------- */}
-      <section className="section-deep grid gap-10 p-8 sm:p-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:p-12">
-        <div>
-          <p className="mb-4 flex items-center gap-2 text-2xs font-semibold uppercase tracking-[var(--tracking-caps)] text-white/55">
-            <span className="inline-block h-1.5 w-1.5 rounded-(--radius-pill) bg-[rgb(var(--accent-glow))] shadow-[0_0_12px_rgb(var(--accent-glow))]" />
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-10">
+      {/* ---- hero ---------------------------------------------------- */}
+      <section className="section-deep relative grid gap-10 p-8 sm:p-11 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:p-14">
+        <span className="orb h-64 w-64" style={{ left: "-4rem", top: "-3rem", background: "rgb(47 116 224 / 0.9)" }} />
+        <span className="orb h-72 w-72" style={{ right: "-5rem", bottom: "-4rem", background: "hsl(268 80% 60% / 0.7)", animationDelay: "-6s" }} />
+
+        <div className="relative z-10">
+          <p className="mb-5 inline-flex items-center gap-2 rounded-(--radius-pill) border border-white/15 bg-white/8 px-3 py-1 text-2xs font-semibold uppercase tracking-[var(--tracking-caps)] text-white/75">
+            <span className="h-1.5 w-1.5 rounded-(--radius-pill) bg-[rgb(var(--accent-glow))] shadow-[0_0_10px_2px_rgb(var(--accent-glow))]" />
             Earth Scan Systems · Climate Intelligence
           </p>
-          <h1 className="text-[clamp(2rem,4.4vw,3.25rem)] font-semibold leading-[1.05] tracking-tight text-white">
-            How the climate of four countries could change under each emissions
-            pathway.
+          <h1 className="text-[clamp(2.15rem,4.8vw,3.5rem)] font-semibold leading-[1.03] tracking-tight text-white">
+            How the climate of four countries could change under each{" "}
+            <span className="bg-gradient-to-r from-[#8fc2ff] via-[#c9b6ff] to-[#ffd9a8] bg-clip-text text-transparent">
+              emissions pathway
+            </span>
+            .
           </h1>
           <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-white/70">
             A projection platform for Pakistan, Uzbekistan, Australia and New
@@ -53,24 +59,24 @@ export function Landing({
             value or a documented derivation from one.
           </p>
 
-          <div className="mt-7 flex flex-wrap items-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link href="/explore" className="btn btn-primary group">
               Start exploring
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               href="/explore?tour=1"
-              className="btn border border-white/20 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+              className="btn border border-white/20 bg-white/5 text-white/85 hover:bg-white/12 hover:text-white"
             >
               <PlayCircle className="h-4 w-4" /> Guided tour · 3 min
             </Link>
           </div>
 
-          <div className="mt-8 flex flex-wrap gap-1.5">
+          <div className="mt-9 flex flex-wrap gap-1.5">
             {PROVENANCE.map((p) => (
               <span
                 key={p}
-                className="rounded-(--radius-pill) border border-white/12 bg-white/6 px-2.5 py-1 text-2xs font-medium text-white/70"
+                className="rounded-(--radius-pill) border border-white/12 bg-white/6 px-2.5 py-1 text-2xs font-medium text-white/65"
                 data-numeric
               >
                 {p}
@@ -79,56 +85,59 @@ export function Landing({
           </div>
         </div>
 
-        <div className="rounded-(--radius-container) border border-white/10 bg-white/5 p-5">
+        <div className="relative z-10 rounded-(--radius-overlay) border border-white/12 bg-white/[0.06] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_30px_60px_-20px_rgba(0,0,0,0.5)]">
           <PathwayBars onDark />
         </div>
       </section>
 
       {/* ---- country grid ------------------------------------------------ */}
       <section className="mt-10">
-        <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
-          <p className="label">Projected warming · capitals</p>
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <p className="label">Projected warming · capitals</p>
+            <p className="mt-1 text-sm text-ink-muted">Tap a country to open it in Explore.</p>
+          </div>
           <p className="text-xs text-ink-faint" data-numeric>
             {scenarioLabel} · {periodLabel} vs 1995–2014
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {headlines.map((h) => (
             <Link
               key={h.code}
               href={`/explore?country=${h.code.toLowerCase()}`}
               onClick={() => setCountry(h.code)}
               style={{ ["--seam-color" as string]: seam }}
-              className="tier-raised-seam group flex flex-col gap-5 p-5 transition-transform motion-state hover:-translate-y-1"
+              className="tier-raised-seam group flex flex-col gap-6 p-5 hover:-translate-y-1.5"
             >
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <span aria-hidden className="text-lg leading-none">{h.flag}</span>
-                  <span className="text-sm font-medium text-ink">{h.name}</span>
+                  <span className="text-sm font-semibold text-ink">{h.name}</span>
                 </span>
-                <span className="flex h-7 w-7 items-center justify-center rounded-(--radius-pill) bg-surface-recessed text-ink-faint transition-colors group-hover:bg-accent group-hover:text-accent-ink">
-                  <ArrowUpRight className="h-3.5 w-3.5" />
+                <span className="flex h-8 w-8 items-center justify-center rounded-(--radius-pill) bg-surface-recessed text-ink-faint transition-all group-hover:bg-[rgb(var(--accent-glow))] group-hover:text-white group-hover:shadow-[0_0_16px_2px_rgb(var(--accent-glow)/0.55)]">
+                  <ArrowUpRight className="h-4 w-4" />
                 </span>
               </div>
 
               <div>
                 <div
-                  className="text-[2.5rem] font-semibold leading-[0.9] tracking-tight tabular-nums"
+                  className="text-[2.75rem] font-semibold leading-[0.85] tracking-tight tabular-nums"
                   data-numeric
                   style={{ color: h.delta !== null ? "var(--danger)" : "var(--ink)" }}
                 >
                   {h.delta !== null ? formatValue(h.delta, "tas", "anomaly") : "—"}
                 </div>
-                <p className="mt-2.5 text-xs leading-snug text-ink-faint">
+                <p className="mt-3 text-xs leading-snug text-ink-faint">
                   at {h.capital}
                   {h.projected != null && (
                     <>
-                      {" · "}
+                      <br />
                       <span className="tabular-nums text-ink-muted" data-numeric>
                         {formatValue(h.projected, "tas")}
                       </span>{" "}
-                      projected
+                      projected · {periodLabel}
                     </>
                   )}
                 </p>
@@ -142,7 +151,7 @@ export function Landing({
         These are physical pathways, not predictions. Individual-model values are
         national aggregates rather than grid-cell values at the selected point —
         see{" "}
-        <Link href="/methodology" className="text-ink-muted underline underline-offset-2">
+        <Link href="/methodology" className="text-accent underline underline-offset-2">
           Methodology
         </Link>
         .

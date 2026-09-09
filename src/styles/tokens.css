@@ -129,42 +129,60 @@
   --space-16: 4rem;
 
   /* ---- Radius --------------------------------------------------- */
-  --radius-control: 4px;
-  --radius-container: 8px;
-  --radius-overlay: 12px;
+  --radius-control: 8px;
+  --radius-container: 14px;
+  --radius-overlay: 18px;
   --radius-pill: 9999px;
 
-  /* ---- Elevation — exactly three tiers, light from top-left ----
-   * Soft multi-stop shadows, a 1px hairline top-highlight on raised
-   * surfaces, subtle inset on recessed ones. The shadow colour is a cool
-   * near-navy, not pure black, so it reads as depth rather than dirt. */
-  --shadow-hue: 218 45% 12%;
-  --elevation-recessed: inset 0 2px 4px hsl(var(--shadow-hue) / 0.09),
-    inset 0 0 0 1px hsl(var(--shadow-hue) / 0.05);
-  --elevation-flat: 0 0 0 1px var(--border),
-    0 1px 2px hsl(var(--shadow-hue) / 0.04);
-  --elevation-raised: 0 0 0 1px hsl(var(--shadow-hue) / 0.06),
-    0 1px 1px hsl(var(--shadow-hue) / 0.05),
-    0 4px 8px -2px hsl(var(--shadow-hue) / 0.08),
-    0 16px 32px -12px hsl(var(--shadow-hue) / 0.16),
+  /* ---- Elevation — three tiers, light from top-left ------------
+   * Deliberately pronounced: cards should visibly float. Cool-navy tint,
+   * multi-stop falloff, a bright 1px top edge, and a faint ambient ring. */
+  --shadow-hue: 220 48% 16%;
+  --elevation-recessed: inset 0 2px 5px hsl(var(--shadow-hue) / 0.12),
+    inset 0 1px 0 hsl(var(--shadow-hue) / 0.06),
+    inset 0 0 0 1px hsl(var(--shadow-hue) / 0.06);
+  --elevation-flat: 0 0 0 1px hsl(var(--shadow-hue) / 0.07),
+    0 1px 2px hsl(var(--shadow-hue) / 0.05),
+    0 4px 10px -4px hsl(var(--shadow-hue) / 0.08);
+  --elevation-raised: 0 0 0 1px hsl(var(--shadow-hue) / 0.08),
+    0 1px 2px hsl(var(--shadow-hue) / 0.08),
+    0 6px 12px -3px hsl(var(--shadow-hue) / 0.12),
+    0 18px 32px -8px hsl(var(--shadow-hue) / 0.18),
+    0 40px 64px -24px hsl(var(--shadow-hue) / 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  --elevation-raised-hover: 0 0 0 1px hsl(var(--shadow-hue) / 0.1),
+    0 2px 4px hsl(var(--shadow-hue) / 0.1),
+    0 10px 20px -4px hsl(var(--shadow-hue) / 0.16),
+    0 28px 48px -10px hsl(var(--shadow-hue) / 0.24),
+    0 56px 88px -28px hsl(var(--shadow-hue) / 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
+  --elevation-overlay: 0 0 0 1px hsl(var(--shadow-hue) / 0.1),
+    0 4px 10px hsl(var(--shadow-hue) / 0.12),
+    0 16px 32px -6px hsl(var(--shadow-hue) / 0.2),
+    0 40px 72px -16px hsl(var(--shadow-hue) / 0.32),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  --elevation-overlay: 0 0 0 1px hsl(var(--shadow-hue) / 0.08),
-    0 2px 8px hsl(var(--shadow-hue) / 0.1),
-    0 12px 24px -6px hsl(var(--shadow-hue) / 0.16),
-    0 32px 64px -16px hsl(var(--shadow-hue) / 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.85);
 
-  /* A faint top-lit gradient for raised surfaces — dimensionality without
-   * a bevel. Layer over the surface colour. */
-  --raise-sheen: linear-gradient(180deg, #ffffff 0%, var(--n-25) 100%);
+  /* Top-lit gradient over a raised surface — dimension without a bevel. */
+  --raise-sheen: linear-gradient(
+    177deg,
+    #ffffff 0%,
+    #ffffff 38%,
+    var(--n-25) 100%
+  );
+  --panel-sheen: linear-gradient(180deg, #ffffff 0%, var(--n-25) 140%);
+
+  /* Accent glow — for primary actions, active states, focus. */
+  --glow-accent: 0 0 0 1px rgb(var(--accent-glow) / 0.4),
+    0 2px 8px rgb(var(--accent-glow) / 0.35),
+    0 12px 28px -6px rgb(var(--accent-glow) / 0.45);
 
   /* ---- Motion — one curve, two durations --------------------- */
-  --ease: cubic-bezier(0.2, 0, 0, 1);
-  --dur-state: 120ms;
-  --dur-panel: 200ms;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-state: 140ms;
+  --dur-panel: 240ms;
 
   /* ---- Focus ------------------------------------------------- */
-  --focus-ring: 0 0 0 2px var(--surface), 0 0 0 4px var(--accent-500);
+  --focus-ring: 0 0 0 2px var(--surface-panel), 0 0 0 4px rgb(var(--accent-glow) / 0.9);
 
   /* ---- Back-compat aliases (older components still read these).
    *      New code uses the names above. Remove once migration lands. */

@@ -73,12 +73,15 @@
     letter-spacing: var(--tracking-normal);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    /* A quiet cool wash so white panels read as lifted off the ground. */
+    /* A cool wash + a whisper-fine grid so white panels read as lifted. */
     background-color: var(--surface);
     background-image:
-      radial-gradient(1100px 520px at 8% -8%, hsl(214 74% 52% / 0.09), transparent 60%),
-      radial-gradient(900px 620px at 104% -4%, hsl(258 60% 52% / 0.07), transparent 58%),
-      radial-gradient(700px 500px at 50% 108%, hsl(200 70% 48% / 0.05), transparent 60%);
+      radial-gradient(1200px 560px at 4% -10%, hsl(214 84% 56% / 0.13), transparent 58%),
+      radial-gradient(1000px 680px at 106% -6%, hsl(262 70% 58% / 0.1), transparent 56%),
+      radial-gradient(820px 560px at 50% 112%, hsl(196 84% 52% / 0.07), transparent 60%),
+      linear-gradient(hsl(220 30% 50% / 0.028) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(220 30% 50% / 0.028) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 100% 100%, 56px 56px, 56px 56px;
     background-attachment: fixed;
   }
 
@@ -138,7 +141,8 @@
     border-radius: var(--radius-container);
   }
   .tier-flat {
-    background: var(--surface-panel);
+    background-color: var(--surface-panel);
+    background-image: var(--panel-sheen);
     box-shadow: var(--elevation-flat);
     border-radius: var(--radius-container);
   }
@@ -154,7 +158,9 @@
     box-shadow: var(--elevation-overlay);
     border-radius: var(--radius-overlay);
   }
-  /* Raised, with a scenario/status accent seam down the left edge. */
+  /* Raised, with a scenario/status accent seam down the left edge and a
+   * light-catching gradient top border. Lifts further on hover when it is a
+   * link/button. */
   .tier-raised-seam {
     position: relative;
     background-color: var(--surface-raised);
@@ -162,13 +168,39 @@
     box-shadow: var(--elevation-raised);
     border-radius: var(--radius-container);
     overflow: hidden;
+    transition: box-shadow var(--dur-panel) var(--ease),
+      transform var(--dur-panel) var(--ease);
   }
   .tier-raised-seam::before {
     content: "";
     position: absolute;
     inset: 0 auto 0 0;
     width: 3px;
-    background: var(--seam-color, var(--accent-500));
+    background: linear-gradient(
+      180deg,
+      var(--seam-color, var(--accent-500)),
+      color-mix(in oklab, var(--seam-color, var(--accent-500)) 55%, transparent)
+    );
+  }
+  .tier-raised-seam::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      160deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(255, 255, 255, 0) 40%
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+  a.tier-raised-seam:hover,
+  button.tier-raised-seam:hover {
+    box-shadow: var(--elevation-raised-hover);
   }
 
   /* Back-compat: older markup uses .panel / .glass-card. Now flat, no blur. */
@@ -205,26 +237,34 @@
     align-items: center;
     gap: 0.5rem;
     border-radius: var(--radius-control);
-    padding: 0.625rem 1.125rem;
+    padding: 0.6875rem 1.25rem;
     font-size: var(--text-sm);
-    font-weight: 550;
+    font-weight: 560;
     line-height: 1;
     transition: transform var(--dur-state) var(--ease),
       box-shadow var(--dur-state) var(--ease),
-      background-color var(--dur-state) var(--ease);
+      filter var(--dur-state) var(--ease);
+  }
+  .btn:active {
+    transform: translateY(0) scale(0.985);
   }
   .btn-primary {
     color: var(--accent-ink);
-    background-image: linear-gradient(180deg, var(--accent-500), var(--accent-600));
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset,
-      0 1px 2px hsl(var(--shadow-hue) / 0.2),
-      0 8px 20px -6px rgb(var(--accent-glow) / 0.45);
+    background-image: linear-gradient(180deg, #4f8ef0 0%, var(--accent-500) 45%, var(--accent-600) 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.28) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.12) inset,
+      0 2px 4px hsl(var(--shadow-hue) / 0.24),
+      0 10px 22px -6px rgb(var(--accent-glow) / 0.55),
+      0 20px 40px -12px rgb(var(--accent-glow) / 0.4);
   }
   .btn-primary:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset,
-      0 2px 4px hsl(var(--shadow-hue) / 0.24),
-      0 14px 30px -8px rgb(var(--accent-glow) / 0.55);
+    transform: translateY(-2px);
+    filter: saturate(1.08) brightness(1.04);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.32) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.12) inset,
+      0 4px 8px hsl(var(--shadow-hue) / 0.28),
+      0 18px 34px -8px rgb(var(--accent-glow) / 0.65),
+      0 34px 60px -14px rgb(var(--accent-glow) / 0.5);
   }
   .btn-dark {
     color: var(--ink-inverse);
@@ -255,20 +295,42 @@
     color: var(--n-100);
     background-color: var(--deep-900);
     background-image:
-      radial-gradient(680px 340px at 12% 0%, rgb(var(--accent-glow) / 0.28), transparent 62%),
-      radial-gradient(520px 320px at 92% 12%, hsl(258 70% 55% / 0.22), transparent 60%),
-      linear-gradient(180deg, var(--deep-800), var(--deep-900));
+      radial-gradient(760px 420px at 6% -10%, rgb(var(--accent-glow) / 0.4), transparent 60%),
+      radial-gradient(620px 400px at 98% 0%, hsl(268 80% 60% / 0.32), transparent 58%),
+      radial-gradient(700px 500px at 60% 120%, hsl(190 90% 50% / 0.18), transparent 60%),
+      linear-gradient(165deg, var(--deep-700) -10%, var(--deep-900) 70%);
     border-radius: var(--radius-overlay);
     overflow: hidden;
     isolation: isolate;
+    box-shadow: var(--elevation-raised);
+  }
+  .section-deep::before {
+    /* a faint grid, barely there — tactile depth, not a pattern statement */
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask: radial-gradient(60% 60% at 30% 20%, #000, transparent 90%);
+    mask: radial-gradient(60% 60% at 30% 20%, #000, transparent 90%);
+    pointer-events: none;
   }
   .section-deep::after {
-    /* very fine top hairline of light */
     content: "";
     position: absolute;
     inset: 0 0 auto 0;
     height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  }
+
+  /* Big number treatment — subtle vertical gradient in the fill. */
+  .figure-gradient {
+    background: linear-gradient(180deg, var(--ink) 0%, color-mix(in oklab, var(--ink) 78%, var(--n-500)) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   .hairline {
@@ -294,6 +356,20 @@
     background: var(--surface-overlay);
     box-shadow: var(--elevation-overlay);
     border-radius: var(--radius-control);
+  }
+
+  /* Drifting glow orb for the hero. */
+  .orb {
+    position: absolute;
+    border-radius: var(--radius-pill);
+    filter: blur(48px);
+    opacity: 0.6;
+    pointer-events: none;
+    animation: orb-drift 18s var(--ease) infinite alternate;
+  }
+  @keyframes orb-drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(24px, -18px, 0) scale(1.12); }
   }
 
   /* Diagonal hatch for areas outside data coverage. */
