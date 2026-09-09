@@ -236,6 +236,7 @@
   --color-ink-faint: var(--ink-faint);
   --color-brand: var(--forest-600);
   --color-brand-deep: var(--forest-700);
+  --color-brand-tint: var(--leaf-50);
   --color-accent: var(--forest-600);
   --color-ssp119: var(--ssp-119);
   --color-ssp126: var(--ssp-126);

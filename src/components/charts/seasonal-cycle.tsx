@@ -68,7 +68,7 @@ export function SeasonalCycle({
 
   if (!geometry) {
     return (
-      <p className="rounded-(--radius-control) border border-dashed border-[var(--color-border)] px-3 py-4 text-center text-[12px] text-[var(--color-ink-faint)]">
+      <p className="rounded-(--radius-control) border border-dashed border-border px-3 py-4 text-center text-[12px] text-ink-faint">
         No monthly climatology available for this indicator.
       </p>
     );
@@ -250,7 +250,7 @@ export function SeasonalCycle({
 
       {hover && active && (
         <div
-          className="pointer-events-none absolute top-1 z-10 w-[152px] rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-2.5 py-2 shadow-(--elevation-flat)"
+          className="pointer-events-none absolute top-1 z-10 w-[152px] rounded-(--radius-control) border border-border bg-surface-recessed px-2.5 py-2 shadow-(--elevation-flat)"
           style={tooltipStyle(hover.clientX, hover.containerWidth, 152)}
         >
           <div className="text-[11px] font-semibold">
@@ -258,18 +258,18 @@ export function SeasonalCycle({
           </div>
           <dl className="mt-1 space-y-0.5 text-[11px]">
             <div className="flex items-baseline justify-between gap-2">
-              <dt className="text-[var(--color-ink-faint)]">1995–2014</dt>
+              <dt className="text-ink-faint">1995–2014</dt>
               <dd className="tnum">{formatValue(active.baseline, indicatorId)}</dd>
             </div>
             <div className="flex items-baseline justify-between gap-2">
-              <dt className="text-[var(--color-ink-faint)]">projected</dt>
+              <dt className="text-ink-faint">projected</dt>
               <dd className="tnum font-semibold" style={{ color }}>
                 {formatValue(active.projected, indicatorId)}
               </dd>
             </div>
             {delta !== null && (
-              <div className="flex items-baseline justify-between gap-2 border-t border-[var(--color-border)] pt-0.5">
-                <dt className="text-[var(--color-ink-faint)]">change</dt>
+              <div className="flex items-baseline justify-between gap-2 border-t border-border pt-0.5">
+                <dt className="text-ink-faint">change</dt>
                 <dd className="tnum font-semibold">
                   {formatValue(delta, indicatorId, "anomaly")}
                 </dd>
@@ -279,7 +279,7 @@ export function SeasonalCycle({
         </div>
       )}
 
-      <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10.5px] text-[var(--color-ink-faint)]">
+      <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10.5px] text-ink-faint">
         <span className="flex items-center gap-1.5">
           <svg width="16" height="6" aria-hidden>
             <line x1="0" y1="3" x2="16" y2="3" stroke={AXIS_TEXT} strokeWidth="1.6" strokeDasharray="4 3" />

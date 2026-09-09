@@ -27,7 +27,7 @@ export default function PlacesPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <header className="mb-9 max-w-3xl">
-        <div className="inline-flex items-center gap-2 rounded-full border border-leaf bg-leaf-soft px-3.5 py-1 text-[12.5px] font-semibold text-brand-deep mb-3 shadow-(--elevation-flat)">
+        <div className="inline-flex items-center gap-2 rounded-(--radius-pill) border border-leaf bg-leaf-soft px-3.5 py-1 text-[12.5px] font-semibold text-brand-deep mb-3 shadow-(--elevation-flat)">
           <span>{config.flag}</span>
           <span>Regional Climate Profiles · {config.name}</span>
         </div>
@@ -47,7 +47,7 @@ export default function PlacesPage() {
             onClick={() => setCountry("UZB")}
             className={`rounded-(--radius-container) px-4 py-2 text-xs font-semibold transition-all shadow-(--elevation-flat) ${
  country === "UZB"
-                ? "bg-brand text-white shadow-md ring-2 ring-leaf/30"
+                ? "bg-brand text-white shadow-(--elevation-raised) ring-2 ring-leaf/30"
                 : "border border-border bg-surface-panel text-ink-muted hover:border-border-strong hover:bg-surface-recessed"
             }`}
           >
@@ -58,7 +58,7 @@ export default function PlacesPage() {
             onClick={() => setCountry("PAK")}
             className={`rounded-(--radius-container) px-4 py-2 text-xs font-semibold transition-all shadow-(--elevation-flat) ${
  country === "PAK"
-                ? "bg-brand text-white shadow-md ring-2 ring-leaf/30"
+                ? "bg-brand text-white shadow-(--elevation-raised) ring-2 ring-leaf/30"
                 : "border border-border bg-surface-panel text-ink-muted hover:border-border-strong hover:bg-surface-recessed"
             }`}
           >
@@ -71,7 +71,7 @@ export default function PlacesPage() {
         {groups.map(([setting, placesList]) => (
           <section key={setting}>
             <div className="flex items-center gap-2 mb-4">
-              <span className="h-2 w-2 rounded-full bg-brand"></span>
+              <span className="h-2 w-2 rounded-(--radius-pill) bg-brand"></span>
               <h2 className="text-[15px] font-semibold uppercase tracking-wider text-ink-muted">
                 {SETTING_LABELS[setting] ?? setting}
               </h2>
@@ -83,7 +83,7 @@ export default function PlacesPage() {
                   <Link
                     key={place.id}
                     href={`/places/${place.id}`}
-                    className="group rounded-(--radius-container) border border-border bg-surface-panel p-5 shadow-(--elevation-flat) transition-all hover:-translate-y-0.5 hover:border-leaf hover:shadow-md"
+                    className="tier-raised group p-5 transition-all motion-panel hover:-translate-y-1 hover:shadow-(--elevation-raised-hover)"
                   >
                     <div className="flex items-baseline justify-between gap-2">
                       <h3 className="text-[16px] font-semibold text-ink group-hover:text-brand transition-colors">

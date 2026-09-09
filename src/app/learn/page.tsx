@@ -31,7 +31,7 @@ export default function LearnPage() {
         <h1 className="text-[28px] font-semibold leading-tight tracking-tight">
           How to read a climate projection
         </h1>
-        <p className="mt-3 text-[14.5px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="mt-3 text-[14.5px] leading-relaxed text-ink-muted">
           Everything on this platform is a projection: a statement about the
           statistics of a future climate under an assumed emissions pathway.
           Reading one correctly means knowing what it is not.
@@ -40,7 +40,7 @@ export default function LearnPage() {
 
       {/* ---------------------------------------------- four questions -- */}
       <Section title="Four different questions">
-        <p className="mb-4 text-[14px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="mb-4 text-[14px] leading-relaxed text-ink-muted">
           These sound similar and are answered by completely different science.
           Conflating them is the most common error in public discussion of
           climate.
@@ -70,11 +70,11 @@ export default function LearnPage() {
           ].map((item) => (
             <div
               key={item.tag}
-              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="tier-flat p-4"
             >
               <div className="label mb-1.5">{item.tag}</div>
               <dt className="text-[14px] font-medium">{item.q}</dt>
-              <dd className="mt-1 text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
+              <dd className="mt-1 text-[13px] leading-relaxed text-ink-muted">
                 {item.a}
               </dd>
             </div>
@@ -84,7 +84,7 @@ export default function LearnPage() {
 
       {/* ---------------------------------------------- scenarios ------- */}
       <Section title="What a scenario actually is">
-        <p className="text-[14px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="text-[14px] leading-relaxed text-ink-muted">
           A Shared Socio-economic Pathway pairs a story about how the world
           develops — population, technology, inequality, energy — with the
           radiative forcing that story produces by 2100. The number after the
@@ -98,22 +98,22 @@ export default function LearnPage() {
             return (
               <div
                 key={id}
-                className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+                className="tier-flat p-4"
               >
                 <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
                   <span
-                    className="inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+                    className="inline-block h-2.5 w-2.5 shrink-0 rounded-(--radius-pill)"
                     style={{ background: scenario.color }}
                   />
                   <h3 className="text-[14.5px] font-semibold">{scenario.label}</h3>
-                  <span className="text-[12px] text-[var(--color-ink-faint)]">
+                  <span className="text-[12px] text-ink-faint">
                     {scenario.narrative}
                   </span>
-                  <span className="tnum ml-auto rounded border border-[var(--color-border)] px-1.5 py-0.5 text-[11px] text-[var(--color-ink-muted)]">
+                  <span className="tnum ml-auto rounded border border-border px-1.5 py-0.5 text-[11px] text-ink-muted">
                     {scenario.globalWarming2100} by 2100
                   </span>
                 </div>
-                <p className="mt-2 text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
+                <p className="mt-2 text-[13px] leading-relaxed text-ink-muted">
                   {scenario.summary}
                 </p>
               </div>
@@ -132,7 +132,7 @@ export default function LearnPage() {
 
       {/* ---------------------------------------------- RCP vs SSP ------ */}
       <Section title="RCP and SSP are not the same thing">
-        <p className="text-[14px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="text-[14px] leading-relaxed text-ink-muted">
           CMIP5 — the model generation behind IPCC AR5 — used Representative
           Concentration Pathways, which specify a forcing trajectory and
           nothing else. CMIP6 replaced them with SSPs, which add a
@@ -145,7 +145,7 @@ export default function LearnPage() {
         <div className="mt-5 overflow-x-auto">
           <table className="w-full min-w-[440px] text-[13px]">
             <thead>
-              <tr className="border-b border-[var(--color-border)]">
+              <tr className="border-b border-border">
                 <th className="label py-2 text-left font-semibold">CMIP5 (RCP)</th>
                 <th className="label py-2 text-right font-semibold">W/m²</th>
                 <th className="label py-2 text-left font-semibold">
@@ -157,11 +157,11 @@ export default function LearnPage() {
               {RCP_SCENARIOS.map((rcp) => (
                 <tr
                   key={rcp.id}
-                  className="border-b border-[var(--color-border)] last:border-0"
+                  className="border-b border-border last:border-0"
                 >
                   <td className="py-2.5">
                     <div className="font-medium">{rcp.label}</div>
-                    <div className="text-[11.5px] text-[var(--color-ink-faint)]">
+                    <div className="text-[11.5px] text-ink-faint">
                       {rcp.summary}
                     </div>
                   </td>
@@ -170,13 +170,13 @@ export default function LearnPage() {
                     {rcp.ssp ? (
                       <span className="flex items-center gap-1.5">
                         <span
-                          className="inline-block h-2 w-2 rounded-full"
+                          className="inline-block h-2 w-2 rounded-(--radius-pill)"
                           style={{ background: SCENARIOS[rcp.ssp].color }}
                         />
                         {SCENARIOS[rcp.ssp].label}
                       </span>
                     ) : (
-                      <span className="text-[var(--color-ink-faint)]">
+                      <span className="text-ink-faint">
                         no close counterpart
                       </span>
                     )}
@@ -196,14 +196,14 @@ export default function LearnPage() {
 
       {/* ---------------------------------------------- models ---------- */}
       <Section title="Why the models disagree">
-        <p className="text-[14px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="text-[14px] leading-relaxed text-ink-muted">
           Thirty modelling groups have built independent representations of the
           same physical system. They agree on the fundamentals and differ on the
           hard parts — clouds above all, then aerosols, convection and land
           surface processes. The result is a genuine range in how much the
           planet warms for a given amount of CO₂.
         </p>
-        <p className="mt-3 text-[14px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="mt-3 text-[14px] leading-relaxed text-ink-muted">
           The usual summary of that is equilibrium climate sensitivity: the
           long-run warming from doubling CO₂. Across the models used here it
           runs from {minEcs()} °C to {maxEcs()} °C. A single model is not wrong
@@ -222,7 +222,7 @@ export default function LearnPage() {
 
       {/* ---------------------------------------------- periods --------- */}
       <Section title="Why twenty-year windows">
-        <p className="text-[14px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="text-[14px] leading-relaxed text-ink-muted">
           Individual years swing far more than the underlying trend. Averaging
           over twenty years suppresses that natural variability enough for the
           forced signal to show through, while still being short enough to
@@ -235,14 +235,14 @@ export default function LearnPage() {
               key={period.id}
               className={`rounded-(--radius-control) border p-3 ${
  period.isBaseline
-                  ? "border-[var(--color-border-strong)] bg-[var(--color-surface-raised)]"
-                  : "border-[var(--color-border)] bg-[var(--color-surface)]"
+                  ? "border-border-strong bg-surface-recessed"
+                  : "border-border bg-surface-panel"
               }`}
             >
               <div className="tnum text-[13px] font-semibold">
                 {period.shortLabel}
               </div>
-              <div className="mt-0.5 text-[11px] leading-tight text-[var(--color-ink-faint)]">
+              <div className="mt-0.5 text-[11px] leading-tight text-ink-faint">
                 {period.label}
               </div>
             </div>
@@ -252,13 +252,13 @@ export default function LearnPage() {
 
       {/* ---------------------------------------------- hazard vs risk -- */}
       <Section title="Hazard is not risk">
-        <p className="text-[14px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="text-[14px] leading-relaxed text-ink-muted">
           A climate model produces climate variables. It does not produce flood
           damages, crop failures or deaths. Getting from one to the other needs
           hydrology, exposure and vulnerability — separate models with their own
           assumptions and their own, usually larger, uncertainties.
         </p>
-        <p className="mt-3 text-[14px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="mt-3 text-[14px] leading-relaxed text-ink-muted">
           This platform stops at the climate variable and names the mechanism
           that would carry it further. It does not cross the line into impact
           claims it cannot support.
@@ -268,21 +268,21 @@ export default function LearnPage() {
           {MECHANISMS.slice(0, 4).map((chain) => (
             <div
               key={chain.id}
-              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="tier-flat p-4"
             >
               <h3 className="text-[13.5px] font-semibold">{chain.title}</h3>
               <ol className="mt-2 space-y-1">
                 {chain.steps.map((step, index) => (
                   <li
                     key={index}
-                    className="flex gap-2 text-[12.5px] leading-snug text-[var(--color-ink-muted)]"
+                    className="flex gap-2 text-[12.5px] leading-snug text-ink-muted"
                   >
-                    <span className="text-[var(--color-ink-faint)]">↓</span>
+                    <span className="text-ink-faint">↓</span>
                     {step}
                   </li>
                 ))}
               </ol>
-              <p className="mt-2.5 border-t border-[var(--color-border)] pt-2 text-[11.5px] leading-relaxed text-[var(--color-ink-faint)]">
+              <p className="mt-2.5 border-t border-border pt-2 text-[11.5px] leading-relaxed text-ink-faint">
                 <span className="font-semibold">Stops here without: </span>
                 {chain.requires}
               </p>
@@ -293,7 +293,7 @@ export default function LearnPage() {
 
       {/* ---------------------------------------------- indicators ------ */}
       <Section title="The indicators">
-        <p className="mb-4 text-[14px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="mb-4 text-[14px] leading-relaxed text-ink-muted">
           Mean temperature is the headline, but it is rarely the number that
           matters for a decision. Threshold counts, extremes and dry-spell
           lengths carry far more of the consequence.
@@ -303,12 +303,12 @@ export default function LearnPage() {
             <div key={group.family.id}>
               <h3 className="flex items-center gap-2 text-[13.5px] font-semibold">
                 <span
-                  className="inline-block h-2 w-2 rounded-full"
+                  className="inline-block h-2 w-2 rounded-(--radius-pill)"
                   style={{ background: group.family.color }}
                 />
                 {group.family.label}
               </h3>
-              <p className="mt-0.5 text-[12px] text-[var(--color-ink-faint)]">
+              <p className="mt-0.5 text-[12px] text-ink-faint">
                 {group.family.description}
               </p>
               <div className="mt-2 flex flex-wrap gap-1.5">
@@ -316,10 +316,10 @@ export default function LearnPage() {
                   <span
                     key={indicator.id}
                     title={indicator.description}
-                    className="rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2 py-1 text-[11.5px] text-[var(--color-ink-muted)]"
+                    className="rounded border border-border bg-surface-panel px-2 py-1 text-[11.5px] text-ink-muted"
                   >
                     {indicator.label}
-                    <span className="ml-1 text-[var(--color-ink-faint)]">
+                    <span className="ml-1 text-ink-faint">
                       {indicator.unit}
                     </span>
                   </span>
@@ -331,13 +331,13 @@ export default function LearnPage() {
       </Section>
 
       <footer className="hairline mt-10 pt-6">
-        <p className="text-[13px] text-[var(--color-ink-muted)]">
+        <p className="text-[13px] text-ink-muted">
           Ready to look at the data?{" "}
-          <Link href="/" className="font-medium text-[var(--color-brand-deep)] underline">
+          <Link href="/" className="font-medium text-brand-deep underline">
             Open the explorer
           </Link>{" "}
           or read the{" "}
-          <Link href="/methodology" className="font-medium text-[var(--color-brand-deep)] underline">
+          <Link href="/methodology" className="font-medium text-brand-deep underline">
             methodology
           </Link>
           .
@@ -358,8 +358,8 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-5 rounded-(--radius-control) border-l-2 border-[var(--color-brand)] bg-[var(--color-brand-tint)] py-3 pl-4 pr-4">
-      <p className="text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
+    <div className="mt-5 rounded-(--radius-control) border-l-2 border-brand bg-[var(--color-brand-tint)] py-3 pl-4 pr-4">
+      <p className="text-[13px] leading-relaxed text-ink-muted">
         {children}
       </p>
     </div>

@@ -19,7 +19,7 @@ export function SiteFooter() {
   if (pathname === "/") return null;
 
   return (
-    <footer className="mt-16 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
+    <footer className="mt-16 border-t border-border bg-surface-panel">
       <div className="mx-auto grid max-w-[1800px] gap-8 px-5 py-9 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <Image
@@ -29,12 +29,12 @@ export function SiteFooter() {
             height={47}
             className="h-10 w-auto"
           />
-          <p className="mt-1.5 max-w-sm text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
+          <p className="mt-1.5 max-w-sm text-[12.5px] leading-relaxed text-ink-muted">
             Data-driven decision support for farmers, industry and the
             stakeholders around them. Towards a carbon-neutral, sustainable
             planet.
           </p>
-          <p className="mt-3 text-[11.5px] text-[var(--color-ink-faint)]">
+          <p className="mt-3 text-[11.5px] text-ink-faint">
             Craigieburn, Victoria 3064, Australia · DHA Phase V Sector G,
             Islamabad, Pakistan
           </p>
@@ -53,7 +53,7 @@ export function SiteFooter() {
               <li key={href}>
                 <Link
                   href={href}
-                  className="text-[var(--color-ink-muted)] transition-colors hover:text-[var(--color-brand-deep)]"
+                  className="text-ink-muted transition-colors hover:text-brand-deep"
                 >
                   {label}
                 </Link>
@@ -64,13 +64,13 @@ export function SiteFooter() {
 
         <div>
           <h2 className="label mb-2">Data</h2>
-          <p className="text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
+          <p className="text-[12.5px] leading-relaxed text-ink-muted">
             CMIP6 bias-corrected downscaled projections at 0.25°, from the
             World Bank Climate Change Knowledge Portal. Administrative
             boundaries from geoBoundaries. Short-range weather from
             Open-Meteo.
           </p>
-          <p className="mt-3 text-[11.5px] text-[var(--color-ink-faint)]">
+          <p className="mt-3 text-[11.5px] text-ink-faint">
             Projections are not forecasts. See{" "}
             <Link href="/methodology" className="underline">
               methodology
@@ -80,18 +80,18 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div className="border-t border-[var(--color-border)]">
-        <div className="mx-auto flex max-w-[1800px] flex-wrap items-center gap-x-4 gap-y-1 px-5 py-3 text-[11.5px] text-[var(--color-ink-faint)]">
+      <div className="border-t border-border">
+        <div className="mx-auto flex max-w-[1800px] flex-wrap items-center gap-x-4 gap-y-1 px-5 py-3 text-[11.5px] text-ink-faint">
           <span>© {new Date().getFullYear()} Earth Scan Systems</span>
           <a
             href="https://escan-systems.com/"
-            className="transition-colors hover:text-[var(--color-brand-deep)]"
+            className="transition-colors hover:text-brand-deep"
           >
             escan-systems.com
           </a>
           <a
             href="mailto:contact@escan-systems.com"
-            className="transition-colors hover:text-[var(--color-brand-deep)]"
+            className="transition-colors hover:text-brand-deep"
           >
             contact@escan-systems.com
           </a>

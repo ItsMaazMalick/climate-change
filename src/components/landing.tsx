@@ -53,7 +53,7 @@ export function Landing({
         />
 
         <div className="relative z-10">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-(--radius-pill) border border-[rgb(255_255_255/0.18)] bg-[rgb(255_255_255/0.08)] px-3 py-1 text-2xs font-semibold uppercase tracking-[var(--tracking-caps)] text-[rgb(255_255_255/0.8)]">
+          <p className="mb-5 inline-flex items-center gap-2 rounded-(--radius-pill) border border-[rgb(255_255_255/0.18)] bg-[rgb(255_255_255/0.08)] px-3 py-1 text-2xs font-semibold uppercase tracking-(--tracking-caps) text-[rgb(255_255_255/0.8)]">
             <span className="h-1.5 w-1.5 rounded-(--radius-pill) bg-leaf shadow-[0_0_10px_2px_rgb(var(--leaf-glow))]" />
             Earth Scan Systems · Climate Intelligence
           </p>

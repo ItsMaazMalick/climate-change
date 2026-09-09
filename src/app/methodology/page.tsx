@@ -33,7 +33,7 @@ export default async function MethodologyPage() {
         <h1 className="text-[28px] font-semibold leading-tight tracking-tight">
           Methodology
         </h1>
-        <p className="mt-3 text-[14.5px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="mt-3 text-[14.5px] leading-relaxed text-ink-muted">
           Where the numbers come from, what was done to them, and what they
           cannot tell you.
         </p>
@@ -60,21 +60,21 @@ export default async function MethodologyPage() {
           {Object.values(DATASETS).map((dataset) => (
             <div
               key={dataset.id}
-              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="tier-flat p-4"
             >
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                 <h3 className="text-[14px] font-semibold">{dataset.label}</h3>
-                <span className="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono text-[10px] uppercase text-[var(--color-ink-faint)]">
+                <span className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px] uppercase text-ink-faint">
                   {dataset.kind}
                 </span>
               </div>
-              <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
-                <span className="font-medium text-[var(--color-ink)]">
+              <p className="mt-1.5 text-[13px] leading-relaxed text-ink-muted">
+                <span className="font-medium text-ink">
                   Answers:
                 </span>{" "}
                 {dataset.answers}
               </p>
-              <dl className="tnum mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1 text-[11.5px] text-[var(--color-ink-faint)] sm:grid-cols-3">
+              <dl className="tnum mt-2.5 grid grid-cols-2 gap-x-4 gap-y-1 text-[11.5px] text-ink-faint sm:grid-cols-3">
                 <Meta label="Provider" value={dataset.provider} />
                 <Meta label="Resolution" value={dataset.resolution} />
                 <Meta label="Coverage" value={dataset.temporalRange} />
@@ -94,7 +94,7 @@ export default async function MethodologyPage() {
 
       {/* ---------------------------------------------------- pipeline -- */}
       <Section title="Processing pipeline">
-        <p className="text-[14px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="text-[14px] leading-relaxed text-ink-muted">
           Raw CMIP6 output is not usable directly: it arrives as global NetCDF
           rasters, one file per variable, model, scenario, product, aggregation,
           percentile and period. The pipeline reduces those to the smallest
@@ -130,12 +130,12 @@ export default async function MethodologyPage() {
             },
           ].map((item, index) => (
             <li key={item.step} className="flex gap-3">
-              <span className="tnum mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[var(--color-border-strong)] text-[10px] font-semibold text-[var(--color-ink-faint)]">
+              <span className="tnum mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-(--radius-pill) border border-border-strong text-[10px] font-semibold text-ink-faint">
                 {index + 1}
               </span>
               <div>
                 <span className="text-[13.5px] font-semibold">{item.step}</span>
-                <p className="text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
+                <p className="text-[13px] leading-relaxed text-ink-muted">
                   {item.detail}
                 </p>
               </div>
@@ -159,7 +159,7 @@ export default async function MethodologyPage() {
           <Stat label="Grid payload" value={`${coverage.sizeMb} MB`} />
           <Stat label="Grid cells" value="3,976" />
         </div>
-        <p className="mt-3 text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="mt-3 text-[12.5px] leading-relaxed text-ink-muted">
           Locally rasterised indicators:{" "}
           <span className="font-mono text-[11.5px]">
             {coverage.variables.join(", ") || "none yet"}
@@ -169,7 +169,7 @@ export default async function MethodologyPage() {
           response and panel says so explicitly rather than presenting a
           country-wide mean as a local value.
         </p>
-        <p className="mt-2 text-[11.5px] text-[var(--color-ink-faint)]">
+        <p className="mt-2 text-[11.5px] text-ink-faint">
           Grid last built {new Date(coverage.generatedAt).toUTCString()}.
         </p>
       </Section>
@@ -204,15 +204,15 @@ export default async function MethodologyPage() {
           </Choice>
           <Choice title="Units taken from the files, not from the variable names">
             Several CCKP variable codes do not mean what they look like.
-            <code className="mx-1 rounded bg-[var(--color-surface-raised)] px-1 font-mono text-[11.5px]">sd</code>
+            <code className="mx-1 rounded bg-surface-recessed px-1 font-mono text-[11.5px]">sd</code>
             is the ETCCDI &ldquo;summer days&rdquo; count, not snow depth;
-            <code className="mx-1 rounded bg-[var(--color-surface-raised)] px-1 font-mono text-[11.5px]">r95ptot</code>
+            <code className="mx-1 rounded bg-surface-recessed px-1 font-mono text-[11.5px]">r95ptot</code>
             is a percentage share of wet-day rainfall, not a millimetre total;
-            <code className="mx-1 rounded bg-[var(--color-surface-raised)] px-1 font-mono text-[11.5px]">cdd65</code>
+            <code className="mx-1 rounded bg-surface-recessed px-1 font-mono text-[11.5px]">cdd65</code>
             is published in Fahrenheit degree-days; and the precipitation
             anomaly is in millimetres rather than percent. Every unit shown on
             this platform is taken from the
-            <code className="mx-1 rounded bg-[var(--color-surface-raised)] px-1 font-mono text-[11.5px]">units</code>
+            <code className="mx-1 rounded bg-surface-recessed px-1 font-mono text-[11.5px]">units</code>
             attribute of the source file and pinned by a test.
           </Choice>
           <Choice title="Model disagreement shown, not hidden">
@@ -285,8 +285,8 @@ export default async function MethodologyPage() {
 
       {/* ---------------------------------------------------- citation -- */}
       <Section title="Citation">
-        <div className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
-          <ul className="space-y-2.5 text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
+        <div className="tier-flat p-4">
+          <ul className="space-y-2.5 text-[12.5px] leading-relaxed text-ink-muted">
             <li>
               World Bank Group.{" "}
               <em>
@@ -316,13 +316,13 @@ export default async function MethodologyPage() {
           </ul>
 
           <p className="mt-4 text-[12px] font-semibold text-ink">Suggested citation</p>
-          <p className="mt-1 text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
+          <p className="mt-1 text-[12.5px] leading-relaxed text-ink-muted">
             Earth Scan Systems (2026). <em>Climate Intelligence Platform: CMIP6
             downscaled projections for Pakistan, Uzbekistan, Australia and New
             Zealand.</em> Data: World Bank Climate Change Knowledge Portal.
           </p>
 
-          <pre className="mt-3 overflow-x-auto rounded-(--radius-control) border border-[var(--color-border)] bg-surface-recessed p-3 font-mono text-[11px] leading-relaxed text-[var(--color-ink-muted)]">
+          <pre className="mt-3 overflow-x-auto rounded-(--radius-control) border border-border bg-surface-recessed p-3 font-mono text-[11px] leading-relaxed text-ink-muted">
 {`@misc{ess_climate_platform_2026,
   author       = {{Earth Scan Systems}},
   title        = {Climate Intelligence Platform: CMIP6 downscaled
@@ -339,9 +339,9 @@ export default async function MethodologyPage() {
       </Section>
 
       <footer className="hairline mt-10 pt-6">
-        <p className="text-[13px] text-[var(--color-ink-muted)]">
+        <p className="text-[13px] text-ink-muted">
           Unsure how to read the numbers?{" "}
-          <Link href="/learn" className="font-medium text-[var(--color-brand-deep)] underline">
+          <Link href="/learn" className="font-medium text-brand-deep underline">
             Start here
           </Link>
           .
@@ -364,14 +364,14 @@ function Meta({ label, value }: { label: string; value: string }) {
   return (
     <div>
       <dt className="label">{label}</dt>
-      <dd className="text-[var(--color-ink-muted)]">{value}</dd>
+      <dd className="text-ink-muted">{value}</dd>
     </div>
   );
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-3.5">
+    <div className="tier-flat p-3.5">
       <div className="label mb-1">{label}</div>
       <div className="tnum text-[20px] font-semibold">{value}</div>
     </div>
@@ -380,9 +380,9 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function Choice({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+    <div className="tier-flat p-4">
       <h3 className="text-[13.5px] font-semibold">{title}</h3>
-      <p className="mt-1 text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
+      <p className="mt-1 text-[13px] leading-relaxed text-ink-muted">
         {children}
       </p>
     </div>
@@ -391,9 +391,9 @@ function Choice({ title, children }: { title: string; children: React.ReactNode 
 
 function Limit({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="border-l-2 border-[var(--color-border-strong)] pl-4">
+    <div className="border-l-2 border-border-strong pl-4">
       <h3 className="text-[13.5px] font-semibold">{title}</h3>
-      <p className="mt-0.5 text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
+      <p className="mt-0.5 text-[13px] leading-relaxed text-ink-muted">
         {children}
       </p>
     </div>
@@ -413,7 +413,7 @@ function ScopeItem({
     <div>
       <dt className="label">{label}</dt>
       <dd className="text-[13.5px] font-semibold">{value}</dd>
-      <dd className="mt-0.5 text-[12px] leading-relaxed text-[var(--color-ink-faint)]">
+      <dd className="mt-0.5 text-[12px] leading-relaxed text-ink-faint">
         {children}
       </dd>
     </div>
@@ -422,8 +422,8 @@ function ScopeItem({
 
 function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-5 rounded-(--radius-control) border-l-2 border-[var(--color-brand)] bg-[var(--color-brand-tint)] py-3 pl-4 pr-4">
-      <p className="text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
+    <div className="mt-5 rounded-(--radius-control) border-l-2 border-brand bg-[var(--color-brand-tint)] py-3 pl-4 pr-4">
+      <p className="text-[13px] leading-relaxed text-ink-muted">
         {children}
       </p>
     </div>

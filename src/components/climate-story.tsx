@@ -113,29 +113,41 @@ export function ClimateStory({ place }: { place: Place }) {
   return (
     <div className="mx-auto max-w-5xl px-5 py-9">
       {/* ---------------------------------------------------- header ---- */}
-      <header className="mb-7">
-        <Link
-          href="/places"
-          className="text-[12px] text-[var(--color-ink-faint)] transition-colors hover:text-[var(--color-ink)]"
-        >
-          ← All places
-        </Link>
-        <h1 className="mt-2 text-[28px] font-semibold leading-tight tracking-tight">
-          {place.name}
-        </h1>
-        <p className="tnum mt-1 text-[13px] text-[var(--color-ink-muted)]">
-          {place.province} · {place.lat.toFixed(3)}°N, {place.lon.toFixed(3)}°E ·{" "}
-          {place.elevation.toLocaleString()} m
-        </p>
-        {place.note && (
-          <p className="mt-3 max-w-2xl border-l-2 border-[var(--color-brand)] pl-3 text-[13.5px] leading-relaxed text-[var(--color-ink-muted)]">
-            {place.note}
+      <header className="section-deep mb-7 p-7 sm:p-9">
+        <span
+          className="orb h-56 w-56"
+          style={{ right: "-3rem", top: "-3rem", background: "rgb(141 198 63 / 0.7)" }}
+        />
+        <div className="relative z-10">
+          <Link
+            href="/places"
+            className="text-2xs font-medium text-[rgb(255_255_255/0.6)] transition-colors hover:text-white"
+          >
+            ← All places
+          </Link>
+          <p className="mt-3 flex items-center gap-2 text-2xs font-semibold uppercase tracking-(--tracking-caps) text-[rgb(255_255_255/0.6)]">
+            <span className="flex h-5 w-5 items-center justify-center rounded-(--radius-pill) bg-leaf text-[11px] font-semibold text-(--forest-900) tabular-nums">
+              4
+            </span>
+            Place profile · {countryName}
           </p>
-        )}
+          <h1 className="mt-2.5 text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold leading-tight tracking-tight text-white">
+            {place.name}
+          </h1>
+          <p className="mt-1.5 text-[13px] tabular-nums text-[rgb(255_255_255/0.68)]" data-numeric>
+            {place.province} · {place.lat.toFixed(3)}°N, {place.lon.toFixed(3)}°E ·{" "}
+            {place.elevation.toLocaleString()} m
+          </p>
+          {place.note && (
+            <p className="mt-4 max-w-2xl border-l-2 border-leaf pl-3 text-[13.5px] leading-relaxed text-[rgb(255_255_255/0.75)]">
+              {place.note}
+            </p>
+          )}
+        </div>
       </header>
 
       {/* ---------------------------------------------------- controls -- */}
-      <div className="mb-7 grid gap-4 rounded-(--radius-container) border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:grid-cols-[240px_1fr]">
+      <div className="mb-7 grid gap-4 tier-flat p-4 sm:grid-cols-[240px_1fr]">
         <div>
           <div className="label mb-1.5">Emissions pathway</div>
           <ScenarioPicker value={scenario} onChange={setScenario} compact />
@@ -143,7 +155,7 @@ export function ClimateStory({ place }: { place: Place }) {
         <div>
           <div className="label mb-1.5">Horizon</div>
           <PeriodPicker value={period} onChange={setPeriod} includeBaseline={false} />
-          <p className="mt-3 text-[12px] leading-relaxed text-[var(--color-ink-muted)]">
+          <p className="mt-3 text-[12px] leading-relaxed text-ink-muted">
             {SCENARIOS[scenario].summary}
           </p>
         </div>
@@ -161,14 +173,14 @@ export function ClimateStory({ place }: { place: Place }) {
                 className={
                   statement.kind === "projection"
                     ? "text-[14px] leading-relaxed"
-                    : "border-l-2 border-[var(--color-border-strong)] pl-3 text-[13px] leading-relaxed text-[var(--color-ink-muted)]"
+                    : "border-l-2 border-border-strong pl-3 text-[13px] leading-relaxed text-ink-muted"
                 }
               >
                 {statement.text}
               </p>
             ))}
             {story.data?.analogue && (
-              <p className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
+              <p className="tier-flat p-3 text-[13px] leading-relaxed text-ink-muted">
                 {story.data.analogue.text}
               </p>
             )}
@@ -187,7 +199,7 @@ export function ClimateStory({ place }: { place: Place }) {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[520px] text-[13px]">
               <thead>
-                <tr className="border-b border-[var(--color-border)]">
+                <tr className="border-b border-border">
                   <th className="label py-2 text-left font-semibold">Indicator</th>
                   <th className="label py-2 text-right font-semibold">1995–2014</th>
                   <th className="label py-2 text-right font-semibold">
@@ -200,17 +212,17 @@ export function ClimateStory({ place }: { place: Place }) {
                 {available.map((row) => (
                   <tr
                     key={row.indicator.id}
-                    className="border-b border-[var(--color-border)] last:border-0"
+                    className="border-b border-border last:border-0"
                   >
                     <td className="py-2.5 pr-3">
                       <div className="font-medium">{row.indicator.label}</div>
-                      <div className="text-[11px] text-[var(--color-ink-faint)]">
+                      <div className="text-[11px] text-ink-faint">
                         {row.source === "grid"
                           ? "at this location"
                           : "national average"}
                       </div>
                     </td>
-                    <td className="tnum py-2.5 text-right text-[var(--color-ink-muted)]">
+                    <td className="tnum py-2.5 text-right text-ink-muted">
                       {formatValue(row.baseline, row.indicator.id)}
                     </td>
                     <td className="tnum py-2.5 text-right">
@@ -271,7 +283,7 @@ export function ClimateStory({ place }: { place: Place }) {
           ].map((panel) => (
             <div
               key={panel.id}
-              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="tier-flat p-4"
             >
               <h3 className="label mb-2.5">{panel.title}</h3>
               {panel.data ? (
@@ -284,7 +296,7 @@ export function ClimateStory({ place }: { place: Place }) {
                   />
                   {panel.data.monsoonSharePercent?.baseline != null &&
                     panel.data.monsoonSharePercent.projected != null && (
-                      <p className="mt-2.5 text-[12px] leading-relaxed text-[var(--color-ink-muted)]">
+                      <p className="mt-2.5 text-[12px] leading-relaxed text-ink-muted">
                         July–September carries{" "}
                         <span className="tnum font-semibold">
                           {panel.data.monsoonSharePercent.baseline}%
@@ -297,7 +309,7 @@ export function ClimateStory({ place }: { place: Place }) {
                       </p>
                     )}
                   {panel.data.extremes?.baseline && panel.data.extremes.projected && (
-                    <p className="mt-2.5 text-[12px] leading-relaxed text-[var(--color-ink-muted)]">
+                    <p className="mt-2.5 text-[12px] leading-relaxed text-ink-muted">
                       The warmest month rises from{" "}
                       <span className="tnum font-semibold">
                         {formatValue(panel.data.extremes.baseline.max, panel.id)}
@@ -346,23 +358,23 @@ export function ClimateStory({ place }: { place: Place }) {
           {story.data?.mechanisms.slice(0, 6).map((chain) => (
             <article
               key={chain.id}
-              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="tier-flat p-4"
             >
               <h3 className="text-[13.5px] font-semibold">{chain.title}</h3>
               <ol className="mt-2.5 space-y-1.5">
                 {chain.steps.map((step, index) => (
                   <li
                     key={index}
-                    className="flex gap-2 text-[12.5px] leading-snug text-[var(--color-ink-muted)]"
+                    className="flex gap-2 text-[12.5px] leading-snug text-ink-muted"
                   >
-                    <span className="tnum mt-px shrink-0 text-[10px] text-[var(--color-ink-faint)]">
+                    <span className="tnum mt-px shrink-0 text-[10px] text-ink-faint">
                       {index + 1}
                     </span>
                     {step}
                   </li>
                 ))}
               </ol>
-              <p className="mt-3 border-t border-[var(--color-border)] pt-2.5 text-[11.5px] leading-relaxed text-[var(--color-ink-faint)]">
+              <p className="mt-3 border-t border-border pt-2.5 text-[11.5px] leading-relaxed text-ink-faint">
                 <span className="font-semibold">To quantify this: </span>
                 {chain.requires}
               </p>
@@ -371,11 +383,11 @@ export function ClimateStory({ place }: { place: Place }) {
         </div>
       </Section>
 
-      <footer className="hairline mt-8 pt-5 text-[11.5px] leading-relaxed text-[var(--color-ink-faint)]">
+      <footer className="hairline mt-8 pt-5 text-[11.5px] leading-relaxed text-ink-faint">
         Projections from the World Bank Climate Change Knowledge Portal CMIP6
         0.25° collection — 30 bias-corrected, downscaled global climate models.
         Values shown are the ensemble median unless stated otherwise.{" "}
-        <Link href="/methodology" className="underline hover:text-[var(--color-ink)]">
+        <Link href="/methodology" className="underline hover:text-ink">
           Methodology
         </Link>
         .
@@ -394,14 +406,14 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mb-9">
-      <h2 className="text-[16px] font-semibold tracking-tight">{title}</h2>
+    <section className="tier-flat mb-6 p-6">
+      <h2 className="text-base font-semibold tracking-tight text-ink">{title}</h2>
       {subtitle && (
-        <p className="mb-3.5 mt-1 max-w-2xl text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
+        <p className="mb-4 mt-1 max-w-2xl text-xs leading-relaxed text-ink-muted">
           {subtitle}
         </p>
       )}
-      {!subtitle && <div className="mb-3.5" />}
+      {!subtitle && <div className="mb-4" />}
       {children}
     </section>
   );
@@ -413,7 +425,7 @@ function SkeletonLines({ count }: { count: number }) {
       {Array.from({ length: count }, (_, index) => (
         <div
           key={index}
-          className="h-4 animate-pulse rounded bg-[var(--color-surface-hover)]"
+          className="h-4 animate-pulse rounded bg-surface-hover"
           style={{ width: `${100 - index * 7}%` }}
         />
       ))}

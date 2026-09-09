@@ -499,7 +499,7 @@ export const INDICATOR_FAMILIES: Record<IndicatorFamily, IndicatorFamilyMeta> = 
   cryosphere: { id: "cryosphere", label: "Snow & cold", description: "Snowpack, frost and ice — the Indus headwaters story.", color: "#0e7490" },
   agriculture: { id: "agriculture", label: "Agriculture", description: "Growing season and evaporative demand.", color: "#15803d" },
   energy: { id: "energy", label: "Energy demand", description: "Degree-day proxies for cooling and heating load.", color: "#6d28d9" },
-  humidity: { id: "humidity", label: "Humidity", description: "Moisture in the near-surface air.", color: "#0f766e" },
+  humidity: { id: "humidity", label: "Humidity", description: "Moisture in the near-surface air.", color: "#4f7a52" },
   wind: { id: "wind", label: "Wind", description: "Near-surface wind speed.", color: "#475569" },
 };
 

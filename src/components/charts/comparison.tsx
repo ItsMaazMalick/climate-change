@@ -69,8 +69,8 @@ export function ScenarioComparison({
             <span
               className={`w-[68px] shrink-0 text-[11.5px] transition-colors ${
  active === bar.scenario
-                  ? "font-semibold text-[var(--color-ink)]"
-                  : "text-[var(--color-ink-muted)]"
+                  ? "font-semibold text-ink"
+                  : "text-ink-muted"
               }`}
               title={scenario.summary}
             >
@@ -173,7 +173,7 @@ export function ModelSpread({
             className="absolute inset-y-0 w-px bg-[var(--color-border-strong)]"
             style={{ left: `${pct(0)}%` }}
           >
-            <span className="absolute -bottom-0.5 left-1 text-[9px] text-[var(--color-ink-faint)]">
+            <span className="absolute -bottom-0.5 left-1 text-[9px] text-ink-faint">
               0
             </span>
           </div>
@@ -218,7 +218,7 @@ export function ModelSpread({
         )}
 
         <div
-          className="absolute top-1.5 h-9 w-[2.5px] rounded-full"
+          className="absolute top-1.5 h-9 w-[2.5px] rounded-(--radius-pill)"
           style={{ left: `${pct(median)}%`, background: color }}
         />
         <div
@@ -230,7 +230,7 @@ export function ModelSpread({
 
         {active && (
           <div
-            className="pointer-events-none absolute -bottom-1 z-10 -translate-x-1/2 whitespace-nowrap rounded border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-1.5 py-0.5 text-[10.5px] shadow-(--elevation-flat)"
+            className="pointer-events-none absolute -bottom-1 z-10 -translate-x-1/2 whitespace-nowrap rounded border border-border bg-surface-recessed px-1.5 py-0.5 text-[10.5px] shadow-(--elevation-flat)"
             style={{ left: `${Math.min(Math.max(pct(active.value), 12), 88)}%` }}
           >
             <span className="font-semibold">{active.label}</span>{" "}
@@ -239,7 +239,7 @@ export function ModelSpread({
         )}
       </div>
 
-      <div className="tnum flex justify-between text-[10px] text-[var(--color-ink-faint)]">
+      <div className="tnum flex justify-between text-[10px] text-ink-faint">
         <span>{p10 !== null ? `10th ${formatValue(p10, indicatorId, "anomaly")}` : ""}</span>
         <span>{p90 !== null ? `90th ${formatValue(p90, indicatorId, "anomaly")}` : ""}</span>
       </div>
@@ -292,10 +292,10 @@ export function ScenarioMatrix({
             const scenario = SCENARIOS[row.scenario];
             return (
               <tr key={row.scenario}>
-                <th className="py-1 pr-3 text-left text-[12px] font-medium text-[var(--color-ink-muted)]">
+                <th className="py-1 pr-3 text-left text-[12px] font-medium text-ink-muted">
                   <span className="flex items-center gap-1.5">
                     <span
-                      className="inline-block h-2 w-2 rounded-full"
+                      className="inline-block h-2 w-2 rounded-(--radius-pill)"
                       style={{ background: scenario.color }}
                     />
                     {scenario.label}
@@ -339,7 +339,7 @@ export function ScenarioMatrix({
 
 function Empty({ children }: { children: React.ReactNode }) {
   return (
-    <p className="rounded-(--radius-control) border border-dashed border-[var(--color-border)] px-3 py-4 text-center text-[12px] text-[var(--color-ink-faint)]">
+    <p className="rounded-(--radius-control) border border-dashed border-border px-3 py-4 text-center text-[12px] text-ink-faint">
       {children}
     </p>
   );

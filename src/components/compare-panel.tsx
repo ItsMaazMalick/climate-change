@@ -135,7 +135,7 @@ export function ComparePanel({ places }: { places: Place[] }) {
       >
         {scenarios.data ? (
           <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
-            <div className="overflow-x-auto rounded-(--radius-container) border border-border bg-surface-panel p-4 shadow-(--elevation-flat)">
+            <div className="overflow-x-auto tier-flat p-4">
               <table className="w-full min-w-[420px] text-[13px]">
                 <thead>
                   <tr className="border-b border-border">
@@ -156,7 +156,7 @@ export function ComparePanel({ places }: { places: Place[] }) {
                         <td className="py-3 pr-3">
                           <span className="flex items-center gap-2 font-semibold text-ink">
                             <span
-                              className="inline-block h-3 w-3 shrink-0 rounded-full shadow-(--elevation-flat) ring-2 ring-white"
+                              className="inline-block h-3 w-3 shrink-0 rounded-(--radius-pill) shadow-(--elevation-flat) ring-2 ring-white"
                               style={{ background: meta.color }}
                             />
                             {meta.label}
@@ -235,12 +235,12 @@ export function ComparePanel({ places }: { places: Place[] }) {
               indicatorId={indicator}
               color={SCENARIOS[scenario].color}
             />
-            <p className="mt-3 max-w-2xl text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
+            <p className="mt-3 max-w-2xl text-[12.5px] leading-relaxed text-ink-muted">
               {models.data.description}
             </p>
             {showMembers && models.data.members.length > 0 && (
               <>
-                <p className="mt-3 text-[11.5px] text-[var(--color-ink-faint)]">
+                <p className="mt-3 text-[11.5px] text-ink-faint">
                   Individual models are published as national aggregates only, so
                   these values describe {config.name} as a whole rather than{" "}
                   {place.name}. Equilibrium climate sensitivity (ECS) is each
@@ -251,13 +251,13 @@ export function ComparePanel({ places }: { places: Place[] }) {
                   {models.data.members.map((member) => (
                     <div
                       key={member.model}
-                      className="flex items-baseline justify-between gap-2 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-2.5 py-1.5"
+                      className="flex items-baseline justify-between gap-2 rounded border border-border bg-surface-panel px-2.5 py-1.5"
                     >
                       <span className="truncate text-[11.5px]">{member.label}</span>
                       <span className="tnum shrink-0 text-[11.5px] font-semibold">
                         {formatValue(member.value, indicator, "anomaly")}
                         {member.ecs && (
-                          <span className="ml-1.5 font-normal text-[var(--color-ink-faint)]">
+                          <span className="ml-1.5 font-normal text-ink-faint">
                             ECS {member.ecs}
                           </span>
                         )}
@@ -287,7 +287,7 @@ export function ComparePanel({ places }: { places: Place[] }) {
               yLabel={indicator}
               indicatorId={indicator}
             />
-            <p className="mt-2.5 text-[11.5px] text-[var(--color-ink-faint)]">
+            <p className="mt-2.5 text-[11.5px] text-ink-faint">
               {trajectory.data.note}
             </p>
           </>
@@ -306,28 +306,28 @@ export function ComparePanel({ places }: { places: Place[] }) {
           {Object.values(SCENARIO_GENERATIONS).map((generation) => (
             <div
               key={generation.id}
-              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="tier-flat p-4"
             >
               <div className="flex items-baseline justify-between">
                 <h3 className="text-[14px] font-semibold">{generation.label}</h3>
-                <span className="text-[11px] text-[var(--color-ink-faint)]">
+                <span className="text-[11px] text-ink-faint">
                   {generation.era}
                 </span>
               </div>
-              <p className="mt-1 text-[11.5px] text-[var(--color-ink-faint)]">
+              <p className="mt-1 text-[11.5px] text-ink-faint">
                 {generation.ipccReport} · {generation.scenarioFamily} scenarios
               </p>
               <div className="mt-2.5 flex flex-wrap gap-1">
                 {generation.scenarios.map((name) => (
                   <span
                     key={name}
-                    className="rounded border border-[var(--color-border)] px-1.5 py-0.5 font-mono text-[10.5px] text-[var(--color-ink-muted)]"
+                    className="rounded border border-border px-1.5 py-0.5 font-mono text-[10.5px] text-ink-muted"
                   >
                     {name}
                   </span>
                 ))}
               </div>
-              <p className="mt-2.5 text-[12px] leading-relaxed text-[var(--color-ink-muted)]">
+              <p className="mt-2.5 text-[12px] leading-relaxed text-ink-muted">
                 {generation.note}
               </p>
             </div>
@@ -385,7 +385,7 @@ function Section({
 function Skeleton({ height }: { height: number }) {
   return (
     <div
-      className="animate-pulse rounded-(--radius-control) bg-[var(--color-surface-hover)]"
+      className="animate-pulse rounded-(--radius-control) bg-surface-hover"
       style={{ height }}
     />
   );

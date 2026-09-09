@@ -72,7 +72,7 @@ export default function ClimateManual() {
       {/* Mobile Menu Button */}
       <button 
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 bg-surface-panel border border-border rounded-(--radius-control) shadow-md flex items-center justify-center text-ink"
+        className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 bg-surface-panel border border-border rounded-(--radius-control) shadow-(--elevation-raised) flex items-center justify-center text-ink"
       >
         {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
       </button>
@@ -129,7 +129,7 @@ export default function ClimateManual() {
         <section id="hero" className="relative px-6 md:px-12 pt-32 pb-24 bg-surface-panel border-b border-border flex items-center min-h-[500px] overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,_rgba(22,163,74,0.08)_0%,_transparent_40%),radial-gradient(circle_at_0%_100%,_rgba(234,88,12,0.05)_0%,_transparent_40%)]" />
           <div className="relative z-10 max-w-4xl">
-            <div className="inline-block px-3 py-1 mb-6 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint uppercase">
+            <div className="inline-block px-3 py-1 mb-6 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint uppercase">
               USER MANUAL
             </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold leading-tight tracking-tight text-ink mb-6">
@@ -175,7 +175,7 @@ export default function ClimateManual() {
         {/* INTRODUCTION */}
         <section id="introduction" className="py-20 px-6 md:px-12 max-w-6xl mx-auto w-full">
           <div className="text-center mb-12">
-            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">OVERVIEW</span>
+            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">OVERVIEW</span>
             <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">What is Climate Intelligence Explorer?</h2>
             <p className="text-base text-ink-faint font-medium">High-resolution climate projections, made accessible.</p>
           </div>
@@ -196,7 +196,7 @@ export default function ClimateManual() {
             </div>
             <figcaption className="mt-4 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-ink-faint">
               <span className="inline-flex items-center gap-2 font-semibold text-ink-muted">
-                <span className="flex h-2 w-2 rounded-full bg-brand animate-pulse" />
+                <span className="flex h-2 w-2 rounded-(--radius-pill) bg-brand animate-pulse" />
                 Video walkthrough
               </span>
               <span>
@@ -261,7 +261,7 @@ export default function ClimateManual() {
         <section id="getting-started" className="py-20 px-6 md:px-12 bg-surface-panel border-y border-border">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
-              <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">SETUP</span>
+              <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">SETUP</span>
               <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">Getting Started</h2>
               <p className="text-base text-ink-faint font-medium">No installation needed &mdash; just open and explore.</p>
             </div>
@@ -277,7 +277,7 @@ export default function ClimateManual() {
                 { title: "Click on the Map", desc: "Click anywhere on the map to query that location. The right panel shows baseline values, projected values, change, model uncertainty, and all-pathway comparisons." }
               ].map((step, i) => (
                 <div key={i} className="relative mb-10 last:mb-0">
-                  <div className="absolute -left-[50px] md:-left-[58px] top-0 w-10 h-10 md:w-11 md:h-11 bg-surface-panel border-2 border-leaf text-brand rounded-full flex items-center justify-center font-semibold text-sm font-mono shadow-[0_0_0_4px_#f8fafc] z-10">
+                  <div className="absolute -left-[50px] md:-left-[58px] top-0 w-10 h-10 md:w-11 md:h-11 bg-surface-panel border-2 border-leaf text-brand rounded-(--radius-pill) flex items-center justify-center font-semibold text-sm font-mono shadow-[0_0_0_4px_var(--surface)] z-10">
                     {i + 1}
                   </div>
                   <div className="bg-surface-panel p-6 md:p-7 rounded-(--radius-container) border border-border shadow-(--elevation-flat)">
@@ -293,7 +293,7 @@ export default function ClimateManual() {
         {/* EXPLORER */}
         <section id="explorer" className="py-20 px-6 md:px-12 max-w-6xl mx-auto w-full">
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">CORE FEATURE</span>
+            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">CORE FEATURE</span>
             <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">Explorer &mdash; Interactive Climate Map</h2>
             <p className="text-base text-ink-faint font-medium">Click anywhere to see how its climate could change.</p>
           </div>
@@ -321,10 +321,10 @@ export default function ClimateManual() {
                 <div className="bg-surface-panel p-5 rounded-(--radius-container) border border-border shadow-(--elevation-flat)">
                   <h4 className="text-sm font-semibold text-ink mb-3 flex items-center gap-2"><Settings size={18} className="text-brand"/> Left Sidebar Controls</h4>
                   <ul className="space-y-2 text-sm text-ink-muted">
-                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 shrink-0"/><span><strong>Target Coordinate / City</strong> &mdash; Search bar</span></li>
-                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 shrink-0"/><span><strong>Climate Indicator</strong> &mdash; 16 scientific variables</span></li>
-                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 shrink-0"/><span><strong>Emissions Pathway (SSP)</strong> &mdash; 5 scenario buttons</span></li>
-                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 shrink-0"/><span><strong>Time Horizon</strong> &mdash; 5 periods from baseline to 2080-2099</span></li>
+                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-(--radius-pill) bg-brand mt-1.5 shrink-0"/><span><strong>Target Coordinate / City</strong> &mdash; Search bar</span></li>
+                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-(--radius-pill) bg-brand mt-1.5 shrink-0"/><span><strong>Climate Indicator</strong> &mdash; 16 scientific variables</span></li>
+                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-(--radius-pill) bg-brand mt-1.5 shrink-0"/><span><strong>Emissions Pathway (SSP)</strong> &mdash; 5 scenario buttons</span></li>
+                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-(--radius-pill) bg-brand mt-1.5 shrink-0"/><span><strong>Time Horizon</strong> &mdash; 5 periods from baseline to 2080-2099</span></li>
                   </ul>
                 </div>
                 <div className="bg-surface-panel p-5 rounded-(--radius-container) border border-border shadow-(--elevation-flat)">
@@ -340,7 +340,7 @@ export default function ClimateManual() {
         <section id="compare" className="py-20 px-6 md:px-12 bg-surface-panel border-y border-border w-full">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">ANALYSIS</span>
+              <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">ANALYSIS</span>
               <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">Compare &mdash; Side-by-Side Analysis</h2>
               <p className="text-base text-ink-faint font-medium">Compare scenarios, regions, and indicators in one view.</p>
             </div>
@@ -362,9 +362,9 @@ export default function ClimateManual() {
                   <div className="bg-surface-panel p-5 rounded-(--radius-container) border border-border shadow-(--elevation-flat)">
                     <h4 className="text-sm font-semibold text-ink mb-3 flex items-center gap-2"><Lightbulb size={18} className="text-brand"/> Use Cases</h4>
                     <ul className="space-y-2 text-sm text-ink-muted">
-                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 shrink-0"/><span>Compare low-emissions vs high-emissions future</span></li>
-                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 shrink-0"/><span>Compare mid-century vs end-of-century</span></li>
-                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 shrink-0"/><span>Compare two different regions under same scenario</span></li>
+                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-(--radius-pill) bg-brand mt-1.5 shrink-0"/><span>Compare low-emissions vs high-emissions future</span></li>
+                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-(--radius-pill) bg-brand mt-1.5 shrink-0"/><span>Compare mid-century vs end-of-century</span></li>
+                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-(--radius-pill) bg-brand mt-1.5 shrink-0"/><span>Compare two different regions under same scenario</span></li>
                     </ul>
                   </div>
                 </div>
@@ -386,7 +386,7 @@ export default function ClimateManual() {
         {/* HOTSPOTS */}
         <section id="hotspots" className="py-20 px-6 md:px-12 max-w-6xl mx-auto w-full">
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">RISK ANALYSIS</span>
+            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">RISK ANALYSIS</span>
             <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">Hotspots &mdash; Most Affected Areas</h2>
             <p className="text-base text-ink-faint font-medium">Ranked list of provinces and districts by projected climate change.</p>
           </div>
@@ -428,7 +428,7 @@ export default function ClimateManual() {
         <section id="places" className="py-20 px-6 md:px-12 bg-surface-panel border-y border-border w-full">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">CITY PROFILES</span>
+              <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">CITY PROFILES</span>
               <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">Places &mdash; Pre-Built City Profiles</h2>
               <p className="text-base text-ink-faint font-medium">Explore climate data for major cities with weather forecasts.</p>
             </div>
@@ -470,7 +470,7 @@ export default function ClimateManual() {
         {/* LEARN */}
         <section id="learn" className="py-20 px-6 md:px-12 max-w-6xl mx-auto w-full">
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">EDUCATION</span>
+            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">EDUCATION</span>
             <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">Learn &mdash; Understanding Projections</h2>
             <p className="text-base text-ink-faint font-medium">How to read and interpret climate projection data.</p>
           </div>
@@ -502,7 +502,7 @@ export default function ClimateManual() {
                       { ssp: "SSP5-8.5", color: "bg-danger", desc: "Very high · 3.3-5.7°C" }
                     ].map(s => (
                       <div key={s.ssp} className="flex items-center gap-3 p-2.5 rounded-(--radius-control) border border-border bg-surface-recessed text-xs">
-                        <div className={`w-3 h-3 rounded-full shrink-0 shadow-(--elevation-flat) ${s.color}`} />
+                        <div className={`w-3 h-3 rounded-(--radius-pill) shrink-0 shadow-(--elevation-flat) ${s.color}`} />
                         <div><strong className="font-mono text-ink font-semibold mr-1">{s.ssp}</strong> &mdash; {s.desc}</div>
                       </div>
                     ))}
@@ -525,7 +525,7 @@ export default function ClimateManual() {
         <section id="methodology" className="py-20 px-6 md:px-12 bg-surface-panel border-y border-border w-full">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">SCIENCE</span>
+              <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">SCIENCE</span>
               <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">Methodology &amp; Data Sources</h2>
               <p className="text-base text-ink-faint font-medium">Where the numbers come from and what they cannot tell you.</p>
             </div>
@@ -594,7 +594,7 @@ export default function ClimateManual() {
         {/* NAVIGATION GUIDE */}
         <section className="py-20 px-6 md:px-12 max-w-6xl mx-auto w-full">
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">NAVIGATION</span>
+            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">NAVIGATION</span>
             <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">Platform Navigation</h2>
             <p className="text-base text-ink-faint font-medium">Access all features from the top header bar.</p>
           </div>
@@ -632,7 +632,7 @@ export default function ClimateManual() {
         <section id="faq" className="py-20 px-6 md:px-12 bg-surface-panel border-y border-border w-full">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-16">
-              <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">HELP</span>
+              <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">HELP</span>
               <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">Frequently Asked Questions</h2>
               <p className="text-base text-ink-faint font-medium">Common questions answered.</p>
             </div>
@@ -661,7 +661,7 @@ export default function ClimateManual() {
         {/* SUPPORT */}
         <section id="support" className="py-20 px-6 md:px-12 max-w-6xl mx-auto w-full">
           <div className="text-center mb-16">
-            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-full text-xs font-semibold tracking-widest text-ink-faint font-mono">CONTACT</span>
+            <span className="inline-block px-3 py-1 mb-4 bg-surface-recessed border border-border rounded-(--radius-pill) text-xs font-semibold tracking-widest text-ink-faint font-mono">CONTACT</span>
             <h2 className="text-3xl font-semibold text-ink mb-3 tracking-tight">Need Help?</h2>
             <p className="text-base text-ink-faint font-medium">Our team is here to support you.</p>
           </div>
@@ -735,7 +735,7 @@ export default function ClimateManual() {
         >
           <div className="relative max-w-7xl max-h-full w-full h-full flex items-center justify-center">
             <button 
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
+              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 text-white rounded-(--radius-pill) flex items-center justify-center hover:bg-black/70 transition-colors"
               onClick={(e) => { e.stopPropagation(); setZoomedImage(null); }}
             >
               <X size={20} />

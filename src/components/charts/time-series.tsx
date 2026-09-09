@@ -84,7 +84,7 @@ export function TimeSeriesChart({
 
   if (!geometry) {
     return (
-      <p className="rounded-(--radius-control) border border-dashed border-[var(--color-border)] px-3 py-4 text-center text-[12px] text-[var(--color-ink-faint)]">
+      <p className="rounded-(--radius-control) border border-dashed border-border px-3 py-4 text-center text-[12px] text-ink-faint">
         No time series available.
       </p>
     );
@@ -253,16 +253,16 @@ export function TimeSeriesChart({
 
       {hover && readings.length > 0 && (
         <div
-          className="pointer-events-none absolute top-1 z-10 w-[168px] rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-2.5 py-2 shadow-(--elevation-flat)"
+          className="pointer-events-none absolute top-1 z-10 w-[168px] rounded-(--radius-control) border border-border bg-surface-recessed px-2.5 py-2 shadow-(--elevation-flat)"
           style={tooltipStyle(hover.clientX, hover.containerWidth, 168)}
         >
           <div className="tnum text-[11px] font-semibold">{hoveredYear}</div>
           <dl className="mt-1 space-y-0.5 text-[11px]">
             {readings.map(({ line, value }) => (
               <div key={line.id} className="flex items-baseline justify-between gap-2">
-                <dt className="flex items-center gap-1.5 text-[var(--color-ink-muted)]">
+                <dt className="flex items-center gap-1.5 text-ink-muted">
                   <span
-                    className="inline-block h-[3px] w-3 rounded-full"
+                    className="inline-block h-[3px] w-3 rounded-(--radius-pill)"
                     style={{ background: line.color }}
                   />
                   {line.label}
@@ -287,8 +287,8 @@ export function TimeSeriesChart({
             aria-pressed={focused === line.id}
             className={`flex items-center gap-1.5 rounded px-1.5 py-0.5 text-[11.5px] transition-colors ${
  focused === line.id
-                ? "bg-[var(--color-surface-hover)] font-semibold text-[var(--color-ink)]"
-                : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
+                ? "bg-surface-hover font-semibold text-ink"
+                : "text-ink-muted hover:text-ink"
             }`}
           >
             <span

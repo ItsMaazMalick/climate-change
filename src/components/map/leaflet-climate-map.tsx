@@ -316,8 +316,8 @@ function MapContent(props: ClimateMapProps) {
       )}
 
       {loading && (
-        <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1001] flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 rounded-full border border-leaf bg-surface-panel px-5 py-2.5 text-xs font-semibold text-brand-deep shadow-(--elevation-overlay) ring-1 ring-leaf/20 ">
-          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-leaf border-t-transparent" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1001] flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 rounded-(--radius-pill) border border-leaf bg-surface-panel px-5 py-2.5 text-xs font-semibold text-brand-deep shadow-(--elevation-overlay) ring-1 ring-leaf/20 ">
+          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-(--radius-pill) border-2 border-leaf border-t-transparent" />
           <span>Aggregating CMIP6 field by region…</span>
         </div>
       )}
@@ -333,10 +333,10 @@ function MapContent(props: ClimateMapProps) {
 
       {!selection && !loading && data && (
         <div className="pointer-events-none absolute left-1/2 top-8 z-[1001] -translate-x-1/2">
-          <div className="flex items-center gap-2 rounded-full border border-leaf bg-surface-panel px-4 py-2.5 text-sm font-semibold text-brand shadow-(--elevation-overlay) ring-2 ring-leaf/20 ">
+          <div className="flex items-center gap-2 rounded-(--radius-pill) border border-leaf bg-surface-panel px-4 py-2.5 text-sm font-semibold text-brand shadow-(--elevation-overlay) ring-2 ring-leaf/20 ">
             <span className="relative flex h-3 w-3">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-leaf opacity-75" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-brand" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-(--radius-pill) bg-leaf opacity-75" />
+              <span className="relative inline-flex h-3 w-3 rounded-(--radius-pill) bg-brand" />
             </span>
             <span>Hover a region for its value · click to inspect a point</span>
           </div>
