@@ -42,6 +42,7 @@ interface RankingsResponse {
  * served entirely from PostgreSQL — ordering 126 districts is an index scan
  * there and a full sweep of every gridded field anywhere else.
  */
+import { NextStepCard } from "@/components/nav/next-step-card";
 import { useCountry } from "@/lib/country-context";
 
 export function HotspotsPanel() {
@@ -59,8 +60,8 @@ export function HotspotsPanel() {
   const worst = rankings.data?.ranked ?? [];
   const max = worst.length ? Math.max(...worst.map((r) => Math.abs(r.value))) : 1;
 
-  const level1Label = country === "UZB" ? "Regions" : "Provinces";
-  const level2Label = country === "UZB" ? "Districts" : "Districts";
+  const level1Label = config.adminLevels.level1.split(" ")[0] ?? "Regions";
+  const level2Label = config.adminLevels.level2.split(" ")[0] ?? "Districts";
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
@@ -195,11 +196,13 @@ export function HotspotsPanel() {
             </section>
           )}
 
-          <p className="mt-6 max-w-2xl rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-[12px] leading-relaxed text-slate-600 font-medium">
-            ℹ️ {rankings.data.note}
+          <p className="mt-6 max-w-2xl rounded-(--radius-container) border border-border bg-surface-recessed p-4 text-xs leading-relaxed text-ink-muted">
+            {rankings.data.note}
           </p>
         </>
       ) : null}
+
+      <NextStepCard from="hotspots" state={{ indicator, scenario, period }} />
     </div>
   );
 }

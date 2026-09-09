@@ -5,6 +5,7 @@ import { CountryProvider } from "@/lib/country-context";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { GuidedTour } from "@/components/tour/guided-tour";
+import { PresenterMode } from "@/components/present/presenter-mode";
 
 import "./globals.css";
 
@@ -73,6 +74,7 @@ export default function RootLayout({
           <SiteFooter />
           <Suspense fallback={null}>
             <GuidedTour />
+            <PresenterMode />
           </Suspense>
         </CountryProvider>
       </body>

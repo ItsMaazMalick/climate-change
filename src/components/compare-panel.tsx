@@ -12,6 +12,7 @@ import {
   PeriodPicker,
   PlaceSearch,
 } from "@/components/controls";
+import { NextStepCard } from "@/components/nav/next-step-card";
 import type { Place } from "@/lib/climate/places";
 import {
   formatValue,
@@ -340,6 +341,18 @@ export function ComparePanel({ places }: { places: Place[] }) {
           ))}
         </div>
       </Section>
+
+      <NextStepCard
+        from="compare"
+        state={{
+          place: place.id,
+          lat: String(place.lat),
+          lon: String(place.lon),
+          indicator,
+          scenario,
+          period,
+        }}
+      />
     </div>
   );
 }

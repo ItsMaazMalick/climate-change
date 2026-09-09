@@ -201,6 +201,20 @@
   }
 }
 
+/* ---- Presenter mode (?present=1) ----------------------------------- */
+:root[data-present="1"] {
+  font-size: 115%;
+}
+:root[data-present="1"] [data-dev-only] {
+  display: none !important;
+}
+:root[data-present="1"] main {
+  padding-bottom: 3rem;
+}
+:root[data-present="1"] svg [data-series] {
+  stroke-width: 2.5px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

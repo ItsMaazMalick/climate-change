@@ -131,7 +131,7 @@ export const SCENARIOS = {
       "Models driven by observed greenhouse gases, aerosols, land use and solar/volcanic forcing. This is the reference the projections are measured against, not a prediction.",
     globalWarming2100: null,
     rank: 0,
-    color: "#6b7280",
+    color: "#626d7d",
   },
   ssp119: {
     id: "ssp119",
@@ -145,7 +145,7 @@ export const SCENARIOS = {
       "The most ambitious pathway in CMIP6. Net-zero CO₂ around 2050, deep and immediate cuts across all sectors. Roughly consistent with holding warming near 1.5 °C.",
     globalWarming2100: "1.0–1.8 °C",
     rank: 1,
-    color: "#0e7490",
+    color: "#00add0",
   },
   ssp126: {
     id: "ssp126",
@@ -159,7 +159,7 @@ export const SCENARIOS = {
       "Strong, sustained mitigation with net-zero CO₂ in the second half of the century. Broadly the successor to RCP2.6 and roughly aligned with the upper end of the Paris goals.",
     globalWarming2100: "1.3–2.4 °C",
     rank: 2,
-    color: "#15803d",
+    color: "#133a63",
   },
   ssp245: {
     id: "ssp245",
@@ -173,7 +173,7 @@ export const SCENARIOS = {
       "Development follows historical patterns; emissions stay near current levels to mid-century then decline. Often treated as the closest analogue to stated national policies.",
     globalWarming2100: "2.1–3.5 °C",
     rank: 3,
-    color: "#b45309",
+    color: "#f4922a",
   },
   ssp370: {
     id: "ssp370",
@@ -187,7 +187,7 @@ export const SCENARIOS = {
       "Resurgent nationalism, weak international cooperation and slow technological change. Emissions roughly double by 2100. High aerosol and land-use forcing.",
     globalWarming2100: "2.8–4.6 °C",
     rank: 4,
-    color: "#c2410c",
+    color: "#e0242a",
   },
   ssp585: {
     id: "ssp585",
@@ -201,7 +201,7 @@ export const SCENARIOS = {
       "Rapid, energy-intensive growth built on abundant fossil fuels. The high end of the CMIP6 range; now widely regarded as a low-likelihood upper bound rather than business as usual.",
     globalWarming2100: "3.3–5.7 °C",
     rank: 5,
-    color: "#991b1b",
+    color: "#8a1a1d",
   },
 } as const satisfies Record<ScenarioId, Scenario>;
 
