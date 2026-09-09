@@ -186,6 +186,7 @@ export function ClimateStory({ place }: { place: Place }) {
 
       {/* ---------------------------------------------------- indicators - */}
       <Section
+        tour="place-indicators"
         title="Indicators"
         subtitle={`Baseline 1995–2014 against ${PERIODS[period].shortLabel} under ${SCENARIOS[scenario].label}.`}
       >
@@ -395,14 +396,16 @@ export function ClimateStory({ place }: { place: Place }) {
 function Section({
   title,
   subtitle,
+  tour,
   children,
 }: {
   title: string;
   subtitle?: string;
+  tour?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="tier-flat mb-6 p-6">
+    <section className="tier-flat mb-6 p-6" data-tour={tour}>
       <h2 className="text-base font-semibold tracking-tight text-ink">{title}</h2>
       {subtitle && (
         <p className="mb-4 mt-1 max-w-2xl text-xs leading-relaxed text-ink-muted">

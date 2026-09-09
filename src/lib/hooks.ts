@@ -154,6 +154,26 @@ export function useStaticJson<T>(url: string): T | null {
 }
 
 /**
+ * Merge this view's state into an existing query string, leaving every
+ * parameter it does not own untouched.
+ *
+ * Rebuilding the query string from scratch is what broke the guided tour:
+ * `?tour=1`, `?present=1` and `?country=` all belong to other components, and
+ * were wiped the moment a view using `useUrlState` hydrated.
+ */
+export function mergeSearchParams(
+  currentSearch: string,
+  state: Record<string, string>,
+): string {
+  const params = new URLSearchParams(currentSearch);
+  for (const [key, value] of Object.entries(state)) {
+    if (value) params.set(key, String(value));
+    else params.delete(key);
+  }
+  return params.toString();
+}
+
+/**
  * Mirror state into the query string so any view in the explorer is a URL
  * that can be shared, bookmarked or cited — which for a data platform is
  * closer to a requirement than a nicety.
@@ -187,12 +207,10 @@ export function useUrlState<T extends Record<string, string>>(
 
   useEffect(() => {
     if (!hydrated.current) return;
-    const params = new URLSearchParams();
-    for (const [key, value] of Object.entries(state)) {
-      if (value) params.set(key, String(value));
-    }
-    const search = params.toString();
-    const target = search ? `?${search}` : window.location.pathname;
+    const search = mergeSearchParams(window.location.search, state);
+    const target = search
+      ? `${window.location.pathname}?${search}`
+      : window.location.pathname;
     if (window.location.search !== (search ? `?${search}` : "")) {
       window.history.replaceState(null, "", target);
     }

@@ -125,7 +125,7 @@ export function HotspotsPanel() {
         </div>
       ) : rankings.data ? (
         <>
-          <div className="tier-raised mb-6 p-5">
+          <div className="tier-raised mb-6 p-5" data-tour="hotspots-ranking">
             <h2 className="mb-1 text-base font-semibold tracking-tight text-ink">
               Largest increase in {rankings.data.indicator.label}
             </h2>
@@ -135,7 +135,12 @@ export function HotspotsPanel() {
 
             <ol className="space-y-1">
               {worst.map((row, index) => (
-                <li key={row.areaId} className="flex items-center gap-3 rounded-(--radius-control) p-1.5 transition-colors hover:bg-surface-hover">
+                <li key={row.areaId}>
+                  <Link
+                    href={`/explore?country=${country}&lat=${row.centroid.lat}&lon=${row.centroid.lon}&indicator=${indicator}&scenario=${scenario}&period=${period}`}
+                    className="flex items-center gap-3 rounded-(--radius-control) p-1.5 transition-colors hover:bg-surface-hover"
+                    title={`Open ${row.name} in Explore`}
+                  >
                   <span
                     className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-(--radius-pill) text-[11px] font-semibold tabular-nums ${
  index < 3 ? "bg-ink text-ink-inverse" : "bg-surface-recessed text-ink-faint"
@@ -160,6 +165,7 @@ export function HotspotsPanel() {
                   <span className="w-[76px] shrink-0 text-right text-[13px] font-semibold text-ink tabular-nums" data-numeric>
                     {formatValue(row.value, indicator, "anomaly")}
                   </span>
+                  </Link>
                 </li>
               ))}
             </ol>

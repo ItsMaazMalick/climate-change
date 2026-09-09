@@ -362,7 +362,7 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mb-6">
+    <section className="mb-6" data-tour={`compare-${index}`}>
       <div className="tier-flat p-5">
         <div className="mb-4 flex gap-3">
           <span
