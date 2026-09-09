@@ -261,3 +261,37 @@ export function roundForDisplay(
 export function displayPrecision(indicatorId: string): number {
   return INDICATORS[indicatorId]?.precision ?? 1;
 }
+
+/**
+ * Round a baseline/delta/projected triple so the three numbers **add up on
+ * screen**.
+ *
+ * Rounding each of the three independently is what produced
+ * `24.5 + 1.5 = 25.9` in the readout: the true values were 24.45, 1.46 and
+ * 25.91, each individually correct to one decimal but visibly inconsistent
+ * together. A reader — especially a reviewer — reads that as a broken number.
+ *
+ * The change is the primary scientific claim, so the baseline and the delta
+ * are rounded from source and the displayed projected is their sum. The
+ * displayed projected can therefore differ from the independently rounded
+ * projected by one unit in the last place; that is the honest trade, and it is
+ * the one that keeps the panel self-consistent (docs/AUDIT.md, D7).
+ */
+export function coherentDisplay(
+  baseline: number | null | undefined,
+  delta: number | null | undefined,
+  indicatorId: string,
+): { baseline: number | null; delta: number | null; projected: number | null } {
+  const p = displayPrecision(indicatorId);
+  const b = roundForDisplay(baseline, p);
+  const d = roundForDisplay(delta, p);
+  if (b === null || d === null) {
+    return {
+      baseline: b,
+      delta: d,
+      projected: b === null || d === null ? null : b + d,
+    };
+  }
+  // Re-round the sum to kill binary floating-point tails (24.5 + 1.5).
+  return { baseline: b, delta: d, projected: roundForDisplay(b + d, p) };
+}

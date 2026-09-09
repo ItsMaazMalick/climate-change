@@ -57,8 +57,15 @@ export type SourceKind = "grid" | "upstream" | "database";
 
 export interface ResolutionMeta {
   source: SourceKind;
-  /** `point` | `area` | `national` — the spatial claim being made. */
-  spatialScope: "point" | "area" | "national";
+  /**
+   * `point`     — read from a locally rasterised 0.25° cell.
+   * `interpolated` — spatial pattern interpolated from elevation/latitude and
+   *                  anchored to the published national aggregate. Real
+   *                  magnitude, modelled spatial detail.
+   * `area`      — mean of the cells inside an admin unit.
+   * `national`  — the published country-wide aggregate, unmodified.
+   */
+  spatialScope: "point" | "interpolated" | "area" | "national";
   /**
    * Set when the nearest valued cell was not the cell containing the request
    * point (coastline, model land mask). Distance in whole grid cells.
@@ -210,13 +217,17 @@ export async function resolvePoint(query: PointQuery): Promise<ClimateValue> {
   if (syntheticField) {
     const hit = nearestValued(syntheticField, query.lon, query.lat);
     if (hit) {
+      // Honest label: the magnitude is the published CCKP national value
+      // (see lib/climate/national-anchors.ts), but the spatial detail is an
+      // elevation/latitude interpolation, not a rasterised grid cell.
       return {
         ...base,
         value: hit.value,
         meta: {
           source: "grid",
-          spatialScope: "point",
+          spatialScope: "interpolated",
           agreement: 1,
+          note: `Anchored to the published ${countryConfig.name} national value for this indicator, pathway and horizon; the variation within the country is interpolated from elevation and latitude, not read from a rasterised grid cell.`,
         },
       };
     }

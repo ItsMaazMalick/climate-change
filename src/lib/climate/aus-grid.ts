@@ -1,5 +1,5 @@
 import { COUNTRIES } from "./countries";
-import { deltaAtPercentile, percentileSpread } from "./derive";
+import { composeAnchoredField } from "./synthetic-field";
 import type { GridField, GridGeometry } from "./grid";
 import {
   displayUnit,
@@ -275,20 +275,12 @@ export function getAustraliaField(query: AusFieldQuery): GridField {
   const ind = INDICATORS[variable];
   const unit = ind ? displayUnit(ind.unit, variable, product) : "°C";
 
-  const isBaselinePeriod = period === "1995-2014" || scenario === "historical";
-  const effectiveProduct = isBaselinePeriod ? "climatology" : product;
-
   const baseVal = BASELINE_VALUES[variable] ?? 20.0;
   const warmingBase =
     (SCENARIO_WARMING_2050[scenario] ?? 1.48) * (PERIOD_FACTORS[period] ?? 1.0);
 
-  const values: Array<number | null> = new Array(AUS_GRID.cellCount);
-  const significance: Array<number | null> = new Array(AUS_GRID.cellCount);
-
-  let finiteSum = 0;
-  let finiteCount = 0;
-  let min = Number.POSITIVE_INFINITY;
-  let max = Number.NEGATIVE_INFINITY;
+  const baselinePattern: Array<number | null> = new Array(AUS_GRID.cellCount).fill(null);
+  const anomalyPattern: Array<number | null> = new Array(AUS_GRID.cellCount).fill(null);
 
   for (let r = 0; r < AUS_GRID.nLat; r += 1) {
     const lat = AUS_GRID.latMin + (r + 0.5) * AUS_GRID.resolution;
@@ -300,41 +292,28 @@ export function getAustraliaField(query: AusFieldQuery): GridField {
       const index = r * AUS_GRID.nLon + c;
       const lon = AUS_GRID.lonMin + (c + 0.5) * AUS_GRID.resolution;
 
-      const inside = isAustraliaCellInside(lon, lat);
-      if (!inside) {
-        values[index] = null;
-        significance[index] = 0;
-        continue;
-      }
+      if (!isAustraliaCellInside(lon, lat)) continue;
 
       const elev = estimateElevation(lon, lat);
       const lapse = -(elev / 1000) * 6.5; // -6.5°C per 1 km
       const ctx: AusCellContext = { baseVal, latFactor, lapse, elev, lon, lat, warmingBase };
 
-      const climBaseline = ausBaselineClimatology(variable, ctx);
-      let cellValue: number;
-      let sig = 1;
-
-      if (isBaselinePeriod) {
-        cellValue = climBaseline;
-        sig = 0;
-      } else {
-        const anomMedian = ausAnomalyMedian(variable, ctx);
-        const delta = deltaAtPercentile(anomMedian, variable, percentile) ?? anomMedian;
-        const band = percentileSpread(anomMedian, variable);
-        sig = band.p10 !== null && band.p90 !== null && band.p10 < 0 && band.p90 > 0 ? 2 : 1;
-        cellValue = effectiveProduct === "climatology" ? climBaseline + delta : delta;
-      }
-
-      values[index] = cellValue;
-      significance[index] = sig;
-
-      finiteSum += cellValue;
-      finiteCount += 1;
-      if (cellValue < min) min = cellValue;
-      if (cellValue > max) max = cellValue;
+      baselinePattern[index] = ausBaselineClimatology(variable, ctx);
+      anomalyPattern[index] = ausAnomalyMedian(variable, ctx);
     }
   }
+
+  const composed = composeAnchoredField({
+    country: "AUS",
+    variable,
+    scenario,
+    period: String(period),
+    percentile,
+    product,
+    baselinePattern,
+    anomalyPattern,
+  });
+  const { values, significance, stats, effectiveProduct } = composed;
 
   return {
     spec: {
@@ -350,13 +329,7 @@ export function getAustraliaField(query: AusFieldQuery): GridField {
     source: "cmip6-x0.25",
     units: unit,
     grid: AUS_GRID,
-    stats: {
-      count: finiteCount,
-      min: finiteCount > 0 ? min : null,
-      max: finiteCount > 0 ? max : null,
-      // Full precision — rounding happens at render (D7).
-      mean: finiteCount > 0 ? finiteSum / finiteCount : null,
-    },
+    stats,
     values,
     significance,
   };

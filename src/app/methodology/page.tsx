@@ -39,6 +39,30 @@ export default async function MethodologyPage() {
         </p>
       </header>
 
+      <div className="mb-6 rounded-(--radius-container) border-l-4 border-warn bg-surface-recessed p-4">
+        <p className="text-[13px] font-semibold text-ink">
+          Where each number comes from
+        </p>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-ink-muted">
+          <strong>Pakistan</strong> is served from a locally rasterised CMIP6
+          0.25° grid — 1,512 extracted fields — so a point value is a real grid
+          cell. <strong>Uzbekistan, Australia and New Zealand</strong> have no
+          local raster yet. For those, the magnitude is the{" "}
+          <strong>published CCKP national value</strong> (1,344 values fetched
+          from the aggregate API and stored in{" "}
+          <code className="rounded bg-surface-panel px-1 font-mono text-[11.5px]">
+            data/cckp-national.json
+          </code>
+          ), and the variation within the country is <strong>interpolated</strong>{" "}
+          from elevation and latitude. Those readouts are labelled{" "}
+          <em>interpolated</em>, never presented as grid cells. Run{" "}
+          <code className="rounded bg-surface-panel px-1 font-mono text-[11.5px]">
+            pnpm grid:extract
+          </code>{" "}
+          to replace the interpolation with real rasters.
+        </p>
+      </div>
+
       <div className="mb-10 rounded-(--radius-container) border-l-4 border-warn bg-surface-recessed p-4">
         <p className="text-[13px] font-semibold text-ink">
           Read this before quoting an individual model

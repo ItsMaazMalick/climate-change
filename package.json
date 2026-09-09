@@ -24,7 +24,8 @@
     "db:load": "tsx scripts/load-grid.ts",
     "grid:extract": "python -m cckp_pipeline.cli extract",
     "warm": "tsx scripts/warm-cache.ts",
-    "geo:build": "tsx scripts/build-boundaries.ts"
+    "geo:build": "tsx scripts/build-boundaries.ts",
+    "anchors:fetch": "tsx scripts/fetch-national-anchors.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",

@@ -316,7 +316,50 @@
     box-shadow: var(--elevation-raised);
   }
 
-  /* ---- Inverted deep section (hero / footer bands) --------------- */
+  /* ---- Light brand hero band -------------------------------------
+   * The product is a light theme. Heroes stay light: white → cream with
+   * low-opacity leaf glows and a faint brand grid. Text is forest green on
+   * near-white, so contrast never depends on where a glow happens to land. */
+  .section-brand {
+    position: relative;
+    color: var(--ink);
+    background-color: var(--surface-panel);
+    background-image:
+      radial-gradient(620px 380px at 100% 0%, rgb(var(--leaf-glow) / 0.16), transparent 62%),
+      radial-gradient(520px 340px at 0% 100%, hsl(128 26% 40% / 0.09), transparent 60%),
+      linear-gradient(168deg, #ffffff 0%, var(--n-25) 55%, var(--n-50) 100%);
+    border-radius: var(--radius-overlay);
+    overflow: hidden;
+    isolation: isolate;
+    box-shadow: var(--elevation-raised);
+  }
+  .section-brand::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(hsl(128 26% 30% / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(128 26% 30% / 0.05) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask: radial-gradient(70% 70% at 85% 10%, #000, transparent 90%);
+    mask: radial-gradient(70% 70% at 85% 10%, #000, transparent 90%);
+    pointer-events: none;
+  }
+  /* A leaf accent rule along the top edge. */
+  .section-brand::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      var(--forest-600),
+      var(--leaf-500) 45%,
+      var(--earth-400) 100%
+    );
+  }
+
+  /* ---- Inverted deep section (kept for non-text bands) ----------- */
   .section-deep {
     position: relative;
     color: var(--n-100);

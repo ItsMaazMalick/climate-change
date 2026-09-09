@@ -37,48 +37,35 @@ export function Landing({
   return (
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-10">
       {/* ---- hero ---------------------------------------------------- */}
-      <section className="section-deep relative grid gap-10 p-8 sm:p-11 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:p-14">
-        <span
-          className="orb h-72 w-72"
-          style={{ left: "-5rem", top: "-4rem", background: "rgb(141 198 63 / 0.85)" }}
-        />
-        <span
-          className="orb h-80 w-80"
-          style={{
-            right: "-6rem",
-            bottom: "-5rem",
-            background: "rgb(105 160 70 / 0.7)",
-            animationDelay: "-7s",
-          }}
-        />
-
+      <section className="section-brand grid gap-10 p-8 sm:p-11 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:p-14">
         <div className="relative z-10">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-(--radius-pill) border border-[rgb(255_255_255/0.18)] bg-[rgb(255_255_255/0.08)] px-3 py-1 text-2xs font-semibold uppercase tracking-(--tracking-caps) text-[rgb(255_255_255/0.8)]">
-            <span className="h-1.5 w-1.5 rounded-(--radius-pill) bg-leaf shadow-[0_0_10px_2px_rgb(var(--leaf-glow))]" />
+          <p className="mb-5 inline-flex items-center gap-2 rounded-(--radius-pill) border border-leaf bg-leaf-soft px-3 py-1 text-2xs font-semibold uppercase tracking-(--tracking-caps) text-brand-deep">
+            <span className="h-1.5 w-1.5 rounded-(--radius-pill) bg-leaf shadow-[0_0_8px_1px_rgb(var(--leaf-glow))]" />
             Earth Scan Systems · Climate Intelligence
           </p>
-          <h1 className="text-[clamp(2.15rem,4.8vw,3.5rem)] font-semibold leading-[1.03] tracking-tight text-white">
+          <h1 className="text-[clamp(2.15rem,4.8vw,3.5rem)] font-semibold leading-[1.03] tracking-tight text-brand-deep">
             How the climate of four countries could change under each{" "}
-            <span className="bg-gradient-to-r from-[#cfe7a5] via-[#8dc63f] to-[#e2c79a] bg-clip-text text-transparent">
+            <span className="relative whitespace-nowrap text-brand">
               emissions pathway
+              <span
+                aria-hidden
+                className="absolute inset-x-0 bottom-[0.08em] -z-10 h-[0.32em] rounded-(--radius-control) bg-leaf/45"
+              />
             </span>
             .
           </h1>
-          <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-[rgb(255_255_255/0.72)]">
+          <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-ink-muted">
             A projection platform for Pakistan, Uzbekistan, Australia and New
             Zealand — not a forecast. Every number traces to a published CMIP6
             value or a documented derivation from one.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/explore" className="btn btn-leaf group">
+            <Link href="/explore" className="btn btn-primary group">
               Start exploring
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
-            <Link
-              href="/explore?tour=1"
-              className="btn border border-[rgb(255_255_255/0.22)] bg-[rgb(255_255_255/0.07)] text-[rgb(255_255_255/0.88)] hover:bg-[rgb(255_255_255/0.14)] hover:text-white"
-            >
+            <Link href="/explore?tour=1" className="btn btn-secondary">
               <PlayCircle className="h-4 w-4" /> Guided tour · 3 min
             </Link>
           </div>
@@ -87,7 +74,7 @@ export function Landing({
             {PROVENANCE.map((p) => (
               <span
                 key={p}
-                className="rounded-(--radius-pill) border border-[rgb(255_255_255/0.14)] bg-[rgb(255_255_255/0.07)] px-2.5 py-1 text-2xs font-medium text-[rgb(255_255_255/0.68)]"
+                className="rounded-(--radius-pill) border border-border bg-surface-recessed px-2.5 py-1 text-2xs font-medium text-ink-muted"
                 data-numeric
               >
                 {p}
@@ -96,8 +83,8 @@ export function Landing({
           </div>
         </div>
 
-        <div className="relative z-10 rounded-(--radius-overlay) border border-[rgb(255_255_255/0.14)] bg-[rgb(255_255_255/0.06)] p-6 shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_30px_60px_-20px_rgb(0_0_0/0.5)]">
-          <PathwayBars onDark />
+        <div className="tier-recessed relative z-10 p-6">
+          <PathwayBars />
         </div>
       </section>
 

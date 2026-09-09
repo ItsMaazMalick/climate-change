@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { ArrowDownRight, ArrowUpRight, Info, Minus } from "lucide-react";
 
+import { coherentDisplay } from "@/lib/climate/derive";
 import { formatValue } from "@/lib/climate/taxonomy";
 
 /**
@@ -43,12 +44,18 @@ export function MetricCard({
 
   const toneColor =
     tone === "adverse" ? "var(--danger)" : tone === "benign" ? "var(--ok)" : "var(--accent-600)";
-  const hasDelta = delta !== null && delta !== undefined;
-  const Arrow = !hasDelta || delta === 0 ? Minus : delta! > 0 ? ArrowUpRight : ArrowDownRight;
+
+  // Round the triple together so baseline + change = projected on screen (D7).
+  // `projected` from the API is already baseline + delta at full precision; we
+  // only re-derive the *displayed* value so the three never disagree by a tenth.
+  const shown = coherentDisplay(baseline, delta, indicatorId);
+  const hasDelta = shown.delta !== null;
+  const Arrow =
+    !hasDelta || shown.delta === 0 ? Minus : shown.delta! > 0 ? ArrowUpRight : ArrowDownRight;
 
   // Baseline vs projected as a paired mini-bar (relative to a shared max).
-  const b = typeof baseline === "number" ? baseline : null;
-  const p = typeof projected === "number" ? projected : null;
+  const b = shown.baseline;
+  const p = shown.projected ?? (typeof projected === "number" ? projected : null);
   const lo = b !== null && p !== null ? Math.min(0, b, p) : 0;
   const hi = b !== null && p !== null ? Math.max(b, p) : 1;
   const span = hi - lo || 1;
@@ -92,7 +99,7 @@ export function MetricCard({
             data-numeric
             style={{ color: toneColor }}
           >
-            {hasDelta ? formatValue(delta, indicatorId, "anomaly") : "—"}
+            {hasDelta ? formatValue(shown.delta, indicatorId, "anomaly") : "—"}
           </span>
           <span
             className="mb-1.5 inline-flex h-7 w-7 items-center justify-center rounded-(--radius-pill)"

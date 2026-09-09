@@ -113,33 +113,29 @@ export function ClimateStory({ place }: { place: Place }) {
   return (
     <div className="mx-auto max-w-5xl px-5 py-9">
       {/* ---------------------------------------------------- header ---- */}
-      <header className="section-deep mb-7 p-7 sm:p-9">
-        <span
-          className="orb h-56 w-56"
-          style={{ right: "-3rem", top: "-3rem", background: "rgb(141 198 63 / 0.7)" }}
-        />
+      <header className="section-brand mb-7 p-7 sm:p-9">
         <div className="relative z-10">
           <Link
             href="/places"
-            className="text-2xs font-medium text-[rgb(255_255_255/0.6)] transition-colors hover:text-white"
+            className="text-2xs font-medium text-ink-faint transition-colors hover:text-brand"
           >
             ← All places
           </Link>
-          <p className="mt-3 flex items-center gap-2 text-2xs font-semibold uppercase tracking-(--tracking-caps) text-[rgb(255_255_255/0.6)]">
-            <span className="flex h-5 w-5 items-center justify-center rounded-(--radius-pill) bg-leaf text-[11px] font-semibold text-(--forest-900) tabular-nums">
+          <p className="mt-3 flex items-center gap-2 text-2xs font-semibold uppercase tracking-(--tracking-caps) text-ink-faint">
+            <span className="flex h-5 w-5 items-center justify-center rounded-(--radius-pill) bg-brand text-[11px] font-semibold text-white tabular-nums">
               4
             </span>
             Place profile · {countryName}
           </p>
-          <h1 className="mt-2.5 text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold leading-tight tracking-tight text-white">
+          <h1 className="mt-2.5 text-[clamp(1.75rem,3.4vw,2.5rem)] font-semibold leading-tight tracking-tight text-brand-deep">
             {place.name}
           </h1>
-          <p className="mt-1.5 text-[13px] tabular-nums text-[rgb(255_255_255/0.68)]" data-numeric>
+          <p className="mt-1.5 text-[13px] tabular-nums text-ink-muted" data-numeric>
             {place.province} · {place.lat.toFixed(3)}°N, {place.lon.toFixed(3)}°E ·{" "}
             {place.elevation.toLocaleString()} m
           </p>
           {place.note && (
-            <p className="mt-4 max-w-2xl border-l-2 border-leaf pl-3 text-[13.5px] leading-relaxed text-[rgb(255_255_255/0.75)]">
+            <p className="mt-4 max-w-2xl border-l-2 border-leaf pl-3 text-[13.5px] leading-relaxed text-ink-muted">
               {place.note}
             </p>
           )}

@@ -1,5 +1,5 @@
 import { COUNTRIES } from "./countries";
-import { deltaAtPercentile, percentileSpread } from "./derive";
+import { composeAnchoredField } from "./synthetic-field";
 import type { GridField, GridGeometry } from "./grid";
 import {
   displayUnit,
@@ -192,19 +192,14 @@ export function getUzbekistanField(query: UzbFieldQuery): GridField {
   const ind = INDICATORS[variable];
   const unit = ind ? displayUnit(ind.unit, variable, product) : "°C";
 
-  const isBaselinePeriod = period === "1995-2014" || scenario === "historical";
-  const effectiveProduct = isBaselinePeriod ? "climatology" : product;
-
+  // Shape only — the national mean is replaced with the published CCKP value
+  // by `composeAnchoredField`, so these constants set the spatial gradient,
+  // never the magnitude a reader quotes.
   const baseVal = BASELINE_VALUES[variable] ?? 15.0;
   const warmingBase = (SCENARIO_WARMING_2050[scenario] ?? 1.76) * (PERIOD_FACTORS[period] ?? 1.0);
 
-  const values: Array<number | null> = new Array(UZB_GRID.cellCount);
-  const significance: Array<number | null> = new Array(UZB_GRID.cellCount);
-
-  let finiteSum = 0;
-  let finiteCount = 0;
-  let min = Number.POSITIVE_INFINITY;
-  let max = Number.NEGATIVE_INFINITY;
+  const baselinePattern: Array<number | null> = new Array(UZB_GRID.cellCount).fill(null);
+  const anomalyPattern: Array<number | null> = new Array(UZB_GRID.cellCount).fill(null);
 
   for (let r = 0; r < UZB_GRID.nLat; r += 1) {
     const lat = UZB_GRID.latMin + (r + 0.5) * UZB_GRID.resolution;
@@ -213,44 +208,28 @@ export function getUzbekistanField(query: UzbFieldQuery): GridField {
     for (let c = 0; c < UZB_GRID.nLon; c += 1) {
       const index = r * UZB_GRID.nLon + c;
       const lon = UZB_GRID.lonMin + (c + 0.5) * UZB_GRID.resolution;
-
-      const inside = isCellInsideUzbekistan(lon, lat);
-      if (!inside) {
-        values[index] = null;
-        significance[index] = 0;
-        continue;
-      }
+      if (!isCellInsideUzbekistan(lon, lat)) continue;
 
       const elev = estimateElevation(lon, lat);
       const lapse = -(elev / 1000) * 6.2; // -6.2°C per 1km elevation
       const ctx: CellContext = { baseVal, latFactor, lapse, elev, lon, lat, warmingBase };
 
-      const climBaseline = uzbBaselineClimatology(variable, ctx);
-      let cellValue: number;
-      let sig = 1;
-
-      if (isBaselinePeriod) {
-        cellValue = climBaseline;
-        sig = 0;
-      } else {
-        const anomMedian = uzbAnomalyMedian(variable, ctx);
-        const delta = deltaAtPercentile(anomMedian, variable, percentile) ?? anomMedian;
-        const band = percentileSpread(anomMedian, variable);
-        // Models disagree on the direction of change where the band straddles zero.
-        sig = band.p10 !== null && band.p90 !== null && band.p10 < 0 && band.p90 > 0 ? 2 : 1;
-        cellValue =
-          effectiveProduct === "climatology" ? climBaseline + delta : delta;
-      }
-
-      values[index] = cellValue;
-      significance[index] = sig;
-
-      finiteSum += cellValue;
-      finiteCount += 1;
-      if (cellValue < min) min = cellValue;
-      if (cellValue > max) max = cellValue;
+      baselinePattern[index] = uzbBaselineClimatology(variable, ctx);
+      anomalyPattern[index] = uzbAnomalyMedian(variable, ctx);
     }
   }
+
+  const composed = composeAnchoredField({
+    country: "UZB",
+    variable,
+    scenario,
+    period: String(period),
+    percentile,
+    product,
+    baselinePattern,
+    anomalyPattern,
+  });
+  const { values, significance, stats, effectiveProduct } = composed;
 
   return {
     spec: {
@@ -266,13 +245,7 @@ export function getUzbekistanField(query: UzbFieldQuery): GridField {
     source: "cmip6-x0.25",
     units: unit,
     grid: UZB_GRID,
-    stats: {
-      count: finiteCount,
-      min: finiteCount > 0 ? min : null,
-      max: finiteCount > 0 ? max : null,
-      // Full precision — rounding happens at render (D7).
-      mean: finiteCount > 0 ? finiteSum / finiteCount : null,
-    },
+    stats,
     values,
     significance,
   };

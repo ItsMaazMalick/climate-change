@@ -8,6 +8,7 @@ import {
 } from "@/lib/climate/countries";
 import { PROJECTION_TOLERANCE } from "@/lib/climate/derive";
 import { getNZField } from "@/lib/climate/nzl-grid";
+import { nationalAnomaly, nationalBaseline } from "@/lib/climate/national-anchors";
 import { getUzbekistanField } from "@/lib/climate/uzb-grid";
 
 type Gen = (q: {
@@ -110,4 +111,60 @@ describe("country bounds — default coordinate must fall inside (D5)", () => {
       expect(isInsideCountryBounds(lat, lon, code as keyof typeof COUNTRIES)).toBe(true);
     }
   });
+});
+
+describe("generated fields are anchored to real CCKP national values", () => {
+  const CASES_CC = [
+    { name: "Uzbekistan", cc: "UZB", gen: getUzbekistanField as unknown as Gen },
+    { name: "Australia", cc: "AUS", gen: getAustraliaField as unknown as Gen },
+    { name: "New Zealand", cc: "NZL", gen: getNZField as unknown as Gen },
+  ];
+
+  function areaMean(values: Array<number | null>): number {
+    let s = 0;
+    let n = 0;
+    for (const v of values) {
+      if (v == null) continue;
+      s += v;
+      n += 1;
+    }
+    return n ? s / n : Number.NaN;
+  }
+
+  for (const { name, cc, gen } of CASES_CC) {
+    it(`${name}: baseline field mean equals the published national baseline`, () => {
+      const anchor = nationalBaseline(cc, "tas");
+      expect(anchor).not.toBeNull();
+      const f = gen({
+        variable: "tas",
+        scenario: "historical",
+        period: "1995-2014",
+        product: "climatology",
+      });
+      expect(areaMean(f.values)).toBeCloseTo(anchor!, 6);
+    });
+
+    it(`${name}: anomaly field mean equals the published national anomaly`, () => {
+      for (const scenario of ["ssp126", "ssp245", "ssp585"]) {
+        for (const period of ["2040-2059", "2080-2099"]) {
+          const anchor = nationalAnomaly(cc, "tas", scenario, period);
+          expect(anchor).not.toBeNull();
+          const f = gen({ variable: "tas", scenario, period, product: "anomaly" });
+          expect(areaMean(f.values)).toBeCloseTo(anchor!, 6);
+        }
+      }
+    });
+
+    it(`${name}: future absolute mean equals baseline + anomaly anchors`, () => {
+      const b = nationalBaseline(cc, "tas")!;
+      const a = nationalAnomaly(cc, "tas", "ssp245", "2040-2059")!;
+      const f = gen({
+        variable: "tas",
+        scenario: "ssp245",
+        period: "2040-2059",
+        product: "climatology",
+      });
+      expect(areaMean(f.values)).toBeCloseTo(b + a, 6);
+    });
+  }
 });

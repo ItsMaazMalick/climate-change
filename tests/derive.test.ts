@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   assertProjectionInvariant,
+  coherentDisplay,
   deltaAtPercentile,
   deriveDelta,
   deriveProjected,
@@ -161,5 +162,34 @@ describe("spreadFamilyFor", () => {
     expect(spreadFamilyFor("cdd")).toBe("drySpell");
     expect(spreadFamilyFor("cdd65")).toBe("degreeDays");
     expect(spreadFamilyFor("spei12")).toBe("drySpell");
+  });
+});
+
+describe("coherentDisplay", () => {
+  it("makes baseline + change equal projected on screen (D7)", () => {
+    // The exact readout defect: 24.45 + 1.46 = 25.91 rendered as
+    // "24.5 + 1.5 = 25.9".
+    const s = coherentDisplay(24.45, 1.46, "tas");
+    expect(s.baseline).toBe(24.5);
+    expect(s.delta).toBe(1.5);
+    expect(s.projected).toBe(26.0);
+    expect(s.baseline! + s.delta!).toBeCloseTo(s.projected!, 10);
+  });
+
+  it("kills binary floating-point tails in the sum", () => {
+    const s = coherentDisplay(24.5, 1.5, "tas");
+    expect(s.projected).toBe(26);
+  });
+
+  it("respects the indicator's precision (day counts are integers)", () => {
+    const s = coherentDisplay(44.6, 11.7, "hd35");
+    expect(s.baseline).toBe(45);
+    expect(s.delta).toBe(12);
+    expect(s.projected).toBe(57);
+  });
+
+  it("propagates nulls", () => {
+    expect(coherentDisplay(null, 1.5, "tas").projected).toBeNull();
+    expect(coherentDisplay(24.5, null, "tas").projected).toBeNull();
   });
 });
