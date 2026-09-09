@@ -479,8 +479,8 @@ function roundGeometry(geometry: AnyPolygon): AnyPolygon {
   return {
     type: "MultiPolygon",
     coordinates: geometry.coordinates
-      .map(mapRings)
-      .filter((rings) => rings.length > 0),
+      .map((rings: Position[][]) => mapRings(rings))
+      .filter((rings: Position[][]) => rings.length > 0),
   };
 }
 
