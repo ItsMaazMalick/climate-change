@@ -9,17 +9,28 @@ shadow — if a value is needed and not in `tokens.css`, add it there first.
 
 | Role | Family | Notes |
 |---|---|---|
-| UI + headings | Inter Tight (`--font-ui`) | tight tracking on headings |
+| UI + headings | **DM Sans** (`--font-ui`) — the ESS brand face | tight tracking on headings |
 | All numerals, coords, model IDs, scenario codes | JetBrains Mono (`--font-code`) | `.tnum` / `[data-numeric]` → tabular-nums |
 
 Scale (`--fs-*`, also `text-2xs … text-3xl`): **12 / 13 / 14 / 16 / 20 / 28 / 40 / 56**. Nothing between.
 
-## Colour
+## Colour — the official ESS brand
 
-- Ten-step cool neutral ramp `--n-0 … --n-900`.
-- **One** institutional accent, `--accent-500/600/700` (deep blue). Green-as-everything is retired.
-- **Scenario colours are data** — the IPCC AR6 WG1 official SSP palette, published as `--ssp-119 … --ssp-585`. Read them through `scenarioColorVar()` ([`lib/climate/scenario-style.ts`](../src/lib/climate/scenario-style.ts)); never override locally.
-- Map ramps: `--ramp-div-*` (diverging blue↔red about zero) for anomalies; `--ramp-seq-*` (sequential) for absolutes.
+Lifted from the ESS Elementor global kit at escan-systems.com and mirrored in `tokens.css`:
+
+| Token | Hex | Role |
+|---|---|---|
+| `--ess-primary` / `--forest-600` | `#334B35` | deep forest green — primary buttons, headings ink, map chrome |
+| `--ess-accent` / `--leaf-500` | `#8DC63F` | leaf green — highlights, active states, glow, `.btn-leaf` |
+| `--ess-secondary` / `--earth-500` | `#8B5E3C` | earth brown — used sparingly |
+| `--ess-text` / `--n-500` | `#687469` | sage grey-green — muted text |
+| `--ess-cream` / `--n-50` | `#F6F4EC` | recessed surfaces |
+| `--ess-beige` / `--n-100` | `#ECEAE0` | active surfaces |
+| `--ess-sage` / `--n-300` | `#B3C5B5` | strong borders |
+
+Two ramps derive from these: `--forest-900…400` (dark end, used for `.section-deep` heroes) and `--leaf-50…700` (bright end). The neutral ramp is warm sage, not cool grey, so white panels read against a brand-tinted ground.
+
+**Scenario colours stay IPCC AR6** — `--ssp-119 … --ssp-585` — read only through `scenarioColorVar()`. Map ramps stay ColorBrewer diverging for anomalies; the sequential ramp is brand green.
 
 ## Elevation — three tiers, light from top-left
 
@@ -27,7 +38,8 @@ Scale (`--fs-*`, also `text-2xs … text-3xl`): **12 / 13 / 14 / 16 / 20 / 28 / 
 |---|---|
 | `--elevation-recessed` / `.tier-recessed` | inset wells, data wells, inputs |
 | `--elevation-flat` / `.tier-flat` | the default — a 1px hairline, no shadow |
-| `--elevation-raised` / `.tier-raised` | cards that must lift (the MetricCard); two-stop shadow + 1px top highlight |
+| `--elevation-raised` / `.tier-raised` | cards that must lift; five-stop forest-tinted shadow + 1px top highlight + `--raise-sheen` gradient |
+| `.tier-raised-seam` | raised + a scenario/status accent seam and a light-catching gradient border; blooms on hover |
 | `--elevation-overlay` / `.tier-overlay` | menus, popovers, coach-marks, map HUD |
 
 **Forbidden:** WebGL globes, rotating/3D charts, extruded bars, isometric
@@ -53,7 +65,19 @@ hierarchy — the eye lands on the number first, the chart second, chrome last.
 
 ## Component library
 
-`src/components/ui/` — `MetricCard`, `ScenarioSelector`, `UncertaintyStrip`,
+`src/components/ui/` — `MetricCard`, `ScenarioSelector`, `UncertaintyStrip`, `PathwayBars`, `PageHeader`,
 `DataProvenanceFooter` (+ `toCsv`), `EmptyState` / `ErrorState` /
 `SkeletonLoader` / `SkeletonBlock`. Navigation: `src/components/nav/` —
 `CountrySelect`, `ProgressRail`, `NextStepCard`.
+
+## Buttons
+
+`.btn` + one of `.btn-primary` (forest gradient, leaf glow), `.btn-leaf` (bright leaf, dark ink), `.btn-dark`, `.btn-secondary`.
+
+## Enforcement
+
+Zero hardcoded Tailwind palette classes (`slate-*`, `emerald-*`, `rose-*`, …) remain in `src/`. Verify with:
+
+```sh
+grep -rnE '\b(text|bg|border|ring|divide|from|to|via)-(slate|gray|zinc|neutral|stone|emerald|green|teal|cyan|sky|blue|indigo|violet|purple|pink|rose|red|orange|amber|yellow|lime)-[0-9]' src --include=*.tsx --include=*.ts
+```
