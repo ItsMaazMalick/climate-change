@@ -115,7 +115,7 @@ export function MetricCard({
         </div>
       )}
 
-      <div className="relative mt-5 space-y-2.5 border-t border-border pt-3.5">
+      <div className="relative mt-5 space-y-2 rounded-(--radius-control) bg-surface-recessed p-3 shadow-(--elevation-recessed)">
         <BarRow
           name="Baseline"
           value={formatValue(b, indicatorId)}
@@ -155,12 +155,16 @@ function BarRow({
   color: string;
 }) {
   return (
-    <div className="grid grid-cols-[64px_1fr_auto] items-center gap-3">
-      <span className="text-2xs text-ink-faint">{name}</span>
-      <span className="h-1.5 overflow-hidden rounded-(--radius-pill) bg-surface-recessed shadow-(--elevation-recessed)">
+    <div className="grid grid-cols-[58px_1fr_auto] items-center gap-2.5">
+      <span className="text-2xs font-medium text-ink-faint">{name}</span>
+      <span className="h-2 overflow-hidden rounded-(--radius-pill) bg-surface-panel shadow-[inset_0_1px_2px_hsl(128_26%_14%/0.16)]">
         <span
           className="block h-full rounded-(--radius-pill) transition-[width] duration-500"
-          style={{ width: `${Math.max(2, Math.min(100, pct))}%`, background: color }}
+          style={{
+            width: `${Math.max(3, Math.min(100, pct))}%`,
+            background: color,
+            boxShadow: `0 0 8px -1px ${color}`,
+          }}
         />
       </span>
       <span className="text-right text-xs tabular-nums text-ink" data-numeric>

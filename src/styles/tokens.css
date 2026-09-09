@@ -18,10 +18,14 @@
 
 :root {
   /* ---- ESS brand primitives ---------------------------------------- */
-  --ess-primary: #334b35; /* deep forest green */
-  --ess-accent: #8dc63f; /* leaf green */
-  --ess-secondary: #8b5e3c; /* earth brown */
-  --ess-text: #687469; /* sage grey-green */
+  --ess-primary: #334b35;
+  /* deep forest green */
+  --ess-accent: #8dc63f;
+  /* leaf green */
+  --ess-secondary: #8b5e3c;
+  /* earth brown */
+  --ess-text: #687469;
+  /* sage grey-green */
   --ess-cream: #f6f4ec;
   --ess-beige: #eceae0;
   --ess-sage: #b3c5b5;
@@ -30,7 +34,8 @@
   --forest-900: #16211a;
   --forest-800: #1e2c20;
   --forest-700: #263a28;
-  --forest-600: #334b35; /* ESS primary */
+  --forest-600: #334b35;
+  /* ESS primary */
   --forest-500: #3f5c42;
   --forest-400: #55764f;
 
@@ -40,7 +45,8 @@
   --leaf-200: #cfe7a5;
   --leaf-300: #b6da7a;
   --leaf-400: #a0d05a;
-  --leaf-500: #8dc63f; /* ESS accent */
+  --leaf-500: #8dc63f;
+  /* ESS accent */
   --leaf-600: #74ab2c;
   --leaf-700: #588520;
   --leaf-glow: 141 198 63;
@@ -53,12 +59,16 @@
   /* ---- Warm sage neutral ramp, ten steps --------------------------- */
   --n-0: #ffffff;
   --n-25: #fbfaf5;
-  --n-50: #f6f4ec; /* ESS cream */
-  --n-100: #eceae0; /* ESS beige */
+  --n-50: #f6f4ec;
+  /* ESS cream */
+  --n-100: #eceae0;
+  /* ESS beige */
   --n-200: #dcdccd;
-  --n-300: #b3c5b5; /* ESS sage */
+  --n-300: #b3c5b5;
+  /* ESS sage */
   --n-400: #8d9a8e;
-  --n-500: #687469; /* ESS text */
+  --n-500: #687469;
+  /* ESS text */
   --n-600: #4f5b51;
   --n-700: #3d4a3f;
   --n-800: #2a382c;

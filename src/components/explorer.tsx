@@ -209,9 +209,13 @@ export function Explorer({ places }: { places: Place[] }) {
     <div className="flex h-[calc(100vh-3.5rem)] flex-col bg-surface-recessed text-ink lg:flex-row">
       {/* ------------------------------------------------ controls ---- */}
       <aside className="w-full shrink-0 overflow-y-auto scrollbar-gutter-stable border-b border-border bg-surface-panel lg:w-77 lg:border-b-0 lg:border-r">
-        <div className="space-y-6 p-4 pb-16">
-          <fieldset data-tour="where" className="space-y-3">
-            <StepLegend n={1} title="Where" hint="The place you want a number for." />
+        <div className="space-y-4 p-3.5 pb-16">
+          <StepCard
+            n={1}
+            title="Where"
+            hint="The place you want a number for"
+            tour="where"
+          >
             <Field label="Location">
               <PlaceSearch
                 places={countryPlaces}
@@ -221,32 +225,33 @@ export function Explorer({ places }: { places: Place[] }) {
               />
             </Field>
             <Field label={config.adminLevels.level1.split(" ")[0] ?? "Region"}>
-              <div className="flex flex-wrap gap-1.5">
-                <ChipButton
-                  active={!state.area}
-                  onClick={() => setState({ area: "" })}
-                  label="All regions"
-                />
-                {(REGIONS_BY_COUNTRY[countryCode] ?? []).map((region) => (
+              <div className="-mx-0.5 max-h-[8.5rem] overflow-y-auto px-0.5">
+                <div className="flex flex-wrap gap-1.5">
                   <ChipButton
-                    key={region.id}
-                    active={state.area === region.id}
-                    onClick={() =>
-                      setState({
-                        area: state.area === region.id ? "" : region.id,
-                        lat: "",
-                        lon: "",
-                      })
-                    }
-                    label={region.name}
+                    active={!state.area}
+                    onClick={() => setState({ area: "" })}
+                    label="All regions"
                   />
-                ))}
+                  {(REGIONS_BY_COUNTRY[countryCode] ?? []).map((region) => (
+                    <ChipButton
+                      key={region.id}
+                      active={state.area === region.id}
+                      onClick={() =>
+                        setState({
+                          area: state.area === region.id ? "" : region.id,
+                          lat: "",
+                          lon: "",
+                        })
+                      }
+                      label={region.name}
+                    />
+                  ))}
+                </div>
               </div>
             </Field>
-          </fieldset>
+          </StepCard>
 
-          <fieldset className="space-y-3">
-            <StepLegend n={2} title="What" hint="Which climate variable." />
+          <StepCard n={2} title="What" hint="Which climate variable">
             <Field
               label="Climate indicator"
               hint="Scientific variables downscaled from CMIP6 multi-model ensembles."
@@ -257,10 +262,14 @@ export function Explorer({ places }: { places: Place[] }) {
                 griddedOnly
               />
             </Field>
-          </fieldset>
+          </StepCard>
 
-          <fieldset data-tour="which-future" className="space-y-3">
-            <StepLegend n={3} title="Which future" hint="Emissions pathway and horizon." />
+          <StepCard
+            n={3}
+            title="Which future"
+            hint="Emissions pathway and horizon"
+            tour="which-future"
+          >
             <Field
               label="Emissions pathway (SSP)"
               hint="Shared Socioeconomic Pathways are physical forcing scenarios, not predictions."
@@ -273,7 +282,7 @@ export function Explorer({ places }: { places: Place[] }) {
             <Field label="Time horizon">
               <PeriodPicker value={period} onChange={(next) => setState({ period: next })} />
             </Field>
-          </fieldset>
+          </StepCard>
 
           <details className="group rounded-(--radius-container) border border-border bg-surface-recessed">
             <summary className="label flex cursor-pointer list-none items-center justify-between px-3 py-2.5 text-ink-muted [&::-webkit-details-marker]:hidden">
@@ -403,11 +412,15 @@ export function Explorer({ places }: { places: Place[] }) {
 
       {/* --------------------------------------------------- panel ---- */}
       <aside className="w-full shrink-0 overflow-y-auto scrollbar-gutter-stable border-t border-border bg-surface-panel lg:w-[380px] lg:border-l lg:border-t-0">
-        {/* Quick city shortcuts */}
-        <div className="border-b border-border bg-surface-recessed px-4 py-3">
-          <p className="label mb-2">Cities · {config.shortName}</p>
-          <div className="flex flex-wrap gap-1.5">
-            {countryPlaces.slice(0, 7).map((p) => {
+        {/* Quick city shortcuts — a rail, so a long list scrolls rather than
+            wrapping into a block that pushes the readout below the fold. */}
+        <div className="sticky top-0 z-10 border-b border-border bg-surface-recessed px-4 py-3">
+          <div className="mb-2 flex items-baseline justify-between gap-2">
+            <p className="label">Cities</p>
+            <p className="text-2xs text-ink-faint">{config.shortName}</p>
+          </div>
+          <div className="chip-rail">
+            {countryPlaces.slice(0, 10).map((p) => {
               const isActive =
                 selection &&
                 Math.abs(selection.lat - p.lat) < 0.05 &&
@@ -416,13 +429,14 @@ export function Explorer({ places }: { places: Place[] }) {
                 <button
                   key={p.id}
                   type="button"
+                  aria-pressed={Boolean(isActive)}
                   onClick={() =>
                     setState({ lat: String(p.lat), lon: String(p.lon), area: "" })
                   }
-                  className={`cursor-pointer rounded-(--radius-control) border px-2.5 py-1 text-xs font-medium transition-colors motion-state ${
- isActive
-                      ? "border-accent bg-accent text-accent-ink"
-                      : "border-border bg-surface-panel text-ink-muted hover:bg-surface-hover hover:text-ink"
+                  className={`cursor-pointer rounded-(--radius-pill) border px-2.5 py-1 text-xs font-medium transition-all motion-state ${
+                    isActive
+                      ? "border-brand bg-brand text-white shadow-[0_2px_8px_-2px_hsl(128_26%_14%/0.45)]"
+                      : "border-border bg-surface-panel text-ink-muted hover:border-border-strong hover:bg-surface-hover hover:text-ink"
                   }`}
                 >
                   {p.name}
@@ -449,21 +463,37 @@ export function Explorer({ places }: { places: Place[] }) {
   );
 }
 
-/** A numbered fieldset legend — makes the decision order explicit. */
-function StepLegend({ n, title, hint }: { n: number; title: string; hint: string }) {
+/**
+ * One decision in the Where / What / Which-future sequence, framed as a card
+ * with a numbered header strip so the order is visible rather than implied.
+ */
+function StepCard({
+  n,
+  title,
+  hint,
+  tour,
+  children,
+}: {
+  n: number;
+  title: string;
+  hint: string;
+  tour?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <legend className="mb-2 flex w-full items-center gap-2">
-      <span
-        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-(--radius-pill) bg-brand text-[11px] font-semibold text-white tabular-nums"
-        data-numeric
-      >
-        {n}
-      </span>
-      <span className="min-w-0">
-        <span className="block text-xs font-semibold text-ink">{title}</span>
-        <span className="block truncate text-2xs text-ink-faint">{hint}</span>
-      </span>
-    </legend>
+    <fieldset className="card" data-tour={tour}>
+      <legend className="sr-only">{`Step ${n}: ${title}`}</legend>
+      <div className="card-head">
+        <span className="step-chip" aria-hidden>
+          {n}
+        </span>
+        <span className="min-w-0">
+          <span className="block text-xs font-semibold leading-tight text-ink">{title}</span>
+          <span className="block truncate text-2xs leading-tight text-ink-faint">{hint}</span>
+        </span>
+      </div>
+      <div className="card-body space-y-3">{children}</div>
+    </fieldset>
   );
 }
 
@@ -481,11 +511,10 @@ function ChipButton({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`cursor-pointer rounded-(--radius-control) border px-2.5 py-1 text-xs font-medium transition-colors motion-state ${
- active
+      className={`cursor-pointer rounded-(--radius-control) border px-2.5 py-1 text-xs font-medium transition-colors motion-state ${active
           ? "border-accent bg-accent-soft text-accent"
           : "border-border bg-surface-panel text-ink-muted hover:bg-surface-hover hover:text-ink"
-      }`}
+        }`}
     >
       {label}
     </button>

@@ -115,36 +115,40 @@ export function LocationPanel({
   const nearest = point.data?.location.nearestPlace;
 
   return (
-    <div className="flex flex-col divide-y divide-border">
+    <div className="flex flex-col">
       {/* ---- header ---- */}
-      <section className="p-4">
+      <section className="border-b border-border px-4 py-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="truncate text-lg font-semibold tracking-tight text-ink leading-tight">
-                {nearest && nearest.distanceKm < 40
-                  ? nearest.name
-                  : `${Math.abs(lat).toFixed(2)}°N, ${Math.abs(lon).toFixed(2)}°E`}
-              </h2>
-              {nearest && nearest.province && (
-                <span className="rounded-(--radius-pill) border border-border bg-surface-recessed px-2 py-0.5 text-2xs font-medium text-ink-muted">
-                  {nearest.province}
-                </span>
+            <h2 className="truncate text-lg font-semibold leading-tight tracking-tight text-ink">
+              {nearest && nearest.distanceKm < 40
+                ? nearest.name
+                : `${Math.abs(lat).toFixed(2)}°N, ${Math.abs(lon).toFixed(2)}°E`}
+            </h2>
+            <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-1 text-2xs text-ink-faint">
+              {nearest?.province && (
+                <span className="font-medium text-ink-muted">{nearest.province}</span>
               )}
-            </div>
-            <p className="mt-1 text-2xs text-ink-faint tabular-nums">
-              {lat.toFixed(3)}°N, {lon.toFixed(3)}°E
+              {nearest?.province && <span aria-hidden>·</span>}
+              <span className="tabular-nums" data-numeric>
+                {lat.toFixed(3)}°N, {lon.toFixed(3)}°E
+              </span>
               {nearest && nearest.distanceKm >= 40 && (
-                <> · {nearest.distanceKm} km from {nearest.name}</>
+                <>
+                  <span aria-hidden>·</span>
+                  <span className="tabular-nums" data-numeric>
+                    {nearest.distanceKm} km from {nearest.name}
+                  </span>
+                </>
               )}
             </p>
           </div>
           {nearest && nearest.distanceKm < 40 && (
             <Link
               href={`/places/${nearest.id}?scenario=${scenario}&period=${period}`}
-              className="btn btn-secondary shrink-0 py-1.5! px-3! text-xs"
+              className="btn btn-secondary shrink-0 px-3! py-1.5! text-xs"
             >
-              Full Profile →
+              Profile →
             </Link>
           )}
         </div>
@@ -152,14 +156,14 @@ export function LocationPanel({
         {point.data?.meta && <ScopeBadge scope={point.data.meta.spatialScope} />}
 
         {point.data?.meta?.note && (
-          <p className="mt-2 rounded-(--radius-control) border border-border bg-surface-recessed p-2.5 text-2xs leading-snug text-ink-muted">
+          <p className="mt-2 border-l-2 border-border-strong pl-2.5 text-2xs leading-snug text-ink-faint">
             {point.data.meta.note}
           </p>
         )}
       </section>
 
       {/* ---- headline readout ---- */}
-      <section className="space-y-3 p-4" data-tour="readout">
+      <section className="space-y-3 px-4 py-4" data-tour="readout">
         {point.error ? (
           <ErrorNote message={point.error} />
         ) : (
@@ -200,12 +204,11 @@ export function LocationPanel({
 
       {/* ---- model uncertainty ---- */}
       {!isBaseline && (
-        <section className="p-4">
-          <div className="tier-flat p-4">
-            <SectionTitle
-              title="Multi-Model Uncertainty"
-              hint="The spread across the 30 downscaled models, at this point, for this pathway and horizon."
-            />
+        <section className="px-4 pb-4">
+          <Panel
+            title="Model spread"
+            hint="The spread across the 30 downscaled models, at this point, for this pathway and horizon."
+          >
             {spread.loading ? (
               <Skeleton height={64} />
             ) : spread.data ? (
@@ -231,18 +234,17 @@ export function LocationPanel({
                 Percentile bounds are not published for this combination.
               </p>
             )}
-          </div>
+          </Panel>
         </section>
       )}
 
       {/* ---- scenario comparison ---- */}
       {!isBaseline && (
-        <section className="p-4">
-          <div className="tier-flat p-4">
-            <SectionTitle
-              title={`All Policy Pathways · ${PERIODS[period].shortLabel}`}
-              hint="The same place and horizon under every emissions pathway. The gap between them is the part still determined by choices."
-            />
+        <section className="px-4 pb-4">
+          <Panel
+            title={`All pathways · ${PERIODS[period].shortLabel}`}
+            hint="The same place and horizon under every emissions pathway. The gap between them is the part still determined by choices."
+          >
             {scenarios.loading ? (
               <Skeleton height={110} />
             ) : scenarios.data ? (
@@ -262,18 +264,17 @@ export function LocationPanel({
                 )}
               </>
             ) : null}
-          </div>
+          </Panel>
         </section>
       )}
 
       {/* ---- seasonal cycle ---- */}
       {!isBaseline && cycle.data && (
-        <section className="p-4">
-          <div className="tier-flat p-4">
-            <SectionTitle
-              title="Annual Seasonality & Cycles"
-              hint="Monthly climatology at this point, baseline against projection."
-            />
+        <section className="px-4 pb-4">
+          <Panel
+            title="Seasonality"
+            hint="Monthly climatology at this point, baseline against projection."
+          >
             <SeasonalCycle
               months={cycle.data.months}
               unit={cycle.data.unit}
@@ -309,15 +310,14 @@ export function LocationPanel({
                 .
               </p>
             )}
-          </div>
+          </Panel>
         </section>
       )}
 
       {/* ---- indicator context ---- */}
       {point.data?.indicator && (
-        <section className="p-4">
-          <div className="tier-flat p-4">
-            <SectionTitle title="Scientific Variable Methodology" />
+        <section className="px-4 pb-4">
+          <Panel title="About this indicator">
             <p className="text-xs leading-relaxed text-ink-muted">
               {point.data.indicator.description}
             </p>
@@ -326,7 +326,7 @@ export function LocationPanel({
                 {point.data.indicator.countryNotes[country]}
               </p>
             )}
-          </div>
+          </Panel>
         </section>
       )}
 
@@ -388,19 +388,35 @@ function ScopeBadge({ scope }: { scope: string }) {
   );
 }
 
-function SectionTitle({ title, hint }: { title: string; hint?: string }) {
+/**
+ * One readout section: a card with a header strip carrying the title and an
+ * optional definition, and the content on the panel surface below it.
+ */
+function Panel({
+  title,
+  hint,
+  children,
+}: {
+  title: string;
+  hint?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <h3 className="label mb-2.5 flex items-center gap-1.5 text-ink-muted">
-      {title}
-      {hint && (
-        <span
-          title={hint}
-          className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-(--radius-pill) border border-border-strong bg-surface-recessed text-[8px] font-semibold normal-case text-ink-faint"
-        >
-          ?
-        </span>
-      )}
-    </h3>
+    <div className="card">
+      <div className="card-head justify-between">
+        <span className="text-xs font-semibold text-ink">{title}</span>
+        {hint && (
+          <span
+            title={hint}
+            aria-label={hint}
+            className="inline-flex h-4 w-4 shrink-0 cursor-help items-center justify-center rounded-(--radius-pill) border border-border-strong bg-surface-panel text-[9px] font-bold text-ink-faint transition-colors hover:text-ink"
+          >
+            ?
+          </span>
+        )}
+      </div>
+      <div className="card-body">{children}</div>
+    </div>
   );
 }
 

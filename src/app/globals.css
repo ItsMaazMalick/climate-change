@@ -95,7 +95,10 @@
     background-attachment: fixed;
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     letter-spacing: var(--tracking-tight);
     line-height: var(--leading-tight);
     font-weight: 600;
@@ -131,43 +134,51 @@
     width: 8px;
     height: 8px;
   }
+
   ::-webkit-scrollbar-track {
     background: transparent;
   }
+
   ::-webkit-scrollbar-thumb {
     background: var(--border-strong);
     border-radius: var(--radius-pill);
   }
+
   ::-webkit-scrollbar-thumb:hover {
     background: var(--n-400);
   }
 }
 
 @layer components {
+
   /* The three elevation tiers as classes. */
   .tier-recessed {
     background: var(--surface-recessed);
     box-shadow: var(--elevation-recessed);
     border-radius: var(--radius-container);
   }
+
   .tier-flat {
     background-color: var(--surface-panel);
     background-image: var(--panel-sheen);
     box-shadow: var(--elevation-flat);
     border-radius: var(--radius-container);
   }
+
   .tier-raised {
     background-color: var(--surface-raised);
     background-image: var(--raise-sheen);
     box-shadow: var(--elevation-raised);
     border-radius: var(--radius-container);
   }
+
   .tier-overlay {
     background-color: var(--surface-overlay);
     background-image: var(--raise-sheen);
     box-shadow: var(--elevation-overlay);
     border-radius: var(--radius-overlay);
   }
+
   /* Raised, with a scenario/status accent seam down the left edge and a
    * light-catching gradient top border. Lifts further on hover when it is a
    * link/button. */
@@ -181,36 +192,103 @@
     transition: box-shadow var(--dur-panel) var(--ease),
       transform var(--dur-panel) var(--ease);
   }
+
   .tier-raised-seam::before {
     content: "";
     position: absolute;
     inset: 0 auto 0 0;
     width: 3px;
-    background: linear-gradient(
-      180deg,
-      var(--seam-color, var(--accent-500)),
-      color-mix(in oklab, var(--seam-color, var(--accent-500)) 55%, transparent)
-    );
+    background: linear-gradient(180deg,
+        var(--seam-color, var(--accent-500)),
+        color-mix(in oklab, var(--seam-color, var(--accent-500)) 55%, transparent));
   }
+
   .tier-raised-seam::after {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(
-      160deg,
-      rgba(255, 255, 255, 0.9),
-      rgba(255, 255, 255, 0) 40%
-    );
+    background: linear-gradient(160deg,
+        rgba(255, 255, 255, 0.9),
+        rgba(255, 255, 255, 0) 40%);
     -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     pointer-events: none;
   }
+
   a.tier-raised-seam:hover,
   button.tier-raised-seam:hover {
-    box-shadow: var(--elevation-raised-hover);
+    /* The lift picks up a wash of the seam colour, so the card feels tied to
+     * its scenario rather than generically shadowed. */
+    box-shadow: var(--elevation-raised-hover),
+      0 18px 40px -18px color-mix(in oklab, var(--seam-color, var(--accent-500)) 60%, transparent);
+  }
+
+  /* ---- Card: a panel with a distinct header strip ------------------
+   * Used wherever a group of controls or one readout section needs its own
+   * frame. The header sits on the recessed tone so the body reads as the
+   * content surface, not more chrome. */
+  .card {
+    position: relative;
+    background-color: var(--surface-panel);
+    background-image: var(--panel-sheen);
+    box-shadow: var(--elevation-flat);
+    border-radius: var(--radius-container);
+    overflow: hidden;
+  }
+
+  .card-raised {
+    box-shadow: var(--elevation-raised);
+    background-image: var(--raise-sheen);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.625rem 0.875rem;
+    background: var(--surface-recessed);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card-body {
+    padding: 0.875rem;
+  }
+
+  /* A numbered chip for step headers. */
+  .step-chip {
+    display: flex;
+    height: 1.375rem;
+    width: 1.375rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-pill);
+    background-image: linear-gradient(180deg, var(--forest-500), var(--forest-700));
+    color: #fff;
+    font-family: var(--font-code);
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset,
+      0 2px 6px -2px hsl(var(--shadow-hue) / 0.4);
+  }
+
+  /* Horizontal chip rail that scrolls instead of wrapping into a block. */
+  .chip-rail {
+    display: flex;
+    gap: 0.375rem;
+    overflow-x: auto;
+    padding-bottom: 0.25rem;
+    scrollbar-width: thin;
+    -webkit-mask: linear-gradient(90deg, #000 calc(100% - 24px), transparent);
+    mask: linear-gradient(90deg, #000 calc(100% - 24px), transparent);
+  }
+
+  .chip-rail > * {
+    flex: 0 0 auto;
   }
 
   /* Back-compat: older markup uses .panel / .glass-card. Now flat, no blur. */
@@ -225,6 +303,7 @@
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
+
   .glass-pill {
     background: var(--surface-panel);
     border: 1px solid var(--border);
@@ -255,9 +334,11 @@
       box-shadow var(--dur-state) var(--ease),
       filter var(--dur-state) var(--ease);
   }
+
   .btn:active {
     transform: translateY(0) scale(0.985);
   }
+
   /* Primary = ESS deep forest green with a leaf-green glow. */
   .btn-primary {
     color: var(--brand-ink);
@@ -268,6 +349,7 @@
       0 10px 22px -6px hsl(var(--shadow-hue) / 0.32),
       0 18px 40px -14px rgb(var(--leaf-glow) / 0.45);
   }
+
   .btn-primary:hover {
     transform: translateY(-2px);
     filter: saturate(1.06) brightness(1.06);
@@ -277,6 +359,7 @@
       0 18px 34px -8px hsl(var(--shadow-hue) / 0.36),
       0 30px 60px -16px rgb(var(--leaf-glow) / 0.6);
   }
+
   /* Leaf = the bright accent action, dark ink for contrast. */
   .btn-leaf {
     color: var(--forest-900);
@@ -286,6 +369,7 @@
       0 2px 4px hsl(var(--shadow-hue) / 0.2),
       0 12px 26px -6px rgb(var(--leaf-glow) / 0.6);
   }
+
   .btn-leaf:hover {
     transform: translateY(-2px);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset,
@@ -293,6 +377,7 @@
       0 4px 8px hsl(var(--shadow-hue) / 0.24),
       0 22px 44px -8px rgb(var(--leaf-glow) / 0.75);
   }
+
   .btn-dark {
     color: var(--ink-inverse);
     background-image: linear-gradient(180deg, var(--deep-700), var(--deep-900));
@@ -300,9 +385,11 @@
       0 1px 2px hsl(var(--shadow-hue) / 0.28),
       0 10px 26px -8px hsl(var(--shadow-hue) / 0.4);
   }
+
   .btn-dark:hover {
     transform: translateY(-1px);
   }
+
   .btn-secondary {
     color: var(--ink-muted);
     background-color: var(--surface-panel);
@@ -310,6 +397,7 @@
     border: 1px solid var(--border-strong);
     box-shadow: var(--elevation-flat);
   }
+
   .btn-secondary:hover {
     transform: translateY(-1px);
     color: var(--ink);
@@ -333,6 +421,7 @@
     isolation: isolate;
     box-shadow: var(--elevation-raised);
   }
+
   .section-brand::before {
     content: "";
     position: absolute;
@@ -345,18 +434,17 @@
     mask: radial-gradient(70% 70% at 85% 10%, #000, transparent 90%);
     pointer-events: none;
   }
+
   /* A leaf accent rule along the top edge. */
   .section-brand::after {
     content: "";
     position: absolute;
     inset: 0 0 auto 0;
     height: 3px;
-    background: linear-gradient(
-      90deg,
-      var(--forest-600),
-      var(--leaf-500) 45%,
-      var(--earth-400) 100%
-    );
+    background: linear-gradient(90deg,
+        var(--forest-600),
+        var(--leaf-500) 45%,
+        var(--earth-400) 100%);
   }
 
   /* ---- Inverted deep section (kept for non-text bands) ----------- */
@@ -374,6 +462,7 @@
     isolation: isolate;
     box-shadow: var(--elevation-raised);
   }
+
   .section-deep::before {
     /* a faint grid, barely there — tactile depth, not a pattern statement */
     content: "";
@@ -387,6 +476,7 @@
     mask: radial-gradient(60% 60% at 30% 20%, #000, transparent 90%);
     pointer-events: none;
   }
+
   .section-deep::after {
     content: "";
     position: absolute;
@@ -412,6 +502,7 @@
     transition-duration: var(--dur-state);
     transition-timing-function: var(--ease);
   }
+
   .motion-panel {
     transition-duration: var(--dur-panel);
     transition-timing-function: var(--ease);
@@ -422,6 +513,7 @@
   .chart-series-active {
     filter: drop-shadow(0 2px 3px hsl(var(--shadow-hue) / 0.25));
   }
+
   .chart-tooltip {
     background: var(--surface-overlay);
     box-shadow: var(--elevation-overlay);
@@ -437,20 +529,24 @@
     pointer-events: none;
     animation: orb-drift 18s var(--ease) infinite alternate;
   }
+
   @keyframes orb-drift {
-    from { transform: translate3d(0, 0, 0) scale(1); }
-    to { transform: translate3d(24px, -18px, 0) scale(1.12); }
+    from {
+      transform: translate3d(0, 0, 0) scale(1);
+    }
+
+    to {
+      transform: translate3d(24px, -18px, 0) scale(1.12);
+    }
   }
 
   /* Diagonal hatch for areas outside data coverage. */
   .hatch-oob {
-    background-image: repeating-linear-gradient(
-      45deg,
-      transparent,
-      transparent 5px,
-      var(--hatch) 5px,
-      var(--hatch) 6px
-    );
+    background-image: repeating-linear-gradient(45deg,
+        transparent,
+        transparent 5px,
+        var(--hatch) 5px,
+        var(--hatch) 6px);
   }
 }
 
@@ -458,17 +554,21 @@
 :root[data-present="1"] {
   font-size: 115%;
 }
+
 :root[data-present="1"] [data-dev-only] {
   display: none !important;
 }
+
 :root[data-present="1"] main {
   padding-bottom: 3rem;
 }
+
 :root[data-present="1"] svg [data-series] {
   stroke-width: 2.5px;
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -483,16 +583,19 @@
   font-family: var(--font-ui);
   background: var(--surface-recessed);
 }
+
 .leaflet-container,
 .leaflet-map-pane,
 .leaflet-tile-pane {
   height: 100%;
   width: 100%;
 }
+
 .leaflet-control-attribution,
 .leaflet-control-zoom {
   display: none !important;
 }
+
 /* Desaturate the basemap so the data ramp is the only saturated element. */
 .leaflet-tile-pane {
   filter: saturate(0.15) brightness(1.04) contrast(0.96);
