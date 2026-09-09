@@ -13,6 +13,7 @@ import {
   PlaceSearch,
 } from "@/components/controls";
 import { NextStepCard } from "@/components/nav/next-step-card";
+import { PageHeader } from "@/components/ui/page-header";
 import type { Place } from "@/lib/climate/places";
 import {
   formatValue,
@@ -99,22 +100,14 @@ export function ComparePanel({ places }: { places: Place[] }) {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <header className="mb-8 max-w-2xl">
-        <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[12px] font-bold text-emerald-800 mb-3 shadow-xs">
-          <span>{config.flag}</span>
-          <span>Climate Uncertainty Workspace · {config.name}</span>
-        </div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Multi-Dimensional Climate Comparison</h1>
-        <p className="mt-2 text-[14px] leading-relaxed text-slate-600 font-medium">
-          Three different scientific factors shape the future climate of a
-          place: which global emissions pathway humanity follows, how independent
-          climate models differ, and how far ahead you look.
-        </p>
-      </header>
+      <PageHeader kicker={`Compare · ${config.name}`} step={2} title="How much is uncertain, and why?">
+        Hold the place fixed. Three factors shape the answer — the emissions
+        pathway, how the 30 models differ, and how far ahead you look.
+      </PageHeader>
 
       {/* ---------------------------------------------------- controls -- */}
-      <div className="mb-8 grid gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm md:grid-cols-3">
-        <Field label="Target Location">
+      <div className="tier-flat mb-8 grid gap-4 p-5 md:grid-cols-3">
+        <Field label="Location">
           <PlaceSearch
             places={countryPlaces}
             onSelect={(selected) => {
@@ -122,14 +115,14 @@ export function ComparePanel({ places }: { places: Place[] }) {
               if (match) setPlace(match);
             }}
           />
-          <p className="tnum mt-1.5 text-[11.5px] font-medium text-slate-500">
-            📍 {place.name} ({place.province}) · {place.lat.toFixed(2)}°N, {place.lon.toFixed(2)}°E
+          <p className="mt-1.5 text-2xs text-ink-faint tabular-nums" data-numeric>
+            {place.name} ({place.province}) · {place.lat.toFixed(2)}°N, {place.lon.toFixed(2)}°E
           </p>
         </Field>
-        <Field label="Climate Indicator">
+        <Field label="Climate indicator">
           <IndicatorPicker value={indicator} onChange={setIndicator} />
         </Field>
-        <Field label="Future Horizon">
+        <Field label="Future horizon">
           <PeriodPicker value={period} onChange={setPeriod} includeBaseline={false} />
         </Field>
       </div>
@@ -369,19 +362,22 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mb-10">
-      <div className="mb-4 flex gap-3">
-        <span className="tnum mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[var(--color-border-strong)] text-[11px] font-semibold text-[var(--color-ink-faint)]">
-          {index}
-        </span>
-        <div className="max-w-2xl">
-          <h2 className="text-[16px] font-semibold tracking-tight">{title}</h2>
-          <p className="mt-1 text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
-            {subtitle}
-          </p>
+    <section className="mb-6">
+      <div className="tier-flat p-5">
+        <div className="mb-4 flex gap-3">
+          <span
+            className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-(--radius-pill) bg-ink text-[11px] font-semibold text-ink-inverse tabular-nums"
+            data-numeric
+          >
+            {index}
+          </span>
+          <div className="max-w-2xl">
+            <h2 className="text-base font-semibold tracking-tight text-ink">{title}</h2>
+            <p className="mt-1 text-xs leading-relaxed text-ink-muted">{subtitle}</p>
+          </div>
         </div>
+        {children}
       </div>
-      {children}
     </section>
   );
 }

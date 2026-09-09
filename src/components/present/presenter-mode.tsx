@@ -27,7 +27,7 @@ export function PresenterMode() {
   const step = stepForPath(pathname);
 
   return (
-    <footer className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-between border-t border-border bg-surface-panel px-6 py-2 text-sm shadow-[var(--elevation-overlay)]">
+    <footer className="fixed inset-x-0 bottom-0 z-50 flex items-center justify-between border-t border-border bg-surface-panel px-6 py-2 text-sm shadow-(--elevation-overlay)">
       <span className="font-medium text-ink">Earth Scan Systems · Climate Intelligence</span>
       {step ? (
         <span className="text-ink-muted" data-numeric>

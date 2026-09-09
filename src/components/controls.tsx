@@ -72,7 +72,7 @@ function Segmented<T extends string>({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className="grid gap-1 rounded-(--radius-container) p-1 shadow-[var(--elevation-recessed)]"
+      className="grid gap-1 rounded-(--radius-container) p-1 shadow-(--elevation-recessed)"
       style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}
     >
       {options.map((o) => {
@@ -90,7 +90,7 @@ function Segmented<T extends string>({
               o.full ? "col-span-full" : ""
             } ${
               active
-                ? "bg-surface-raised text-ink shadow-[var(--elevation-raised)]"
+                ? "bg-surface-raised text-ink shadow-(--elevation-raised)"
                 : "text-ink-faint hover:text-ink"
             }`}
             data-numeric={active ? undefined : undefined}
@@ -120,7 +120,7 @@ function Select({
         value={value}
         aria-label={ariaLabel}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full cursor-pointer appearance-none rounded-(--radius-control) border border-border-strong bg-surface-panel py-2.5 pl-3 pr-9 text-[13px] font-medium text-ink shadow-[var(--elevation-recessed)] transition-colors hover:border-ink-faint focus:outline-none focus-visible:shadow-[var(--focus-ring)]"
+        className="w-full cursor-pointer appearance-none rounded-(--radius-control) border border-border-strong bg-surface-panel py-2.5 pl-3 pr-9 text-[13px] font-medium text-ink shadow-(--elevation-recessed) transition-colors hover:border-ink-faint focus:outline-none focus-visible:shadow-(--focus-ring)"
       >
         {children}
       </select>
@@ -360,11 +360,11 @@ export function Toggle({
     >
       <span
         className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-(--radius-pill) transition-colors motion-state ${
-          checked ? "bg-accent" : "bg-surface-active shadow-[var(--elevation-recessed)]"
+          checked ? "bg-accent" : "bg-surface-active shadow-(--elevation-recessed)"
         }`}
       >
         <span
-          className={`inline-block h-3.5 w-3.5 rounded-(--radius-pill) bg-surface-raised shadow-[var(--elevation-raised)] transition-transform motion-state ${
+          className={`inline-block h-3.5 w-3.5 rounded-(--radius-pill) bg-surface-raised shadow-(--elevation-raised) transition-transform motion-state ${
             checked ? "translate-x-[18px]" : "translate-x-[3px]"
           }`}
         />
@@ -447,7 +447,7 @@ export function PlaceSearch({
               setOpen(false);
             }
           }}
-          className="w-full rounded-(--radius-control) border border-border-strong bg-surface-panel py-2.5 pl-9 pr-8 text-[13px] font-medium text-ink shadow-[var(--elevation-recessed)] transition-colors placeholder:text-ink-faint hover:border-ink-faint focus:outline-none focus-visible:shadow-[var(--focus-ring)]"
+          className="w-full rounded-(--radius-control) border border-border-strong bg-surface-panel py-2.5 pl-9 pr-8 text-[13px] font-medium text-ink shadow-(--elevation-recessed) transition-colors placeholder:text-ink-faint hover:border-ink-faint focus:outline-none focus-visible:shadow-(--focus-ring)"
         />
         {query && (
           <button
