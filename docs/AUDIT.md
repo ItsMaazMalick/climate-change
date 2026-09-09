@@ -180,10 +180,20 @@ policy is genuinely single-source (Phase 2).
 
 ---
 
-## Test / check status after Phase 0
+## Test / check status
 
 | Check | Result |
 |---|---|
 | `pnpm typecheck` | clean |
-| `pnpm test` | 120 passed (10 files) — +31 new (`derive`, `synthetic-grid`) |
-| `pnpm lint` | 27 problems (10 errors, 17 warnings) — **unchanged from baseline**, pre-existing `react-hooks` debt in `hooks.ts`; no new issues introduced |
+| `pnpm build` | succeeds |
+| `pnpm test` | 120 passed (10 files) — +31 (`derive`, `synthetic-grid`) |
+| `pnpm test:e2e` | spec written (`tests/e2e/demo-path.spec.ts`); browser not installed in this environment |
+| `pnpm lint` | 26 problems (9 errors, 17 warnings) — baseline was 27/10; pre-existing `react-hooks` debt in `hooks.ts`, no new errors introduced |
+
+## Live verification (Tashkent, the D1/D2/D3 reproduction)
+
+| | Before | After |
+|---|---|---|
+| Explore · SSP2-4.5 · 2040–2059 | baseline 10.4, projected **10.4**, change +1.8 | baseline 10.36, projected **12.18**, change +1.82 (10.36 + 1.82 = 12.18 ✓) |
+| Compare · 2080–2099 · VALUE across 5 SSPs | **10.4 for all five** | 12.49 / 13.09 / 13.73 / 14.52 / 15.20 |
+| Model spread · SSP5-8.5 · 2080–2099 | "+3.4 to +3.4" | p10 +3.5, p90 +6.2 |
