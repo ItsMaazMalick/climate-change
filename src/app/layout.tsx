@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import { CountryProvider } from "@/lib/country-context";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { GuidedTour } from "@/components/tour/guided-tour";
 
 import "./globals.css";
 
@@ -69,6 +71,9 @@ export default function RootLayout({
           <SiteHeader />
           <main id="main">{children}</main>
           <SiteFooter />
+          <Suspense fallback={null}>
+            <GuidedTour />
+          </Suspense>
         </CountryProvider>
       </body>
     </html>
