@@ -70,7 +70,7 @@ export default function LearnPage() {
           ].map((item) => (
             <div
               key={item.tag}
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
             >
               <div className="label mb-1.5">{item.tag}</div>
               <dt className="text-[14px] font-medium">{item.q}</dt>
@@ -98,7 +98,7 @@ export default function LearnPage() {
             return (
               <div
                 key={id}
-                className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+                className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
               >
                 <div className="flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
                   <span
@@ -233,8 +233,8 @@ export default function LearnPage() {
           {Object.values(PERIODS).map((period) => (
             <div
               key={period.id}
-              className={`rounded-lg border p-3 ${
-                period.isBaseline
+              className={`rounded-(--radius-control) border p-3 ${
+ period.isBaseline
                   ? "border-[var(--color-border-strong)] bg-[var(--color-surface-raised)]"
                   : "border-[var(--color-border)] bg-[var(--color-surface)]"
               }`}
@@ -268,7 +268,7 @@ export default function LearnPage() {
           {MECHANISMS.slice(0, 4).map((chain) => (
             <div
               key={chain.id}
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
             >
               <h3 className="text-[13.5px] font-semibold">{chain.title}</h3>
               <ol className="mt-2 space-y-1">
@@ -358,7 +358,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-5 rounded-lg border-l-2 border-[var(--color-brand)] bg-[var(--color-brand-tint)] py-3 pl-4 pr-4">
+    <div className="mt-5 rounded-(--radius-control) border-l-2 border-[var(--color-brand)] bg-[var(--color-brand-tint)] py-3 pl-4 pr-4">
       <p className="text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
         {children}
       </p>

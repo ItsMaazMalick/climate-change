@@ -84,7 +84,7 @@ export function TimeSeriesChart({
 
   if (!geometry) {
     return (
-      <p className="rounded-md border border-dashed border-[var(--color-border)] px-3 py-4 text-center text-[12px] text-[var(--color-ink-faint)]">
+      <p className="rounded-(--radius-control) border border-dashed border-[var(--color-border)] px-3 py-4 text-center text-[12px] text-[var(--color-ink-faint)]">
         No time series available.
       </p>
     );
@@ -253,7 +253,7 @@ export function TimeSeriesChart({
 
       {hover && readings.length > 0 && (
         <div
-          className="pointer-events-none absolute top-1 z-10 w-[168px] rounded-md border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-2.5 py-2 shadow-sm"
+          className="pointer-events-none absolute top-1 z-10 w-[168px] rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-2.5 py-2 shadow-(--elevation-flat)"
           style={tooltipStyle(hover.clientX, hover.containerWidth, 168)}
         >
           <div className="tnum text-[11px] font-semibold">{hoveredYear}</div>
@@ -286,7 +286,7 @@ export function TimeSeriesChart({
             onClick={() => setFocused((current) => (current === line.id ? null : line.id))}
             aria-pressed={focused === line.id}
             className={`flex items-center gap-1.5 rounded px-1.5 py-0.5 text-[11.5px] transition-colors ${
-              focused === line.id
+ focused === line.id
                 ? "bg-[var(--color-surface-hover)] font-semibold text-[var(--color-ink)]"
                 : "text-[var(--color-ink-muted)] hover:text-[var(--color-ink)]"
             }`}

@@ -33,6 +33,16 @@
   --color-accent-soft: var(--accent-50);
   --color-accent-ink: var(--accent-ink);
 
+  /* ESS brand roles */
+  --color-brand: var(--forest-600);
+  --color-brand-deep: var(--forest-800);
+  --color-brand-hover: var(--forest-500);
+  --color-brand-ink: var(--brand-ink);
+  --color-leaf: var(--leaf-500);
+  --color-leaf-soft: var(--leaf-50);
+  --color-leaf-strong: var(--leaf-700);
+  --color-earth: var(--earth-500);
+
   --color-ok: var(--ok);
   --color-warn: var(--warn);
   --color-danger: var(--danger);
@@ -73,14 +83,14 @@
     letter-spacing: var(--tracking-normal);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    /* A cool wash + a whisper-fine grid so white panels read as lifted. */
+    /* A warm sage wash + a whisper-fine grid so white panels read as lifted. */
     background-color: var(--surface);
     background-image:
-      radial-gradient(1200px 560px at 4% -10%, hsl(214 84% 56% / 0.13), transparent 58%),
-      radial-gradient(1000px 680px at 106% -6%, hsl(262 70% 58% / 0.1), transparent 56%),
-      radial-gradient(820px 560px at 50% 112%, hsl(196 84% 52% / 0.07), transparent 60%),
-      linear-gradient(hsl(220 30% 50% / 0.028) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(220 30% 50% / 0.028) 1px, transparent 1px);
+      radial-gradient(1200px 560px at 4% -10%, rgb(var(--leaf-glow) / 0.16), transparent 58%),
+      radial-gradient(1000px 680px at 106% -6%, hsl(128 26% 30% / 0.12), transparent 56%),
+      radial-gradient(820px 560px at 50% 112%, rgb(var(--leaf-glow) / 0.08), transparent 60%),
+      linear-gradient(hsl(128 20% 35% / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(128 20% 35% / 0.03) 1px, transparent 1px);
     background-size: 100% 100%, 100% 100%, 100% 100%, 56px 56px, 56px 56px;
     background-attachment: fixed;
   }
@@ -248,23 +258,40 @@
   .btn:active {
     transform: translateY(0) scale(0.985);
   }
+  /* Primary = ESS deep forest green with a leaf-green glow. */
   .btn-primary {
-    color: var(--accent-ink);
-    background-image: linear-gradient(180deg, #4f8ef0 0%, var(--accent-500) 45%, var(--accent-600) 100%);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.28) inset,
-      0 -1px 0 rgba(0, 0, 0, 0.12) inset,
-      0 2px 4px hsl(var(--shadow-hue) / 0.24),
-      0 10px 22px -6px rgb(var(--accent-glow) / 0.55),
-      0 20px 40px -12px rgb(var(--accent-glow) / 0.4);
+    color: var(--brand-ink);
+    background-image: linear-gradient(180deg, var(--forest-500) 0%, var(--forest-600) 55%, var(--forest-700) 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.22) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.14) inset,
+      0 2px 4px hsl(var(--shadow-hue) / 0.26),
+      0 10px 22px -6px hsl(var(--shadow-hue) / 0.32),
+      0 18px 40px -14px rgb(var(--leaf-glow) / 0.45);
   }
   .btn-primary:hover {
     transform: translateY(-2px);
-    filter: saturate(1.08) brightness(1.04);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.32) inset,
-      0 -1px 0 rgba(0, 0, 0, 0.12) inset,
-      0 4px 8px hsl(var(--shadow-hue) / 0.28),
-      0 18px 34px -8px rgb(var(--accent-glow) / 0.65),
-      0 34px 60px -14px rgb(var(--accent-glow) / 0.5);
+    filter: saturate(1.06) brightness(1.06);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.28) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.14) inset,
+      0 4px 8px hsl(var(--shadow-hue) / 0.3),
+      0 18px 34px -8px hsl(var(--shadow-hue) / 0.36),
+      0 30px 60px -16px rgb(var(--leaf-glow) / 0.6);
+  }
+  /* Leaf = the bright accent action, dark ink for contrast. */
+  .btn-leaf {
+    color: var(--forest-900);
+    background-image: linear-gradient(180deg, var(--leaf-400) 0%, var(--leaf-500) 55%, var(--leaf-600) 100%);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.1) inset,
+      0 2px 4px hsl(var(--shadow-hue) / 0.2),
+      0 12px 26px -6px rgb(var(--leaf-glow) / 0.6);
+  }
+  .btn-leaf:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45) inset,
+      0 -1px 0 rgba(0, 0, 0, 0.1) inset,
+      0 4px 8px hsl(var(--shadow-hue) / 0.24),
+      0 22px 44px -8px rgb(var(--leaf-glow) / 0.75);
   }
   .btn-dark {
     color: var(--ink-inverse);
@@ -295,10 +322,10 @@
     color: var(--n-100);
     background-color: var(--deep-900);
     background-image:
-      radial-gradient(760px 420px at 6% -10%, rgb(var(--accent-glow) / 0.4), transparent 60%),
-      radial-gradient(620px 400px at 98% 0%, hsl(268 80% 60% / 0.32), transparent 58%),
-      radial-gradient(700px 500px at 60% 120%, hsl(190 90% 50% / 0.18), transparent 60%),
-      linear-gradient(165deg, var(--deep-700) -10%, var(--deep-900) 70%);
+      radial-gradient(760px 420px at 6% -10%, rgb(var(--leaf-glow) / 0.42), transparent 60%),
+      radial-gradient(620px 400px at 98% 0%, hsl(96 45% 45% / 0.3), transparent 58%),
+      radial-gradient(700px 500px at 60% 120%, hsl(30 40% 45% / 0.16), transparent 60%),
+      linear-gradient(165deg, var(--forest-600) -14%, var(--forest-900) 68%);
     border-radius: var(--radius-overlay);
     overflow: hidden;
     isolation: isolate;

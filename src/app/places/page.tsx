@@ -27,14 +27,14 @@ export default function PlacesPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
       <header className="mb-9 max-w-3xl">
-        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3.5 py-1 text-[12.5px] font-bold text-emerald-800 mb-3 shadow-xs">
+        <div className="inline-flex items-center gap-2 rounded-full border border-leaf bg-leaf-soft px-3.5 py-1 text-[12.5px] font-semibold text-brand-deep mb-3 shadow-(--elevation-flat)">
           <span>{config.flag}</span>
           <span>Regional Climate Profiles · {config.name}</span>
         </div>
-        <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">
+        <h1 className="text-3xl font-semibold tracking-tight text-ink">
           City & Regional Climate Profiles
         </h1>
-        <p className="mt-2 text-[14px] leading-relaxed text-slate-600 font-medium">
+        <p className="mt-2 text-[14px] leading-relaxed text-ink-muted font-medium">
           {country === "PAK"
             ? "Pakistan contains one of the steepest climate gradients on Earth — from sea level on the Arabian Sea coast to above 8,000 metres in the Karakoram. Places are grouped by physical eco-zone."
             : "Uzbekistan spans diverse Central Asian climatic settings: from the arid Kyzylkum desert and Aral basin to the fertile irrigated Fergana Valley and Tien Shan foothill oases."}
@@ -45,10 +45,10 @@ export default function PlacesPage() {
           <button
             type="button"
             onClick={() => setCountry("UZB")}
-            className={`rounded-xl px-4 py-2 text-xs font-bold transition-all shadow-xs ${
-              country === "UZB"
-                ? "bg-emerald-600 text-white shadow-md ring-2 ring-emerald-600/30"
-                : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+            className={`rounded-(--radius-container) px-4 py-2 text-xs font-semibold transition-all shadow-(--elevation-flat) ${
+ country === "UZB"
+                ? "bg-brand text-white shadow-md ring-2 ring-leaf/30"
+                : "border border-border bg-surface-panel text-ink-muted hover:border-border-strong hover:bg-surface-recessed"
             }`}
           >
             🇺🇿 Uzbekistan ({PLACES.filter((p) => p.country === "UZB").length} cities)
@@ -56,10 +56,10 @@ export default function PlacesPage() {
           <button
             type="button"
             onClick={() => setCountry("PAK")}
-            className={`rounded-xl px-4 py-2 text-xs font-bold transition-all shadow-xs ${
-              country === "PAK"
-                ? "bg-emerald-600 text-white shadow-md ring-2 ring-emerald-600/30"
-                : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+            className={`rounded-(--radius-container) px-4 py-2 text-xs font-semibold transition-all shadow-(--elevation-flat) ${
+ country === "PAK"
+                ? "bg-brand text-white shadow-md ring-2 ring-leaf/30"
+                : "border border-border bg-surface-panel text-ink-muted hover:border-border-strong hover:bg-surface-recessed"
             }`}
           >
             🇵🇰 Pakistan ({PLACES.filter((p) => p.country === "PAK").length} cities)
@@ -71,8 +71,8 @@ export default function PlacesPage() {
         {groups.map(([setting, placesList]) => (
           <section key={setting}>
             <div className="flex items-center gap-2 mb-4">
-              <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
-              <h2 className="text-[15px] font-bold uppercase tracking-wider text-slate-700">
+              <span className="h-2 w-2 rounded-full bg-brand"></span>
+              <h2 className="text-[15px] font-semibold uppercase tracking-wider text-ink-muted">
                 {SETTING_LABELS[setting] ?? setting}
               </h2>
             </div>
@@ -83,25 +83,25 @@ export default function PlacesPage() {
                   <Link
                     key={place.id}
                     href={`/places/${place.id}`}
-                    className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-xs transition-all hover:-translate-y-0.5 hover:border-emerald-400 hover:shadow-md"
+                    className="group rounded-(--radius-container) border border-border bg-surface-panel p-5 shadow-(--elevation-flat) transition-all hover:-translate-y-0.5 hover:border-leaf hover:shadow-md"
                   >
                     <div className="flex items-baseline justify-between gap-2">
-                      <h3 className="text-[16px] font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                      <h3 className="text-[16px] font-semibold text-ink group-hover:text-brand transition-colors">
                         {place.name}
                       </h3>
-                      <span className="tnum shrink-0 rounded bg-slate-100 px-1.5 py-0.5 text-[11px] font-bold text-slate-600">
+                      <span className="tnum shrink-0 rounded bg-surface-active px-1.5 py-0.5 text-[11px] font-semibold text-ink-muted">
                         {place.elevation.toLocaleString()} m
                       </span>
                     </div>
-                    <p className="mt-1 text-[12px] font-medium text-slate-500">
+                    <p className="mt-1 text-[12px] font-medium text-ink-faint">
                       {place.province} · {place.country === "PAK" ? "Pakistan" : "Uzbekistan"}
                     </p>
                     {place.note && (
-                      <p className="mt-3 text-[12.5px] leading-relaxed text-slate-600 line-clamp-3">
+                      <p className="mt-3 text-[12.5px] leading-relaxed text-ink-muted line-clamp-3">
                         {place.note}
                       </p>
                     )}
-                    <div className="mt-4 flex items-center gap-1 text-[12px] font-bold text-emerald-700 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-4 flex items-center gap-1 text-[12px] font-semibold text-brand opacity-0 group-hover:opacity-100 transition-opacity">
                       <span>Explore climate story</span>
                       <span>→</span>
                     </div>

@@ -68,7 +68,7 @@ export function SeasonalCycle({
 
   if (!geometry) {
     return (
-      <p className="rounded-md border border-dashed border-[var(--color-border)] px-3 py-4 text-center text-[12px] text-[var(--color-ink-faint)]">
+      <p className="rounded-(--radius-control) border border-dashed border-[var(--color-border)] px-3 py-4 text-center text-[12px] text-[var(--color-ink-faint)]">
         No monthly climatology available for this indicator.
       </p>
     );
@@ -250,7 +250,7 @@ export function SeasonalCycle({
 
       {hover && active && (
         <div
-          className="pointer-events-none absolute top-1 z-10 w-[152px] rounded-md border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-2.5 py-2 shadow-sm"
+          className="pointer-events-none absolute top-1 z-10 w-[152px] rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-2.5 py-2 shadow-(--elevation-flat)"
           style={tooltipStyle(hover.clientX, hover.containerWidth, 152)}
         >
           <div className="text-[11px] font-semibold">

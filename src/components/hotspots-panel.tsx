@@ -98,7 +98,7 @@ export function HotspotsPanel() {
                 onClick={() => setLevel(option.value)}
                 aria-pressed={level === option.value}
                 className={`rounded-(--radius-control) px-3 py-1.5 text-xs font-medium transition-all motion-state ${
-                  level === option.value
+ level === option.value
                     ? "bg-surface-raised text-ink shadow-(--elevation-raised)"
                     : "text-ink-faint hover:text-ink"
                 }`}
@@ -138,7 +138,7 @@ export function HotspotsPanel() {
                 <li key={row.areaId} className="flex items-center gap-3 rounded-(--radius-control) p-1.5 transition-colors hover:bg-surface-hover">
                   <span
                     className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-(--radius-pill) text-[11px] font-semibold tabular-nums ${
-                      index < 3 ? "bg-ink text-ink-inverse" : "bg-surface-recessed text-ink-faint"
+ index < 3 ? "bg-ink text-ink-inverse" : "bg-surface-recessed text-ink-faint"
                     }`}
                     data-numeric
                   >

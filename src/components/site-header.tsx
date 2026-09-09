@@ -52,7 +52,7 @@ export function SiteHeader() {
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={`rounded-(--radius-control) px-2.5 py-1.5 text-xs font-medium transition-colors ${
-                  active ? "bg-surface-active text-ink" : "text-ink-faint hover:bg-surface-hover hover:text-ink"
+ active ? "bg-surface-active text-ink" : "text-ink-faint hover:bg-surface-hover hover:text-ink"
                 }`}
               >
                 {item.label}

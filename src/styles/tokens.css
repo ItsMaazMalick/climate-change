@@ -1,43 +1,88 @@
 /*
  * tokens.css — the single source of truth for every visual constant.
  *
+ * Palette is the OFFICIAL Earth Scan Systems brand, lifted from the ESS
+ * Elementor global kit at escan-systems.com:
+ *
+ *   primary   #334B35  deep forest green
+ *   accent    #8DC63F  leaf green
+ *   secondary #8B5E3C  earth brown
+ *   text      #687469  sage grey-green
+ *   surfaces  #FFFFFF / #F6F4EC / #ECEAE0 / #B3C5B5
+ *   type      DM Sans (brand), Open Sans
+ *
  * Nothing in a component may introduce a raw hex value, an ad-hoc pixel size,
  * or a one-off shadow. If a value is needed and not here, it is added here
  * first. See docs/DESIGN.md.
- *
- * Reference points: Copernicus Climate Data Store, NASA Earthdata, Our World
- * in Data — restrained, information-dense, one accent.
  */
 
 :root {
-  /* ---- Neutral ramp — cool, ten steps ------------------------------- */
-  --n-0: #ffffff;
-  --n-25: #f7f9fc;
-  --n-50: #eef2f7;
-  --n-100: #e2e8f0;
-  --n-200: #cdd6e2;
-  --n-300: #aeb9c9;
-  --n-400: #808da2;
-  --n-500: #58657a;
-  --n-600: #3d4859;
-  --n-700: #2a3341;
-  --n-800: #1a212c;
-  --n-900: #0d1219;
+  /* ---- ESS brand primitives ---------------------------------------- */
+  --ess-primary: #334b35; /* deep forest green */
+  --ess-accent: #8dc63f; /* leaf green */
+  --ess-secondary: #8b5e3c; /* earth brown */
+  --ess-text: #687469; /* sage grey-green */
+  --ess-cream: #f6f4ec;
+  --ess-beige: #eceae0;
+  --ess-sage: #b3c5b5;
 
-  /* ---- The one institutional accent (deep, confident blue) ----------- */
-  --accent-50: #ecf2fe;
-  --accent-100: #d5e3fc;
-  --accent-300: #86aef2;
-  --accent-500: #2f74e0;
-  --accent-600: #1e57c4;
-  --accent-700: #17469f;
-  --accent-ink: #ffffff;
-  --accent-glow: 47 116 224;
+  /* ---- Forest ramp (brand green, dark end) ------------------------- */
+  --forest-900: #16211a;
+  --forest-800: #1e2c20;
+  --forest-700: #263a28;
+  --forest-600: #334b35; /* ESS primary */
+  --forest-500: #3f5c42;
+  --forest-400: #55764f;
+
+  /* ---- Leaf ramp (brand accent, bright end) ------------------------ */
+  --leaf-50: #f3f9e8;
+  --leaf-100: #e3f1ca;
+  --leaf-200: #cfe7a5;
+  --leaf-300: #b6da7a;
+  --leaf-400: #a0d05a;
+  --leaf-500: #8dc63f; /* ESS accent */
+  --leaf-600: #74ab2c;
+  --leaf-700: #588520;
+  --leaf-glow: 141 198 63;
+
+  /* ---- Earth ramp (brand secondary — used sparingly) --------------- */
+  --earth-500: #8b5e3c;
+  --earth-400: #a67a56;
+  --earth-100: #ecdfd2;
+
+  /* ---- Warm sage neutral ramp, ten steps --------------------------- */
+  --n-0: #ffffff;
+  --n-25: #fbfaf5;
+  --n-50: #f6f4ec; /* ESS cream */
+  --n-100: #eceae0; /* ESS beige */
+  --n-200: #dcdccd;
+  --n-300: #b3c5b5; /* ESS sage */
+  --n-400: #8d9a8e;
+  --n-500: #687469; /* ESS text */
+  --n-600: #4f5b51;
+  --n-700: #3d4a3f;
+  --n-800: #2a382c;
+  --n-900: #16211a;
+
+  /* ---- Accent role (maps to the brand) ----------------------------- */
+  --accent-50: var(--leaf-50);
+  --accent-100: var(--leaf-100);
+  --accent-300: var(--leaf-300);
+  --accent-500: var(--leaf-500);
+  --accent-600: var(--leaf-600);
+  --accent-700: var(--leaf-700);
+  --accent-glow: var(--leaf-glow);
+  /* Leaf green needs dark ink on it for contrast; the deep forest is the
+   * fill used for solid primary buttons. */
+  --accent-ink: var(--forest-900);
+  --brand-fill: var(--forest-600);
+  --brand-fill-hover: var(--forest-500);
+  --brand-ink: #ffffff;
 
   /* ---- Deep field for inverted sections (hero, footers) ------------- */
-  --deep-900: #0b1220;
-  --deep-800: #131c30;
-  --deep-700: #1c2842;
+  --deep-900: var(--forest-900);
+  --deep-800: var(--forest-800);
+  --deep-700: var(--forest-700);
 
   /* ---- Semantic surface roles -------------------------------------- */
   --surface-recessed: var(--n-50);
@@ -56,12 +101,12 @@
   --ink: var(--n-900);
   --ink-muted: var(--n-600);
   --ink-faint: var(--n-500);
-  --ink-inverse: var(--n-0);
+  --ink-inverse: #ffffff;
 
-  /* ---- Status (used sparingly, never as the accent) ---------------- */
-  --ok: #1f7a4d;
-  --warn: #a4690b;
-  --danger: #a51f1f;
+  /* ---- Status ------------------------------------------------------ */
+  --ok: var(--leaf-700);
+  --warn: #b07a15;
+  --danger: #b3372c;
 
   /* ---- Scenario colours = data. IPCC AR6 WG1 official SSP palette.
    *      Climate researchers read these on sight; never override locally. */
@@ -77,23 +122,22 @@
   --ramp-div-neg-3: #2166ac;
   --ramp-div-neg-2: #4393c3;
   --ramp-div-neg-1: #92c5de;
-  --ramp-div-0: #f2f2ef;
+  --ramp-div-0: #f6f4ec;
   --ramp-div-pos-1: #f4a582;
   --ramp-div-pos-2: #d6604d;
   --ramp-div-pos-3: #b2182b;
-  /* Sequential, for absolutes. */
-  --ramp-seq-0: #f7fbff;
-  --ramp-seq-1: #cfe1f2;
-  --ramp-seq-2: #93c4de;
-  --ramp-seq-3: #4a97c9;
-  --ramp-seq-4: #1764ab;
-  --ramp-seq-5: #084081;
-  /* Out-of-coverage hatch stroke. */
+  /* Sequential, for absolutes — brand green. */
+  --ramp-seq-0: #f3f9e8;
+  --ramp-seq-1: #d7ecb2;
+  --ramp-seq-2: #aed77a;
+  --ramp-seq-3: #7fb944;
+  --ramp-seq-4: #52812c;
+  --ramp-seq-5: #2c4d1e;
   --hatch: var(--n-300);
 
   /* ---- Type ------------------------------------------------------- */
-  --font-ui: var(--font-ui-next), "Inter Tight", "Söhne", "Neue Haas Grotesk",
-    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-ui: var(--font-ui-next), "DM Sans", "Open Sans", system-ui,
+    -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-code: var(--font-mono-next), "JetBrains Mono", "IBM Plex Mono",
     ui-monospace, "SF Mono", "Cascadia Code", monospace;
 
@@ -135,40 +179,35 @@
   --radius-pill: 9999px;
 
   /* ---- Elevation — three tiers, light from top-left ------------
-   * Deliberately pronounced: cards should visibly float. Cool-navy tint,
-   * multi-stop falloff, a bright 1px top edge, and a faint ambient ring. */
-  --shadow-hue: 220 48% 16%;
-  --elevation-recessed: inset 0 2px 5px hsl(var(--shadow-hue) / 0.12),
+   * Pronounced on purpose: cards visibly float. Shadow is tinted with the
+   * brand forest green so depth reads warm, never grey and dirty. */
+  --shadow-hue: 128 26% 14%;
+  --elevation-recessed: inset 0 2px 5px hsl(var(--shadow-hue) / 0.13),
     inset 0 1px 0 hsl(var(--shadow-hue) / 0.06),
-    inset 0 0 0 1px hsl(var(--shadow-hue) / 0.06);
-  --elevation-flat: 0 0 0 1px hsl(var(--shadow-hue) / 0.07),
+    inset 0 0 0 1px hsl(var(--shadow-hue) / 0.07);
+  --elevation-flat: 0 0 0 1px hsl(var(--shadow-hue) / 0.08),
     0 1px 2px hsl(var(--shadow-hue) / 0.05),
-    0 4px 10px -4px hsl(var(--shadow-hue) / 0.08);
-  --elevation-raised: 0 0 0 1px hsl(var(--shadow-hue) / 0.08),
+    0 4px 10px -4px hsl(var(--shadow-hue) / 0.09);
+  --elevation-raised: 0 0 0 1px hsl(var(--shadow-hue) / 0.09),
     0 1px 2px hsl(var(--shadow-hue) / 0.08),
-    0 6px 12px -3px hsl(var(--shadow-hue) / 0.12),
+    0 6px 12px -3px hsl(var(--shadow-hue) / 0.13),
     0 18px 32px -8px hsl(var(--shadow-hue) / 0.18),
     0 40px 64px -24px hsl(var(--shadow-hue) / 0.22),
     inset 0 1px 0 rgba(255, 255, 255, 1);
-  --elevation-raised-hover: 0 0 0 1px hsl(var(--shadow-hue) / 0.1),
+  --elevation-raised-hover: 0 0 0 1px hsl(var(--shadow-hue) / 0.11),
     0 2px 4px hsl(var(--shadow-hue) / 0.1),
-    0 10px 20px -4px hsl(var(--shadow-hue) / 0.16),
-    0 28px 48px -10px hsl(var(--shadow-hue) / 0.24),
+    0 10px 20px -4px hsl(var(--shadow-hue) / 0.17),
+    0 28px 48px -10px hsl(var(--shadow-hue) / 0.25),
     0 56px 88px -28px hsl(var(--shadow-hue) / 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 1);
-  --elevation-overlay: 0 0 0 1px hsl(var(--shadow-hue) / 0.1),
+  --elevation-overlay: 0 0 0 1px hsl(var(--shadow-hue) / 0.11),
     0 4px 10px hsl(var(--shadow-hue) / 0.12),
     0 16px 32px -6px hsl(var(--shadow-hue) / 0.2),
     0 40px 72px -16px hsl(var(--shadow-hue) / 0.32),
     inset 0 1px 0 rgba(255, 255, 255, 0.9);
 
   /* Top-lit gradient over a raised surface — dimension without a bevel. */
-  --raise-sheen: linear-gradient(
-    177deg,
-    #ffffff 0%,
-    #ffffff 38%,
-    var(--n-25) 100%
-  );
+  --raise-sheen: linear-gradient(177deg, #ffffff 0%, #ffffff 38%, var(--n-25) 100%);
   --panel-sheen: linear-gradient(180deg, #ffffff 0%, var(--n-25) 140%);
 
   /* Accent glow — for primary actions, active states, focus. */
@@ -182,10 +221,9 @@
   --dur-panel: 240ms;
 
   /* ---- Focus ------------------------------------------------- */
-  --focus-ring: 0 0 0 2px var(--surface-panel), 0 0 0 4px rgb(var(--accent-glow) / 0.9);
+  --focus-ring: 0 0 0 2px var(--surface-panel), 0 0 0 4px var(--forest-600);
 
-  /* ---- Back-compat aliases (older components still read these).
-   *      New code uses the names above. Remove once migration lands. */
+  /* ---- Back-compat aliases (older markup still reads these) ---- */
   --color-ground: var(--surface-recessed);
   --color-ground-elevated: var(--surface);
   --color-surface: var(--surface-panel);
@@ -196,8 +234,9 @@
   --color-ink: var(--ink);
   --color-ink-muted: var(--ink-muted);
   --color-ink-faint: var(--ink-faint);
-  --color-brand: var(--accent-600);
-  --color-accent: var(--accent-600);
+  --color-brand: var(--forest-600);
+  --color-brand-deep: var(--forest-700);
+  --color-accent: var(--forest-600);
   --color-ssp119: var(--ssp-119);
   --color-ssp126: var(--ssp-126);
   --color-ssp245: var(--ssp-245);

@@ -47,7 +47,7 @@ export function InfoDot({ text }: { text: string }) {
     <span
       title={text}
       aria-label={text}
-      className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-(--radius-pill) border border-border-strong bg-surface-recessed text-[9px] font-bold text-ink-faint transition-colors hover:bg-surface-hover hover:text-ink"
+      className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-(--radius-pill) border border-border-strong bg-surface-recessed text-[9px] font-semibold text-ink-faint transition-colors hover:bg-surface-hover hover:text-ink"
     >
       ?
     </span>
@@ -87,7 +87,7 @@ function Segmented<T extends string>({
             title={o.hint}
             onClick={() => onChange(o.id)}
             className={`rounded-(--radius-control) px-2.5 py-1.5 text-center text-xs font-medium tabular-nums transition-all motion-state disabled:cursor-not-allowed disabled:opacity-40 ${
-              o.full ? "col-span-full" : ""
+ o.full ? "col-span-full" : ""
             } ${
               active
                 ? "bg-surface-raised text-ink shadow-(--elevation-raised)"
@@ -160,7 +160,7 @@ export function ScenarioPicker({
             title={scenario.summary}
             style={active ? ({ ["--seam-color" as string]: scenarioColorVar(id) } as React.CSSProperties) : undefined}
             className={`group flex items-center justify-between gap-2.5 rounded-(--radius-control) px-3 py-2 text-left transition-all motion-state ${
-              active
+ active
                 ? "tier-raised-seam"
                 : "border border-border bg-surface-panel hover:bg-surface-hover"
             }`}
@@ -360,12 +360,12 @@ export function Toggle({
     >
       <span
         className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-(--radius-pill) transition-colors motion-state ${
-          checked ? "bg-accent" : "bg-surface-active shadow-(--elevation-recessed)"
+ checked ? "bg-accent" : "bg-surface-active shadow-(--elevation-recessed)"
         }`}
       >
         <span
           className={`inline-block h-3.5 w-3.5 rounded-(--radius-pill) bg-surface-raised shadow-(--elevation-raised) transition-transform motion-state ${
-            checked ? "translate-x-[18px]" : "translate-x-[3px]"
+ checked ? "translate-x-[18px]" : "translate-x-[3px]"
           }`}
         />
       </span>
@@ -473,7 +473,7 @@ export function PlaceSearch({
                 onClick={() => choose(place)}
                 onMouseEnter={() => setHighlighted(index)}
                 className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-[13px] transition-colors ${
-                  index === highlighted
+ index === highlighted
                     ? "bg-accent-soft text-ink"
                     : "text-ink-muted hover:bg-surface-hover"
                 }`}

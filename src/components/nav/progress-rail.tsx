@@ -27,14 +27,14 @@ export function ProgressRail() {
                 aria-current={active ? "step" : undefined}
                 title={step.question}
                 className={`flex items-center gap-1.5 rounded-(--radius-pill) px-2.5 py-1.5 text-xs font-medium transition-all motion-state ${
-                  active
+ active
                     ? "bg-ink text-ink-inverse shadow-[0_1px_2px_hsl(220_48%_16%/0.3),0_6px_14px_-4px_hsl(220_48%_16%/0.4)]"
                     : "text-ink-faint hover:text-ink"
                 }`}
               >
                 <span
                   className={`flex h-4.5 w-4.5 items-center justify-center rounded-(--radius-pill) text-[10px] font-semibold tabular-nums ${
-                    active
+ active
                       ? "bg-[rgb(var(--accent-glow))] text-white"
                       : done
                         ? "bg-ok/20 text-ok"

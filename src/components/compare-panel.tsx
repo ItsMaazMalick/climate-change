@@ -135,40 +135,40 @@ export function ComparePanel({ places }: { places: Place[] }) {
       >
         {scenarios.data ? (
           <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
-            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+            <div className="overflow-x-auto rounded-(--radius-container) border border-border bg-surface-panel p-4 shadow-(--elevation-flat)">
               <table className="w-full min-w-[420px] text-[13px]">
                 <thead>
-                  <tr className="border-b border-slate-100">
-                    <th className="py-2.5 text-left font-bold text-slate-500 text-[11px] uppercase tracking-wider">Pathway</th>
-                    <th className="py-2.5 text-left font-bold text-slate-500 text-[11px] uppercase tracking-wider">Storyline</th>
-                    <th className="py-2.5 text-right font-bold text-slate-500 text-[11px] uppercase tracking-wider">Value</th>
-                    <th className="py-2.5 text-right font-bold text-slate-500 text-[11px] uppercase tracking-wider">Change (Δ)</th>
+                  <tr className="border-b border-border">
+                    <th className="py-2.5 text-left font-semibold text-ink-faint text-[11px] uppercase tracking-wider">Pathway</th>
+                    <th className="py-2.5 text-left font-semibold text-ink-faint text-[11px] uppercase tracking-wider">Storyline</th>
+                    <th className="py-2.5 text-right font-semibold text-ink-faint text-[11px] uppercase tracking-wider">Value</th>
+                    <th className="py-2.5 text-right font-semibold text-ink-faint text-[11px] uppercase tracking-wider">Change (Δ)</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-border">
                   {scenarios.data.results.map((row) => {
                     const meta = SCENARIOS[row.scenario.id];
                     return (
                       <tr
                         key={row.scenario.id}
-                        className="hover:bg-slate-50/70 transition-colors"
+                        className="hover:bg-surface-recessed/70 transition-colors"
                       >
                         <td className="py-3 pr-3">
-                          <span className="flex items-center gap-2 font-bold text-slate-900">
+                          <span className="flex items-center gap-2 font-semibold text-ink">
                             <span
-                              className="inline-block h-3 w-3 shrink-0 rounded-full shadow-xs ring-2 ring-white"
+                              className="inline-block h-3 w-3 shrink-0 rounded-full shadow-(--elevation-flat) ring-2 ring-white"
                               style={{ background: meta.color }}
                             />
                             {meta.label}
                           </span>
                         </td>
-                        <td className="py-3 pr-3 text-[12px] text-slate-500">
+                        <td className="py-3 pr-3 text-[12px] text-ink-faint">
                           {meta.narrative}
                         </td>
-                        <td className="tnum py-3 text-right text-slate-600 font-medium">
+                        <td className="tnum py-3 text-right text-ink-muted font-medium">
                           {formatValue(row.value, indicator)}
                         </td>
-                        <td className="tnum py-3 text-right font-bold text-slate-900">
+                        <td className="tnum py-3 text-right font-semibold text-ink">
                           {formatValue(row.anomaly, indicator, "anomaly")}
                         </td>
                       </tr>
@@ -178,9 +178,9 @@ export function ComparePanel({ places }: { places: Place[] }) {
               </table>
             </div>
 
-            <aside className="rounded-2xl border border-slate-200 bg-gradient-to-b from-slate-50 to-white p-5 shadow-xs">
-              <div className="label mb-2 text-slate-500 font-bold">Policy Implication</div>
-              <p className="text-[12.5px] leading-relaxed text-slate-700 font-medium">
+            <aside className="rounded-(--radius-container) border border-border bg-gradient-to-b from-surface-recessed to-white p-5 shadow-(--elevation-flat)">
+              <div className="label mb-2 text-ink-faint font-semibold">Policy Implication</div>
+              <p className="text-[12.5px] leading-relaxed text-ink-muted font-medium">
                 {scenarios.data.divergence ??
                   "The pathways have not meaningfully diverged for this indicator at this horizon."}
               </p>
@@ -204,10 +204,10 @@ export function ComparePanel({ places }: { places: Place[] }) {
               type="button"
               onClick={() => setScenario(id)}
               aria-pressed={scenario === id}
-              className={`rounded-lg border px-3 py-1.5 text-[12px] font-bold transition-all shadow-xs ${
-                scenario === id
-                  ? "border-transparent text-white ring-2 ring-offset-1 ring-slate-300"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+              className={`rounded-(--radius-control) border px-3 py-1.5 text-[12px] font-semibold transition-all shadow-(--elevation-flat) ${
+ scenario === id
+                  ? "border-transparent text-white ring-2 ring-offset-1 ring-border-strong"
+                  : "border-border bg-surface-panel text-ink-muted hover:border-border-strong hover:bg-surface-recessed"
               }`}
               style={
                 scenario === id ? { background: SCENARIOS[id].color } : undefined
@@ -219,7 +219,7 @@ export function ComparePanel({ places }: { places: Place[] }) {
           <button
             type="button"
             onClick={() => setShowMembers((current) => !current)}
-            className="ml-auto rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[12px] font-semibold text-slate-700 transition-all hover:bg-slate-50 hover:border-slate-300 shadow-xs"
+            className="ml-auto rounded-(--radius-control) border border-border bg-surface-panel px-3 py-1.5 text-[12px] font-semibold text-ink-muted transition-all hover:bg-surface-recessed hover:border-border-strong shadow-(--elevation-flat)"
           >
             {showMembers ? "Hide individual models" : "Show all 30 models"}
           </button>
@@ -306,7 +306,7 @@ export function ComparePanel({ places }: { places: Place[] }) {
           {Object.values(SCENARIO_GENERATIONS).map((generation) => (
             <div
               key={generation.id}
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
             >
               <div className="flex items-baseline justify-between">
                 <h3 className="text-[14px] font-semibold">{generation.label}</h3>
@@ -385,7 +385,7 @@ function Section({
 function Skeleton({ height }: { height: number }) {
   return (
     <div
-      className="animate-pulse rounded-lg bg-[var(--color-surface-hover)]"
+      className="animate-pulse rounded-(--radius-control) bg-[var(--color-surface-hover)]"
       style={{ height }}
     />
   );

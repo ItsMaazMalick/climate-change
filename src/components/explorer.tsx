@@ -420,7 +420,7 @@ export function Explorer({ places }: { places: Place[] }) {
                     setState({ lat: String(p.lat), lon: String(p.lon), area: "" })
                   }
                   className={`cursor-pointer rounded-(--radius-control) border px-2.5 py-1 text-xs font-medium transition-colors motion-state ${
-                    isActive
+ isActive
                       ? "border-accent bg-accent text-accent-ink"
                       : "border-border bg-surface-panel text-ink-muted hover:bg-surface-hover hover:text-ink"
                   }`}
@@ -464,7 +464,7 @@ function ChipButton({
       onClick={onClick}
       aria-pressed={active}
       className={`cursor-pointer rounded-(--radius-control) border px-2.5 py-1 text-xs font-medium transition-colors motion-state ${
-        active
+ active
           ? "border-accent bg-accent-soft text-accent"
           : "border-border bg-surface-panel text-ink-muted hover:bg-surface-hover hover:text-ink"
       }`}

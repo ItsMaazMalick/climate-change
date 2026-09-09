@@ -135,7 +135,7 @@ export function ClimateStory({ place }: { place: Place }) {
       </header>
 
       {/* ---------------------------------------------------- controls -- */}
-      <div className="mb-7 grid gap-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:grid-cols-[240px_1fr]">
+      <div className="mb-7 grid gap-4 rounded-(--radius-container) border border-[var(--color-border)] bg-[var(--color-surface)] p-4 sm:grid-cols-[240px_1fr]">
         <div>
           <div className="label mb-1.5">Emissions pathway</div>
           <ScenarioPicker value={scenario} onChange={setScenario} compact />
@@ -168,7 +168,7 @@ export function ClimateStory({ place }: { place: Place }) {
               </p>
             ))}
             {story.data?.analogue && (
-              <p className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
+              <p className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-3 text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
                 {story.data.analogue.text}
               </p>
             )}
@@ -271,7 +271,7 @@ export function ClimateStory({ place }: { place: Place }) {
           ].map((panel) => (
             <div
               key={panel.id}
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
             >
               <h3 className="label mb-2.5">{panel.title}</h3>
               {panel.data ? (
@@ -346,7 +346,7 @@ export function ClimateStory({ place }: { place: Place }) {
           {story.data?.mechanisms.slice(0, 6).map((chain) => (
             <article
               key={chain.id}
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
             >
               <h3 className="text-[13.5px] font-semibold">{chain.title}</h3>
               <ol className="mt-2.5 space-y-1.5">

@@ -60,7 +60,7 @@ export default async function MethodologyPage() {
           {Object.values(DATASETS).map((dataset) => (
             <div
               key={dataset.id}
-              className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
+              className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4"
             >
               <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
                 <h3 className="text-[14px] font-semibold">{dataset.label}</h3>
@@ -285,7 +285,7 @@ export default async function MethodologyPage() {
 
       {/* ---------------------------------------------------- citation -- */}
       <Section title="Citation">
-        <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+        <div className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
           <ul className="space-y-2.5 text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
             <li>
               World Bank Group.{" "}
@@ -371,7 +371,7 @@ function Meta({ label, value }: { label: string; value: string }) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-3.5">
+    <div className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-3.5">
       <div className="label mb-1">{label}</div>
       <div className="tnum text-[20px] font-semibold">{value}</div>
     </div>
@@ -380,7 +380,7 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 function Choice({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
+    <div className="rounded-(--radius-control) border border-[var(--color-border)] bg-[var(--color-surface)] p-4">
       <h3 className="text-[13.5px] font-semibold">{title}</h3>
       <p className="mt-1 text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
         {children}
@@ -422,7 +422,7 @@ function ScopeItem({
 
 function Callout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mt-5 rounded-lg border-l-2 border-[var(--color-brand)] bg-[var(--color-brand-tint)] py-3 pl-4 pr-4">
+    <div className="mt-5 rounded-(--radius-control) border-l-2 border-[var(--color-brand)] bg-[var(--color-brand-tint)] py-3 pl-4 pr-4">
       <p className="text-[13px] leading-relaxed text-[var(--color-ink-muted)]">
         {children}
       </p>

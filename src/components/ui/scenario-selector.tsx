@@ -30,7 +30,7 @@ export function ScenarioSelector({
             aria-checked={active}
             onClick={() => onChange(id)}
             className={`flex items-center gap-2.5 rounded-(--radius-control) border px-2.5 py-2 text-left transition-colors motion-state ${
-              active
+ active
                 ? "border-accent bg-accent-soft"
                 : "border-border bg-surface-panel hover:bg-surface-hover"
             }`}

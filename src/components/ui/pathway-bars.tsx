@@ -28,7 +28,7 @@ export function PathwayBars({ onDark = false }: { onDark?: boolean }) {
     <figure className="w-full">
       <figcaption
         className={`mb-3 text-2xs uppercase tracking-[var(--tracking-caps)] ${
-          onDark ? "text-white/55" : "text-ink-faint"
+ onDark ? "text-white/55" : "text-ink-faint"
         }`}
       >
         Global warming by 2100 · IPCC AR6 · °C vs 1850–1900

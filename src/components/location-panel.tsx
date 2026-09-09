@@ -364,7 +364,7 @@ function SectionTitle({ title, hint }: { title: string; hint?: string }) {
       {hint && (
         <span
           title={hint}
-          className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-(--radius-pill) border border-border-strong bg-surface-recessed text-[8px] font-bold normal-case text-ink-faint"
+          className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-(--radius-pill) border border-border-strong bg-surface-recessed text-[8px] font-semibold normal-case text-ink-faint"
         >
           ?
         </span>

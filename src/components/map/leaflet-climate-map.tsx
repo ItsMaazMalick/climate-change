@@ -26,6 +26,17 @@ import { buildScale, NO_DATA_COLOR } from "@/lib/colors";
 import { displayUnit, formatValue, type ProductId } from "@/lib/climate/taxonomy";
 import type { GeoCollection, GeoFeature } from "./projection";
 
+/**
+ * Map chrome colours. Mirrors the ESS brand tokens in styles/tokens.css —
+ * Leaflet style objects take literal colours, not CSS custom properties.
+ */
+const ESS = {
+  forest: "#334b35",
+  forestDeep: "#16211a",
+  leaf: "#8dc63f",
+  ground: "#f6f4ec",
+} as const;
+
 /* ------------------------------------------------------------------ types */
 
 export interface RegionValue {
@@ -126,7 +137,7 @@ function ChoroplethLayer({
         // Opaque enough to read as data, sheer enough that the basemap's
         // coastline and place names stay visible underneath.
         fillOpacity: value === null ? 0.25 : contested ? 0.4 : 0.78,
-        color: emphasised ? "#0f766e" : "#ffffff",
+        color: emphasised ? ESS.forest : "#ffffff",
         weight: emphasised ? 2.2 : 0.5,
         opacity: emphasised ? 1 : 0.85,
       };
@@ -151,7 +162,7 @@ function ChoroplethLayer({
               value: region?.value ?? null,
               cells: region?.cells ?? 0,
             });
-            (featureLayer as L.Path).setStyle({ weight: 2, color: "#134e4a", opacity: 1 });
+            (featureLayer as L.Path).setStyle({ weight: 2, color: ESS.forestDeep, opacity: 1 });
           },
           mouseout: () => {
             onHover(null);
@@ -197,7 +208,7 @@ function OutlineLayer({ outline }: { outline: GeoCollection | null }) {
       interactive: false,
       style: {
         fill: false,
-        color: "#0f172a",
+        color: ESS.forestDeep,
         weight: 1.6,
         opacity: 0.75,
       },
@@ -264,7 +275,7 @@ function MapContent(props: ClimateMapProps) {
       radius: 7,
       color: "#ffffff",
       weight: 2.5,
-      fillColor: "#0f766e",
+      fillColor: ESS.forest,
       fillOpacity: 1,
     }).addTo(map);
     markerRef.current = marker;
@@ -289,14 +300,14 @@ function MapContent(props: ClimateMapProps) {
       <OutlineLayer outline={outline} />
 
       {hover && (
-        <div className="pointer-events-none absolute bottom-3.5 left-3.5 z-[1000] rounded-xl border border-slate-200/90 bg-white/95 px-4 py-3 shadow-xl ring-1 ring-slate-100 backdrop-blur-xl">
-          <div className="text-[13px] font-bold text-slate-900">{hover.name}</div>
-          <div className="tnum mt-1 text-[17px] font-extrabold text-slate-900">
+        <div className="pointer-events-none absolute bottom-3.5 left-3.5 z-[1000] rounded-(--radius-container) border border-border/90 bg-surface-panel px-4 py-3 shadow-(--elevation-overlay) ring-1 ring-border ">
+          <div className="text-[13px] font-semibold text-ink">{hover.name}</div>
+          <div className="tnum mt-1 text-[17px] font-semibold text-ink">
             {hover.value === null
               ? "No data"
               : formatValue(hover.value, indicatorId, product as ProductId)}
           </div>
-          <div className="mt-0.5 text-[10.5px] font-medium text-slate-500">
+          <div className="mt-0.5 text-[10.5px] font-medium text-ink-faint">
             {hover.value === null
               ? "outside the climate grid"
               : `mean of ${hover.cells} grid cell${hover.cells === 1 ? "" : "s"} · ${unit}`}
@@ -305,15 +316,15 @@ function MapContent(props: ClimateMapProps) {
       )}
 
       {loading && (
-        <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1001] flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 rounded-full border border-emerald-200 bg-white/95 px-5 py-2.5 text-xs font-bold text-emerald-800 shadow-xl ring-1 ring-emerald-500/20 backdrop-blur-xl">
-          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1001] flex -translate-x-1/2 -translate-y-1/2 items-center gap-3 rounded-full border border-leaf bg-surface-panel px-5 py-2.5 text-xs font-semibold text-brand-deep shadow-(--elevation-overlay) ring-1 ring-leaf/20 ">
+          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-leaf border-t-transparent" />
           <span>Aggregating CMIP6 field by region…</span>
         </div>
       )}
 
       {!data && !loading && (
         <div className="pointer-events-none absolute inset-0 z-[1001] flex items-center justify-center">
-          <div className="max-w-sm rounded-xl border border-slate-200 bg-white/95 px-5 py-4 text-center text-xs font-medium text-slate-600 shadow-xl backdrop-blur-xl">
+          <div className="max-w-sm rounded-(--radius-container) border border-border bg-surface-panel px-5 py-4 text-center text-xs font-medium text-ink-muted shadow-(--elevation-overlay) ">
             No gridded field for this combination. Point values are still
             available in the location panel.
           </div>
@@ -322,10 +333,10 @@ function MapContent(props: ClimateMapProps) {
 
       {!selection && !loading && data && (
         <div className="pointer-events-none absolute left-1/2 top-8 z-[1001] -translate-x-1/2">
-          <div className="flex items-center gap-2 rounded-full border border-emerald-200 bg-white/95 px-4 py-2.5 text-sm font-bold text-emerald-700 shadow-xl ring-2 ring-emerald-500/20 backdrop-blur-xl">
+          <div className="flex items-center gap-2 rounded-full border border-leaf bg-surface-panel px-4 py-2.5 text-sm font-semibold text-brand shadow-(--elevation-overlay) ring-2 ring-leaf/20 ">
             <span className="relative flex h-3 w-3">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-500" />
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-leaf opacity-75" />
+              <span className="relative inline-flex h-3 w-3 rounded-full bg-brand" />
             </span>
             <span>Hover a region for its value · click to inspect a point</span>
           </div>
@@ -362,7 +373,7 @@ export function ClimateMap(props: ClimateMapProps) {
       // on screen. Quarter steps let it fit the frame properly.
       zoomSnap={0.25}
       zoomDelta={0.5}
-      style={{ background: "#eef2f6" }}
+      style={{ background: ESS.ground }}
     >
       {/*
         Esri World Light Gray Canvas — a muted basemap built to sit under data.
@@ -394,12 +405,12 @@ export function ClimateMap(props: ClimateMapProps) {
 function ZoomControl({ bounds }: { bounds: [[number, number], [number, number]] }) {
   const map = useMap();
   return (
-    <div className="absolute right-3.5 top-3.5 z-[1000] flex flex-col overflow-hidden rounded-xl border border-slate-200/90 bg-white/95 shadow-lg ring-1 ring-slate-100 backdrop-blur-xl">
+    <div className="absolute right-3.5 top-3.5 z-[1000] flex flex-col overflow-hidden rounded-(--radius-container) border border-border/90 bg-surface-panel shadow-(--elevation-raised) ring-1 ring-border ">
       <button
         type="button"
         aria-label="Zoom in"
         onClick={() => map.zoomIn()}
-        className="flex h-9 w-9 cursor-pointer items-center justify-center border-b border-slate-100 text-base font-bold text-slate-700 transition-colors hover:bg-slate-50"
+        className="flex h-9 w-9 cursor-pointer items-center justify-center border-b border-border text-base font-semibold text-ink-muted transition-colors hover:bg-surface-recessed"
       >
         +
       </button>
@@ -407,7 +418,7 @@ function ZoomControl({ bounds }: { bounds: [[number, number], [number, number]] 
         type="button"
         aria-label="Zoom out"
         onClick={() => map.zoomOut()}
-        className="flex h-9 w-9 cursor-pointer items-center justify-center border-b border-slate-100 text-base font-bold text-slate-700 transition-colors hover:bg-slate-50"
+        className="flex h-9 w-9 cursor-pointer items-center justify-center border-b border-border text-base font-semibold text-ink-muted transition-colors hover:bg-surface-recessed"
       >
         −
       </button>
@@ -416,7 +427,7 @@ function ZoomControl({ bounds }: { bounds: [[number, number], [number, number]] 
         aria-label="Reset view"
         title="Reset view"
         onClick={() => map.fitBounds(bounds, { animate: true, padding: [16, 16] })}
-        className="flex h-9 w-9 cursor-pointer items-center justify-center text-slate-600 transition-colors hover:bg-slate-50"
+        className="flex h-9 w-9 cursor-pointer items-center justify-center text-ink-muted transition-colors hover:bg-surface-recessed"
       >
         <svg
           width="14"
@@ -438,7 +449,7 @@ function ZoomControl({ bounds }: { bounds: [[number, number], [number, number]] 
 
 function AttributionControl() {
   return (
-    <div className="absolute bottom-1.5 right-1.5 z-[1000] rounded-md bg-white/80 px-1.5 py-0.5 text-[10px] text-slate-500 backdrop-blur-sm">
+    <div className="absolute bottom-1.5 right-1.5 z-[1000] rounded-(--radius-control) bg-surface-panel px-1.5 py-0.5 text-[10px] text-ink-faint ">
       Tiles ©{" "}
       <a
         href="https://www.esri.com/en-us/legal/terms/full-master-agreement"

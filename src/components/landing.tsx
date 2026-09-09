@@ -38,35 +38,46 @@ export function Landing({
     <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:py-10">
       {/* ---- hero ---------------------------------------------------- */}
       <section className="section-deep relative grid gap-10 p-8 sm:p-11 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:p-14">
-        <span className="orb h-64 w-64" style={{ left: "-4rem", top: "-3rem", background: "rgb(47 116 224 / 0.9)" }} />
-        <span className="orb h-72 w-72" style={{ right: "-5rem", bottom: "-4rem", background: "hsl(268 80% 60% / 0.7)", animationDelay: "-6s" }} />
+        <span
+          className="orb h-72 w-72"
+          style={{ left: "-5rem", top: "-4rem", background: "rgb(141 198 63 / 0.85)" }}
+        />
+        <span
+          className="orb h-80 w-80"
+          style={{
+            right: "-6rem",
+            bottom: "-5rem",
+            background: "rgb(105 160 70 / 0.7)",
+            animationDelay: "-7s",
+          }}
+        />
 
         <div className="relative z-10">
-          <p className="mb-5 inline-flex items-center gap-2 rounded-(--radius-pill) border border-white/15 bg-white/8 px-3 py-1 text-2xs font-semibold uppercase tracking-[var(--tracking-caps)] text-white/75">
-            <span className="h-1.5 w-1.5 rounded-(--radius-pill) bg-[rgb(var(--accent-glow))] shadow-[0_0_10px_2px_rgb(var(--accent-glow))]" />
+          <p className="mb-5 inline-flex items-center gap-2 rounded-(--radius-pill) border border-[rgb(255_255_255/0.18)] bg-[rgb(255_255_255/0.08)] px-3 py-1 text-2xs font-semibold uppercase tracking-[var(--tracking-caps)] text-[rgb(255_255_255/0.8)]">
+            <span className="h-1.5 w-1.5 rounded-(--radius-pill) bg-leaf shadow-[0_0_10px_2px_rgb(var(--leaf-glow))]" />
             Earth Scan Systems · Climate Intelligence
           </p>
           <h1 className="text-[clamp(2.15rem,4.8vw,3.5rem)] font-semibold leading-[1.03] tracking-tight text-white">
             How the climate of four countries could change under each{" "}
-            <span className="bg-gradient-to-r from-[#8fc2ff] via-[#c9b6ff] to-[#ffd9a8] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#cfe7a5] via-[#8dc63f] to-[#e2c79a] bg-clip-text text-transparent">
               emissions pathway
             </span>
             .
           </h1>
-          <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-white/70">
+          <p className="mt-5 max-w-lg text-[15px] leading-relaxed text-[rgb(255_255_255/0.72)]">
             A projection platform for Pakistan, Uzbekistan, Australia and New
             Zealand — not a forecast. Every number traces to a published CMIP6
             value or a documented derivation from one.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link href="/explore" className="btn btn-primary group">
+            <Link href="/explore" className="btn btn-leaf group">
               Start exploring
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
             <Link
               href="/explore?tour=1"
-              className="btn border border-white/20 bg-white/5 text-white/85 hover:bg-white/12 hover:text-white"
+              className="btn border border-[rgb(255_255_255/0.22)] bg-[rgb(255_255_255/0.07)] text-[rgb(255_255_255/0.88)] hover:bg-[rgb(255_255_255/0.14)] hover:text-white"
             >
               <PlayCircle className="h-4 w-4" /> Guided tour · 3 min
             </Link>
@@ -76,7 +87,7 @@ export function Landing({
             {PROVENANCE.map((p) => (
               <span
                 key={p}
-                className="rounded-(--radius-pill) border border-white/12 bg-white/6 px-2.5 py-1 text-2xs font-medium text-white/65"
+                className="rounded-(--radius-pill) border border-[rgb(255_255_255/0.14)] bg-[rgb(255_255_255/0.07)] px-2.5 py-1 text-2xs font-medium text-[rgb(255_255_255/0.68)]"
                 data-numeric
               >
                 {p}
@@ -85,7 +96,7 @@ export function Landing({
           </div>
         </div>
 
-        <div className="relative z-10 rounded-(--radius-overlay) border border-white/12 bg-white/[0.06] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_30px_60px_-20px_rgba(0,0,0,0.5)]">
+        <div className="relative z-10 rounded-(--radius-overlay) border border-[rgb(255_255_255/0.14)] bg-[rgb(255_255_255/0.06)] p-6 shadow-[inset_0_1px_0_rgb(255_255_255/0.14),0_30px_60px_-20px_rgb(0_0_0/0.5)]">
           <PathwayBars onDark />
         </div>
       </section>
@@ -95,7 +106,7 @@ export function Landing({
         <div className="mb-5 flex flex-wrap items-end justify-between gap-2">
           <div>
             <p className="label">Projected warming · capitals</p>
-            <p className="mt-1 text-sm text-ink-muted">Tap a country to open it in Explore.</p>
+            <p className="mt-1 text-sm text-ink-muted">Choose a country to open it in Explore.</p>
           </div>
           <p className="text-xs text-ink-faint" data-numeric>
             {scenarioLabel} · {periodLabel} vs 1995–2014
@@ -116,16 +127,15 @@ export function Landing({
                   <span aria-hidden className="text-lg leading-none">{h.flag}</span>
                   <span className="text-sm font-semibold text-ink">{h.name}</span>
                 </span>
-                <span className="flex h-8 w-8 items-center justify-center rounded-(--radius-pill) bg-surface-recessed text-ink-faint transition-all group-hover:bg-[rgb(var(--accent-glow))] group-hover:text-white group-hover:shadow-[0_0_16px_2px_rgb(var(--accent-glow)/0.55)]">
+                <span className="flex h-8 w-8 items-center justify-center rounded-(--radius-pill) bg-surface-recessed text-ink-faint transition-all group-hover:bg-brand group-hover:text-white group-hover:shadow-[0_0_18px_2px_rgb(var(--leaf-glow)/0.5)]">
                   <ArrowUpRight className="h-4 w-4" />
                 </span>
               </div>
 
               <div>
                 <div
-                  className="text-[2.75rem] font-semibold leading-[0.85] tracking-tight tabular-nums"
+                  className="text-[2.75rem] font-semibold leading-[0.85] tracking-tight tabular-nums text-brand"
                   data-numeric
-                  style={{ color: h.delta !== null ? "var(--danger)" : "var(--ink)" }}
                 >
                   {h.delta !== null ? formatValue(h.delta, "tas", "anomaly") : "—"}
                 </div>
@@ -151,7 +161,7 @@ export function Landing({
         These are physical pathways, not predictions. Individual-model values are
         national aggregates rather than grid-cell values at the selected point —
         see{" "}
-        <Link href="/methodology" className="text-accent underline underline-offset-2">
+        <Link href="/methodology" className="text-brand underline underline-offset-2">
           Methodology
         </Link>
         .

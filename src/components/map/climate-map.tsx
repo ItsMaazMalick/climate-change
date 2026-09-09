@@ -20,9 +20,9 @@ const LeafletClimateMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-full w-full items-center justify-center bg-slate-50">
-        <div className="flex items-center gap-3 rounded-full border border-emerald-200 bg-white/95 px-5 py-2.5 text-xs font-bold text-emerald-800 backdrop-blur-xl shadow-xl">
-          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-emerald-600 border-t-transparent" />
+      <div className="flex h-full w-full items-center justify-center bg-surface-recessed">
+        <div className="flex items-center gap-3 rounded-full border border-leaf bg-surface-panel px-5 py-2.5 text-xs font-semibold text-brand-deep shadow-(--elevation-overlay)">
+          <span className="inline-block h-3.5 w-3.5 animate-spin rounded-full border-2 border-leaf border-t-transparent" />
           <span>Loading map…</span>
         </div>
       </div>

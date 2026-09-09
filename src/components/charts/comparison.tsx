@@ -68,7 +68,7 @@ export function ScenarioComparison({
           >
             <span
               className={`w-[68px] shrink-0 text-[11.5px] transition-colors ${
-                active === bar.scenario
+ active === bar.scenario
                   ? "font-semibold text-[var(--color-ink)]"
                   : "text-[var(--color-ink-muted)]"
               }`}
@@ -78,17 +78,17 @@ export function ScenarioComparison({
             </span>
 
             <div
-              className="relative flex-1 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden"
+              className="relative flex-1 rounded-(--radius-control) bg-surface-active border border-border overflow-hidden"
               style={{ height }}
             >
               <div
-                className="absolute inset-y-0 w-px bg-slate-300"
+                className="absolute inset-y-0 w-px bg-border-strong"
                 style={{ left: `${zeroPct}%` }}
                 aria-hidden
               />
               {value !== null && (
                 <div
-                  className="absolute inset-y-[2px] rounded-md transition-all duration-200"
+                  className="absolute inset-y-[2px] rounded-(--radius-control) transition-all duration-200"
                   style={{
                     left: `${leftPct}%`,
                     width: `${Math.max(widthPct, 0.6)}%`,
@@ -109,7 +109,7 @@ export function ScenarioComparison({
 
             <span
               className={`tnum w-[68px] shrink-0 text-right text-[12px] font-mono transition-colors ${
-                active === bar.scenario ? "font-black text-slate-900" : "font-bold text-slate-700"
+ active === bar.scenario ? "font-semibold text-ink" : "font-semibold text-ink-muted"
               }`}
             >
               {formatValue(value, indicatorId, "anomaly")}
@@ -139,7 +139,7 @@ export function ModelSpread({
   p90,
   members,
   indicatorId,
-  color = "#3c8c1e",
+  color = "var(--forest-600)",
 }: {
   median: number | null;
   p10: number | null;
@@ -230,7 +230,7 @@ export function ModelSpread({
 
         {active && (
           <div
-            className="pointer-events-none absolute -bottom-1 z-10 -translate-x-1/2 whitespace-nowrap rounded border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-1.5 py-0.5 text-[10.5px] shadow-sm"
+            className="pointer-events-none absolute -bottom-1 z-10 -translate-x-1/2 whitespace-nowrap rounded border border-[var(--color-border)] bg-[var(--color-surface-raised)] px-1.5 py-0.5 text-[10.5px] shadow-(--elevation-flat)"
             style={{ left: `${Math.min(Math.max(pct(active.value), 12), 88)}%` }}
           >
             <span className="font-semibold">{active.label}</span>{" "}
@@ -339,7 +339,7 @@ export function ScenarioMatrix({
 
 function Empty({ children }: { children: React.ReactNode }) {
   return (
-    <p className="rounded-md border border-dashed border-[var(--color-border)] px-3 py-4 text-center text-[12px] text-[var(--color-ink-faint)]">
+    <p className="rounded-(--radius-control) border border-dashed border-[var(--color-border)] px-3 py-4 text-center text-[12px] text-[var(--color-ink-faint)]">
       {children}
     </p>
   );
