@@ -1,4 +1,5 @@
 import { COUNTRIES } from "./countries";
+import { deltaAtPercentile, percentileSpread } from "./derive";
 import type { GridField, GridGeometry } from "./grid";
 import {
   displayUnit,
@@ -173,11 +174,104 @@ export function isAustraliaCellInside(_lon: number, _lat: number): boolean {
   return true; // bbox bounds are already checked by the grid loop
 }
 
+interface AusCellContext {
+  baseVal: number;
+  latFactor: number;
+  lapse: number;
+  elev: number;
+  lon: number;
+  lat: number;
+  warmingBase: number;
+}
+
+/** Baseline (1995–2014) climatology for one cell. No rounding here — that
+ *  happens at render (see `lib/climate/derive.ts`, D7). */
+function ausBaselineClimatology(variable: string, ctx: AusCellContext): number {
+  const { baseVal, latFactor, lapse, elev, lon, lat } = ctx;
+  switch (variable) {
+    case "tas":
+      return baseVal + latFactor + lapse;
+    case "tasmax": {
+      const aridBoost = lon >= 120.0 && lon <= 140.0 && lat >= -30.0 && lat <= -20.0 ? 3.5 : 0;
+      return baseVal + latFactor * 1.15 + lapse * 0.95 + aridBoost;
+    }
+    case "tasmin":
+      return baseVal + latFactor * 0.85 + lapse * 1.05;
+    case "txx": {
+      const extremeBoost = lon >= 116.0 && lon <= 122.0 && lat >= -24.0 && lat <= -20.0 ? 7.0 : 0;
+      return baseVal + latFactor * 1.2 + lapse * 0.9 + extremeBoost;
+    }
+    case "tnn":
+      return baseVal + latFactor * 0.8 + lapse * 1.2;
+    case "pr":
+      return estimatePrecipitation(lon, lat);
+    case "hd35":
+      return Math.max(0, 30 + latFactor * 10 + (elev > 800 ? -20 : 0));
+    case "hd40":
+      return Math.max(0, 8 + latFactor * 6 + (elev > 600 ? -5 : 0));
+    case "hi35": {
+      const humidCoast = lon >= 128.0 && lon <= 136.0 && lat >= -16.0 ? 15.0 : 0;
+      return Math.max(0, baseVal * 2.2 + latFactor * 8 + humidCoast);
+    }
+    case "cdd":
+      return Math.max(20, baseVal + latFactor * 5 - (elev / 1000) * 15);
+    case "cdd65":
+      return Math.max(0, baseVal * 20 + latFactor * 180);
+    default:
+      return baseVal + latFactor * 0.1;
+  }
+}
+
+/** Ensemble-median change signal for one cell. p10/p90 are derived from this
+ *  by `deltaAtPercentile` and can never collapse onto it (D3). */
+function ausAnomalyMedian(variable: string, ctx: AusCellContext): number {
+  const { baseVal, warmingBase, elev, lon, lat } = ctx;
+  switch (variable) {
+    case "tas":
+    case "tasmax":
+    case "tasmin":
+    case "txx":
+    case "tnn": {
+      const edw = (elev / 2000) * 0.2;
+      const desertDist = Math.sqrt(
+        Math.pow((lon - 132.5) / 18, 2) + Math.pow((lat - -25.0) / 12, 2),
+      );
+      const aridAmplify = Math.max(0, 0.18 * (1 - desertDist));
+      return warmingBase + edw + aridAmplify;
+    }
+    case "pr": {
+      const pct = lat <= -28.0 ? -warmingBase * 3.5 : lat >= -20.0 ? warmingBase * 2.0 : -warmingBase * 1.0;
+      return (baseVal * pct) / 100;
+    }
+    case "hd35":
+      return warmingBase * 14.8;
+    case "hd40":
+      return warmingBase * 9.2;
+    case "hi35":
+      return warmingBase * 11.2;
+    case "cdd":
+      return warmingBase * 4.1;
+    case "cdd65":
+      return warmingBase * 195;
+    case "rx1day":
+    case "rx5day":
+    case "r95ptot":
+      return warmingBase * 2.1;
+    default:
+      return warmingBase;
+  }
+}
+
 /**
  * Generate a complete GridField for Australia.
+ *
+ * See `docs/AUDIT.md`: future absolute = `baseline + delta` (D1/D2); a
+ * requested percentile moves the value off the median (D3); stored values
+ * carry full precision (D7).
  */
 export function getAustraliaField(query: AusFieldQuery): GridField {
   const { variable, scenario, period, product = "anomaly" } = query;
+  const percentile = query.percentile ?? "median";
   const ind = INDICATORS[variable];
   const unit = ind ? displayUnit(ind.unit, variable, product) : "°C";
 
@@ -215,89 +309,25 @@ export function getAustraliaField(query: AusFieldQuery): GridField {
 
       const elev = estimateElevation(lon, lat);
       const lapse = -(elev / 1000) * 6.5; // -6.5°C per 1 km
+      const ctx: AusCellContext = { baseVal, latFactor, lapse, elev, lon, lat, warmingBase };
 
+      const climBaseline = ausBaselineClimatology(variable, ctx);
       let cellValue: number;
+      let sig = 1;
 
-      if (effectiveProduct === "climatology") {
-        if (variable === "tas") {
-          cellValue = baseVal + latFactor + lapse;
-        } else if (variable === "tasmax") {
-          // Interior and arid zones have higher daily maxima
-          const aridBoost = lon >= 120.0 && lon <= 140.0 && lat >= -30.0 && lat <= -20.0 ? 3.5 : 0;
-          cellValue = baseVal + latFactor * 1.15 + lapse * 0.95 + aridBoost;
-        } else if (variable === "tasmin") {
-          cellValue = baseVal + latFactor * 0.85 + lapse * 1.05;
-        } else if (variable === "txx") {
-          // Extreme max: Pilbara / SA / interior record territory
-          const extremeBoost = (lon >= 116.0 && lon <= 122.0 && lat >= -24.0 && lat <= -20.0) ? 7.0 : 0;
-          cellValue = baseVal + latFactor * 1.2 + lapse * 0.9 + extremeBoost;
-        } else if (variable === "tnn") {
-          // Southern highlands can freeze
-          cellValue = baseVal + latFactor * 0.8 + lapse * 1.2;
-        } else if (variable === "pr") {
-          cellValue = estimatePrecipitation(lon, lat);
-        } else if (variable === "hd35") {
-          // Hot days: rare in SE and SW, very common in interior and north
-          const baseHd = Math.max(0, 30 + latFactor * 10 + (elev > 800 ? -20 : 0));
-          cellValue = Math.round(baseHd);
-        } else if (variable === "hd40") {
-          const baseHd40 = Math.max(0, 8 + latFactor * 6 + (elev > 600 ? -5 : 0));
-          cellValue = Math.round(baseHd40);
-        } else if (variable === "hi35") {
-          // Humidity-adjusted heat: coastal north (Darwin) highest
-          const humidCoast = (lon >= 128.0 && lon <= 136.0 && lat >= -16.0) ? 15.0 : 0;
-          cellValue = Math.max(0, Math.round(baseVal * 2.2 + latFactor * 8 + humidCoast));
-        } else if (variable === "cdd") {
-          cellValue = Math.max(20, Math.round(baseVal + latFactor * 5 - (elev / 1000) * 15));
-        } else if (variable === "cdd65") {
-          cellValue = Math.max(0, Math.round(baseVal * 20 + latFactor * 180));
-        } else {
-          cellValue = baseVal + latFactor * 0.1;
-        }
+      if (isBaselinePeriod) {
+        cellValue = climBaseline;
+        sig = 0;
       } else {
-        // Anomaly
-        if (variable === "tas" || variable === "tasmax" || variable === "tasmin" ||
-            variable === "txx" || variable === "tnn") {
-          // Australia warms faster inland; smooth Gaussian falloff from arid
-          // interior avoids the rectangular artefact a step function creates.
-          const edw = (elev / 2000) * 0.2;
-          const desertLon = 132.5, desertLat = -25.0;
-          const desertDist = Math.sqrt(
-            Math.pow((lon - desertLon) / 18, 2) +
-            Math.pow((lat - desertLat) / 12, 2),
-          );
-          const aridAmplify = Math.max(0, 0.18 * (1 - desertDist));
-          cellValue = warmingBase + edw + aridAmplify;
-        } else if (variable === "pr") {
-          // Southern Australia dries; tropical north slightly wetter
-          const isSouthern = lat <= -28.0;
-          const isTropical = lat >= -20.0;
-          const pct = isSouthern
-            ? -warmingBase * 3.5
-            : isTropical
-              ? warmingBase * 2.0
-              : -warmingBase * 1.0;
-          cellValue = (baseVal * pct) / 100;
-        } else if (variable === "hd35") {
-          cellValue = Math.round(warmingBase * 14.8);
-        } else if (variable === "hd40") {
-          cellValue = Math.round(warmingBase * 9.2);
-        } else if (variable === "hi35") {
-          cellValue = Math.round(warmingBase * 11.2);
-        } else if (variable === "cdd") {
-          cellValue = Math.round(warmingBase * 4.1);
-        } else if (variable === "cdd65") {
-          cellValue = Math.round(warmingBase * 195);
-        } else if (variable === "rx1day" || variable === "rx5day" || variable === "r95ptot") {
-          cellValue = Number((warmingBase * 2.1).toFixed(1));
-        } else {
-          cellValue = warmingBase;
-        }
+        const anomMedian = ausAnomalyMedian(variable, ctx);
+        const delta = deltaAtPercentile(anomMedian, variable, percentile) ?? anomMedian;
+        const band = percentileSpread(anomMedian, variable);
+        sig = band.p10 !== null && band.p90 !== null && band.p10 < 0 && band.p90 > 0 ? 2 : 1;
+        cellValue = effectiveProduct === "climatology" ? climBaseline + delta : delta;
       }
 
-      cellValue = Number(cellValue.toFixed(ind?.precision ?? 2));
       values[index] = cellValue;
-      significance[index] = 1;
+      significance[index] = sig;
 
       finiteSum += cellValue;
       finiteCount += 1;
@@ -313,7 +343,7 @@ export function getAustraliaField(query: AusFieldQuery): GridField {
       scenario,
       product: effectiveProduct,
       aggregation: query.aggregation ?? "annual",
-      percentile: query.percentile ?? "median",
+      percentile,
       period,
       statistic: "mean",
     },
@@ -324,7 +354,8 @@ export function getAustraliaField(query: AusFieldQuery): GridField {
       count: finiteCount,
       min: finiteCount > 0 ? min : null,
       max: finiteCount > 0 ? max : null,
-      mean: finiteCount > 0 ? Number((finiteSum / finiteCount).toFixed(2)) : null,
+      // Full precision — rounding happens at render (D7).
+      mean: finiteCount > 0 ? finiteSum / finiteCount : null,
     },
     values,
     significance,

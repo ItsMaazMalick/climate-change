@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Info, MapPin } from "lucide-react";
 
 import {
@@ -17,6 +17,7 @@ import { LocationPanel } from "@/components/location-panel";
 import { ClimateMap, type RegionData } from "@/components/map/climate-map";
 import { Legend } from "@/components/map/legend";
 import type { GeoCollection } from "@/components/map/projection";
+import { isInsideCountryBounds } from "@/lib/climate/countries";
 import type { Place } from "@/lib/climate/places";
 import {
   displayUnit,
@@ -143,6 +144,34 @@ export function Explorer({ places }: { places: Place[] }) {
     () => places.filter((place) => place.country === countryCode),
     [places, countryCode],
   );
+
+  // The country's capital — the target every country switch resets to (D5).
+  const capital = useMemo(
+    () =>
+      countryPlaces.find((p) => p.id === config.defaultCityId) ??
+      countryPlaces[0] ??
+      null,
+    [countryPlaces, config.defaultCityId],
+  );
+
+  // On a country switch — or an initial coordinate that lands outside the
+  // active country's bounding box — move the target to that country's capital.
+  // A stale coordinate must never be handed to the point API as if it were a
+  // location in the new country (D5). Reconciled during render, matching the
+  // pattern in compare-panel.
+  const [syncedCountry, setSyncedCountry] = useState(countryCode);
+  const hasCoord = Boolean(state.lat && state.lon);
+  const coordOutside =
+    hasCoord &&
+    !isInsideCountryBounds(Number(state.lat), Number(state.lon), countryCode);
+  if (syncedCountry !== countryCode || coordOutside) {
+    setSyncedCountry(countryCode);
+    if (capital) {
+      setState({ lat: String(capital.lat), lon: String(capital.lon), area: "" });
+    } else if (coordOutside) {
+      setState({ lat: "", lon: "", area: "" });
+    }
+  }
 
   // ---- the choropleth ---------------------------------------------------
   //

@@ -48,9 +48,16 @@ export interface Spread {
  * evidence base to assign those terms, so we describe the *model spread*
  * literally instead — which is what we actually measured.
  */
-export function describeSpread(spread: Spread, indicatorId: string): string {
+export function describeSpread(
+  spread: Spread,
+  indicatorId: string,
+  opts: { degenerate?: boolean } = {},
+): string {
   const { median, p10, p90 } = spread;
   if (median === null) return "No projection available.";
+  if (opts.degenerate) {
+    return `Central estimate ${formatValue(median, indicatorId, "anomaly")}. Model spread unavailable at this aggregation.`;
+  }
   if (p10 === null || p90 === null) {
     return `Central estimate ${formatValue(median, indicatorId, "anomaly")}. Model spread not available for this combination.`;
   }
@@ -280,6 +287,9 @@ export function mechanismsFor(indicatorId: string): MechanismChain[] {
 
 export interface NarrativeInput {
   placeName: string;
+  /** Active country's display name — interpolated into copy so no country
+   *  name is ever hardcoded here (D4). */
+  countryName: string;
   scenario: ScenarioId;
   period: PeriodId;
   baseline: Record<string, number | null>;
@@ -293,7 +303,7 @@ export interface NarrativeInput {
  * than a paragraph the reader has to disentangle.
  */
 export function buildNarrative(input: NarrativeInput): Statement[] {
-  const { placeName, scenario, period, baseline, projected, anomaly } = input;
+  const { placeName, countryName, scenario, period, baseline, projected, anomaly } = input;
   const statements: Statement[] = [];
   const scenarioMeta = SCENARIOS[scenario];
   const periodMeta = PERIODS[period];
@@ -354,7 +364,7 @@ export function buildNarrative(input: NarrativeInput): Statement[] {
     });
     statements.push({
       kind: "mechanism",
-      text: "Annual totals are the least informative precipitation statistic for Pakistan. The same total delivered in fewer, heavier events raises flood and drought exposure simultaneously.",
+      text: `Annual totals are the least informative precipitation statistic for ${countryName}. The same total delivered in fewer, heavier events raises flood and drought exposure simultaneously.`,
     });
   }
 

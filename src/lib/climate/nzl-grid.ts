@@ -1,3 +1,4 @@
+import { deltaAtPercentile, percentileSpread } from "./derive";
 import type { GridField, GridGeometry } from "./grid";
 import {
   displayUnit,
@@ -178,11 +179,100 @@ export function isNZCellInside(_lon: number, _lat: number): boolean {
   return true; // bbox bounds are already checked by the grid loop
 }
 
+interface NzlCellContext {
+  baseVal: number;
+  latFactor: number;
+  lapse: number;
+  elev: number;
+  lon: number;
+  lat: number;
+  warmingBase: number;
+}
+
+/** Baseline (1995–2014) climatology for one cell. No rounding here — that
+ *  happens at render (see `lib/climate/derive.ts`, D7). */
+function nzlBaselineClimatology(variable: string, ctx: NzlCellContext): number {
+  const { baseVal, latFactor, lapse, elev, lon, lat } = ctx;
+  switch (variable) {
+    case "tas":
+      return baseVal + latFactor + lapse;
+    case "tasmax": {
+      const foehn = lon >= 171.5 && lon <= 173.0 && lat >= -44.5 ? 2.5 : 0;
+      return baseVal + latFactor * 1.1 + lapse * 0.9 + foehn;
+    }
+    case "tasmin": {
+      const frostHollow = lon >= 169.0 && lon <= 170.5 && lat <= -45.0 ? -2.5 : 0;
+      return baseVal + latFactor * 0.9 + lapse * 1.1 + frostHollow;
+    }
+    case "txx":
+      return baseVal + latFactor * 1.2 + lapse * 0.8;
+    case "tnn":
+      return baseVal + latFactor * 0.8 + lapse * 1.2;
+    case "pr":
+      return estimatePrecipitation(lon, lat);
+    case "hd35": {
+      const foehn = lon >= 171.5 && lon <= 173.5 && lat >= -44.0 ? 3.0 : 0;
+      return Math.max(0, baseVal + latFactor * 0.8 + foehn);
+    }
+    case "hd40":
+      return Math.max(0, baseVal * 0.08 + latFactor * 0.1);
+    case "hi35":
+      return Math.max(0, baseVal + latFactor * 0.5);
+    case "cdd":
+      return Math.max(5, baseVal - (elev / 1000) * 8 + (lat <= -44.0 ? 8 : 0));
+    case "cdd65":
+      return Math.max(0, baseVal + latFactor * 15);
+    default:
+      return baseVal + latFactor * 0.1;
+  }
+}
+
+/** Ensemble-median change signal for one cell. p10/p90 are derived from this
+ *  by `deltaAtPercentile` and can never collapse onto it (D3). */
+function nzlAnomalyMedian(variable: string, ctx: NzlCellContext): number {
+  const { baseVal, warmingBase, elev, lon } = ctx;
+  switch (variable) {
+    case "tas":
+    case "tasmax":
+    case "tasmin":
+    case "txx":
+    case "tnn": {
+      const edw = (elev / 2500) * 0.22;
+      return warmingBase + edw;
+    }
+    case "pr": {
+      const pct = lon <= 170.0 ? warmingBase * 3.5 : -warmingBase * 2.2;
+      return (baseVal * pct) / 100;
+    }
+    case "hd35":
+      return warmingBase * 6.4;
+    case "hd40":
+      return warmingBase * 2.1;
+    case "hi35":
+      return warmingBase * 4.8;
+    case "cdd":
+      return warmingBase * 2.8;
+    case "cdd65":
+      return warmingBase * 82;
+    case "rx1day":
+    case "rx5day":
+    case "r95ptot":
+      return warmingBase * 2.8;
+    default:
+      return warmingBase;
+  }
+}
+
 /**
  * Generate a complete GridField for New Zealand.
+ *
+ * See `docs/AUDIT.md`: future absolute = `baseline + delta` (D1/D2); a
+ * requested percentile moves the value off the median (D3); stored values
+ * carry full precision (D7).
  */
 export function getNZField(query: NzlFieldQuery): GridField {
   const { variable, scenario, period, product = "anomaly" } = query;
+  const percentile = query.percentile ?? "median";
   const ind = INDICATORS[variable];
   const unit = ind ? displayUnit(ind.unit, variable, product) : "°C";
 
@@ -219,74 +309,25 @@ export function getNZField(query: NzlFieldQuery): GridField {
 
       const elev = estimateElevation(lon, lat);
       const lapse = -(elev / 1000) * 6.5;
+      const ctx: NzlCellContext = { baseVal, latFactor, lapse, elev, lon, lat, warmingBase };
 
+      const climBaseline = nzlBaselineClimatology(variable, ctx);
       let cellValue: number;
+      let sig = 1;
 
-      if (effectiveProduct === "climatology") {
-        if (variable === "tas") {
-          cellValue = baseVal + latFactor + lapse;
-        } else if (variable === "tasmax") {
-          // Canterbury Plains are dry and hot in summer (Föhn effect)
-          const foehn = lon >= 171.5 && lon <= 173.0 && lat >= -44.5 ? 2.5 : 0;
-          cellValue = baseVal + latFactor * 1.1 + lapse * 0.9 + foehn;
-        } else if (variable === "tasmin") {
-          // Otago inland frost hollows are cold
-          const frostHollow = lon >= 169.0 && lon <= 170.5 && lat <= -45.0 ? -2.5 : 0;
-          cellValue = baseVal + latFactor * 0.9 + lapse * 1.1 + frostHollow;
-        } else if (variable === "txx") {
-          cellValue = baseVal + latFactor * 1.2 + lapse * 0.8;
-        } else if (variable === "tnn") {
-          cellValue = baseVal + latFactor * 0.8 + lapse * 1.2;
-        } else if (variable === "pr") {
-          cellValue = estimatePrecipitation(lon, lat);
-        } else if (variable === "hd35") {
-          // Very few hot days in NZ; Canterbury Föhn occasionally pushes 35°
-          const foehn = lon >= 171.5 && lon <= 173.5 && lat >= -44.0 ? 3.0 : 0;
-          cellValue = Math.max(0, Math.round(baseVal + latFactor * 0.8 + foehn));
-        } else if (variable === "hd40") {
-          cellValue = Math.max(0, Math.round(baseVal * 0.08 + latFactor * 0.1));
-        } else if (variable === "hi35") {
-          cellValue = Math.max(0, Math.round(baseVal + latFactor * 0.5));
-        } else if (variable === "cdd") {
-          // Southland and inland Otago have the longest dry spells in SI
-          cellValue = Math.max(5, Math.round(baseVal - (elev / 1000) * 8 + (lat <= -44.0 ? 8 : 0)));
-        } else if (variable === "cdd65") {
-          cellValue = Math.max(0, Math.round(baseVal + latFactor * 15));
-        } else {
-          cellValue = baseVal + latFactor * 0.1;
-        }
+      if (isBaselinePeriod) {
+        cellValue = climBaseline;
+        sig = 0;
       } else {
-        // Anomaly
-        if (variable === "tas" || variable === "tasmax" || variable === "tasmin" ||
-            variable === "txx" || variable === "tnn") {
-          // Elevation-dependent warming in the Southern Alps
-          const edw = (elev / 2500) * 0.22;
-          cellValue = warmingBase + edw;
-        } else if (variable === "pr") {
-          // West Coast gets wetter, east/north gets drier
-          const isWestCoast = lon <= 170.0;
-          const pct = isWestCoast ? warmingBase * 3.5 : -warmingBase * 2.2;
-          cellValue = (baseVal * pct) / 100;
-        } else if (variable === "hd35") {
-          cellValue = Math.round(warmingBase * 6.4);
-        } else if (variable === "hd40") {
-          cellValue = Math.round(warmingBase * 2.1);
-        } else if (variable === "hi35") {
-          cellValue = Math.round(warmingBase * 4.8);
-        } else if (variable === "cdd") {
-          cellValue = Math.round(warmingBase * 2.8);
-        } else if (variable === "cdd65") {
-          cellValue = Math.round(warmingBase * 82);
-        } else if (variable === "rx1day" || variable === "rx5day" || variable === "r95ptot") {
-          cellValue = Number((warmingBase * 2.8).toFixed(1));
-        } else {
-          cellValue = warmingBase;
-        }
+        const anomMedian = nzlAnomalyMedian(variable, ctx);
+        const delta = deltaAtPercentile(anomMedian, variable, percentile) ?? anomMedian;
+        const band = percentileSpread(anomMedian, variable);
+        sig = band.p10 !== null && band.p90 !== null && band.p10 < 0 && band.p90 > 0 ? 2 : 1;
+        cellValue = effectiveProduct === "climatology" ? climBaseline + delta : delta;
       }
 
-      cellValue = Number(cellValue.toFixed(ind?.precision ?? 2));
       values[index] = cellValue;
-      significance[index] = 1;
+      significance[index] = sig;
 
       finiteSum += cellValue;
       finiteCount += 1;
@@ -302,7 +343,7 @@ export function getNZField(query: NzlFieldQuery): GridField {
       scenario,
       product: effectiveProduct,
       aggregation: query.aggregation ?? "annual",
-      percentile: query.percentile ?? "median",
+      percentile,
       period,
       statistic: "mean",
     },
@@ -313,7 +354,8 @@ export function getNZField(query: NzlFieldQuery): GridField {
       count: finiteCount,
       min: finiteCount > 0 ? min : null,
       max: finiteCount > 0 ? max : null,
-      mean: finiteCount > 0 ? Number((finiteSum / finiteCount).toFixed(2)) : null,
+      // Full precision — rounding happens at render (D7).
+      mean: finiteCount > 0 ? finiteSum / finiteCount : null,
     },
     values,
     significance,

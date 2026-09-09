@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { CCKP_CITATION, handler, searchParams } from "@/lib/api";
+import { getCountry } from "@/lib/climate/countries";
 import { resolveSeries } from "@/lib/climate/store";
 import {
   INDICATORS,
@@ -67,7 +68,7 @@ export const GET = handler(async (request) => {
       smoothingYears: query.smooth > 1 ? query.smooth : null,
       scenarioStartYear: 2015,
       lines: lines.filter((line) => line.points.length > 0),
-      note: `Annual time series are published as national spatial aggregates, so these lines describe ${query.geography === "UZB" ? "Uzbekistan" : "Pakistan"} as a whole rather than any single location.`,
+      note: `Annual time series are published as national spatial aggregates, so these lines describe ${getCountry(query.geography).name} as a whole rather than any single location.`,
     },
     meta: { source: "upstream", dataset: "cmip6-x0.25", citation: CCKP_CITATION },
   };

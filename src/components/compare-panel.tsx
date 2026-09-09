@@ -90,7 +90,7 @@ export function ComparePanel({ places }: { places: Place[] }) {
     `/api/climate/scenarios?${point}&period=${period}`,
   );
   const models = useApi<ModelsResponse>(
-    `/api/climate/models?${point}&scenario=${scenario}&period=${period}&models=${showMembers}`,
+    `/api/climate/models?${point}&scenario=${scenario}&period=${period}&models=${showMembers}&country=${countryCode}`,
   );
   const trajectory = useApi<TrajectoryResponse>(
     `/api/climate/trajectory?indicator=${indicator}&geography=${countryCode}&smooth=11`,
@@ -248,7 +248,7 @@ export function ComparePanel({ places }: { places: Place[] }) {
               <>
                 <p className="mt-3 text-[11.5px] text-[var(--color-ink-faint)]">
                   Individual models are published as national aggregates only, so
-                  these values describe Pakistan as a whole rather than{" "}
+                  these values describe {config.name} as a whole rather than{" "}
                   {place.name}. Equilibrium climate sensitivity (ECS) is each
                   model&rsquo;s long-run warming per doubling of CO₂ — the single
                   best predictor of where it sits in this range.

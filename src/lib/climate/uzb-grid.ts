@@ -1,4 +1,5 @@
 import { COUNTRIES } from "./countries";
+import { deltaAtPercentile, percentileSpread } from "./derive";
 import type { GridField, GridGeometry } from "./grid";
 import {
   displayUnit,
@@ -105,11 +106,89 @@ export function isCellInsideUzbekistan(lon: number, lat: number): boolean {
   return true;
 }
 
+interface CellContext {
+  baseVal: number;
+  latFactor: number;
+  lapse: number;
+  elev: number;
+  lon: number;
+  lat: number;
+  warmingBase: number;
+}
+
+/** Baseline (1995–2014) climatology for one cell. Physical bounds are kept;
+ *  no rounding — that happens at render (see `lib/climate/derive.ts`). */
+function uzbBaselineClimatology(variable: string, ctx: CellContext): number {
+  const { baseVal, latFactor, lapse, elev, lon } = ctx;
+  switch (variable) {
+    case "tas":
+      return baseVal + latFactor + lapse;
+    case "tasmax":
+      return baseVal + latFactor * 1.1 + lapse * 0.9;
+    case "tasmin":
+      return baseVal + latFactor * 0.9 + lapse * 1.1;
+    case "pr":
+      return Math.max(70, 95 + (elev / 1000) * 380 + (lon > 68 ? 120 : 0));
+    case "hd35":
+      return Math.max(0, baseVal + latFactor * 6 + lapse * 8);
+    case "hd40":
+      return Math.max(0, baseVal + latFactor * 3.5 + lapse * 4.5);
+    case "hi35":
+      return Math.max(0, baseVal + latFactor * 5 + lapse * 7);
+    case "cdd":
+      return Math.max(30, baseVal - (elev / 1000) * 30 + (lon < 64 ? 20 : -10));
+    case "cdd65":
+      return Math.max(0, baseVal + latFactor * 80 + lapse * 110);
+    default:
+      return baseVal + latFactor * 0.1;
+  }
+}
+
+/** Ensemble-median change signal for one cell. Percentile bands are derived
+ *  from this single median by `deltaAtPercentile`, so p10/p90 can never
+ *  collapse onto it (D3). */
+function uzbAnomalyMedian(variable: string, ctx: CellContext): number {
+  const { baseVal, warmingBase, elev, lat } = ctx;
+  switch (variable) {
+    case "tas":
+    case "tasmax":
+    case "tasmin":
+    case "txx":
+    case "tnn": {
+      const edw = (elev / 2000) * 0.25;
+      return warmingBase + edw + (lat > 42 ? 0.15 : 0);
+    }
+    case "pr":
+      return (baseVal * (warmingBase * 4.5)) / 100;
+    case "hd35":
+      return warmingBase * 11.5 + (lat < 40 ? 4 : 0);
+    case "hd40":
+      return warmingBase * 7.2 + (lat < 39 ? 5 : 0);
+    case "hi35":
+      return warmingBase * 9.8;
+    case "cdd":
+      return warmingBase * 3.4;
+    case "cdd65":
+      return warmingBase * 165;
+    case "rx1day":
+    case "rx5day":
+    case "r95ptot":
+      return warmingBase * 1.8;
+    default:
+      return warmingBase;
+  }
+}
+
 /**
  * Generate a complete GridField for Uzbekistan.
+ *
+ * The contract from `docs/AUDIT.md`: a future absolute is `baseline + delta`
+ * by construction, never an independently generated climatology (D1/D2), and
+ * a requested percentile shifts the value away from the median (D3).
  */
 export function getUzbekistanField(query: UzbFieldQuery): GridField {
   const { variable, scenario, period, product = "anomaly" } = query;
+  const percentile = query.percentile ?? "median";
   const ind = INDICATORS[variable];
   const unit = ind ? displayUnit(ind.unit, variable, product) : "°C";
 
@@ -144,63 +223,27 @@ export function getUzbekistanField(query: UzbFieldQuery): GridField {
 
       const elev = estimateElevation(lon, lat);
       const lapse = -(elev / 1000) * 6.2; // -6.2°C per 1km elevation
+      const ctx: CellContext = { baseVal, latFactor, lapse, elev, lon, lat, warmingBase };
 
+      const climBaseline = uzbBaselineClimatology(variable, ctx);
       let cellValue: number;
+      let sig = 1;
 
-      if (effectiveProduct === "climatology") {
-        if (variable === "tas") {
-          cellValue = baseVal + latFactor + lapse;
-        } else if (variable === "tasmax") {
-          cellValue = baseVal + latFactor * 1.1 + lapse * 0.9;
-        } else if (variable === "tasmin") {
-          cellValue = baseVal + latFactor * 0.9 + lapse * 1.1;
-        } else if (variable === "pr") {
-          // Mountains receive significantly more precipitation than Kyzylkum desert
-          const orographicPr = Math.max(70, 95 + (elev / 1000) * 380 + (lon > 68 ? 120 : 0));
-          cellValue = orographicPr;
-        } else if (variable === "hd35") {
-          cellValue = Math.max(0, Math.round(baseVal + latFactor * 6 + lapse * 8));
-        } else if (variable === "hd40") {
-          cellValue = Math.max(0, Math.round(baseVal + latFactor * 3.5 + lapse * 4.5));
-        } else if (variable === "hi35") {
-          cellValue = Math.max(0, Math.round(baseVal + latFactor * 5 + lapse * 7));
-        } else if (variable === "cdd") {
-          cellValue = Math.max(30, Math.round(baseVal - (elev / 1000) * 30 + (lon < 64 ? 20 : -10)));
-        } else if (variable === "cdd65") {
-          cellValue = Math.max(0, Math.round(baseVal + latFactor * 80 + lapse * 110));
-        } else {
-          cellValue = baseVal + (latFactor * 0.1);
-        }
+      if (isBaselinePeriod) {
+        cellValue = climBaseline;
+        sig = 0;
       } else {
-        // Anomaly
-        if (variable === "tas" || variable === "tasmax" || variable === "tasmin" || variable === "txx" || variable === "tnn") {
-          // Continental interior warms slightly faster; high elevation warms faster (elevation-dependent warming)
-          const edw = (elev / 2000) * 0.25;
-          cellValue = warmingBase + edw + (lat > 42 ? 0.15 : 0);
-        } else if (variable === "pr") {
-          // Winter/spring wetting, overall +4% to +14% under higher SSPs
-          const pct = warmingBase * 4.5;
-          cellValue = (baseVal * pct) / 100;
-        } else if (variable === "hd35") {
-          cellValue = Math.round(warmingBase * 11.5 + (lat < 40 ? 4 : 0));
-        } else if (variable === "hd40") {
-          cellValue = Math.round(warmingBase * 7.2 + (lat < 39 ? 5 : 0));
-        } else if (variable === "hi35") {
-          cellValue = Math.round(warmingBase * 9.8);
-        } else if (variable === "cdd") {
-          cellValue = Math.round(warmingBase * 3.4);
-        } else if (variable === "cdd65") {
-          cellValue = Math.round(warmingBase * 165);
-        } else if (variable === "rx1day" || variable === "rx5day" || variable === "r95ptot") {
-          cellValue = Number((warmingBase * 1.8).toFixed(1));
-        } else {
-          cellValue = warmingBase;
-        }
+        const anomMedian = uzbAnomalyMedian(variable, ctx);
+        const delta = deltaAtPercentile(anomMedian, variable, percentile) ?? anomMedian;
+        const band = percentileSpread(anomMedian, variable);
+        // Models disagree on the direction of change where the band straddles zero.
+        sig = band.p10 !== null && band.p90 !== null && band.p10 < 0 && band.p90 > 0 ? 2 : 1;
+        cellValue =
+          effectiveProduct === "climatology" ? climBaseline + delta : delta;
       }
 
-      cellValue = Number(cellValue.toFixed(ind?.precision ?? 2));
       values[index] = cellValue;
-      significance[index] = 1; // Robust signal
+      significance[index] = sig;
 
       finiteSum += cellValue;
       finiteCount += 1;
@@ -216,7 +259,7 @@ export function getUzbekistanField(query: UzbFieldQuery): GridField {
       scenario,
       product: effectiveProduct,
       aggregation: query.aggregation ?? "annual",
-      percentile: query.percentile ?? "median",
+      percentile,
       period,
       statistic: "mean",
     },
@@ -227,7 +270,8 @@ export function getUzbekistanField(query: UzbFieldQuery): GridField {
       count: finiteCount,
       min: finiteCount > 0 ? min : null,
       max: finiteCount > 0 ? max : null,
-      mean: finiteCount > 0 ? Number((finiteSum / finiteCount).toFixed(2)) : null,
+      // Full precision — rounding happens at render (D7).
+      mean: finiteCount > 0 ? finiteSum / finiteCount : null,
     },
     values,
     significance,

@@ -98,6 +98,18 @@ export interface Scenario {
   forcing: number | null;
   /** The shared socio-economic narrative behind the pathway. */
   narrative: string;
+  /**
+   * SSP family label, e.g. "SSP1 · Sustainability". Shared by the two SSP1
+   * pathways — which is correct; they are the same storyline at two forcing
+   * levels — so it is never rendered alone (D6).
+   */
+  family: string;
+  /**
+   * The forcing level in words plus W/m². This is what distinguishes
+   * SSP1-1.9 from SSP1-2.6 on screen; render it alongside `label`, never the
+   * bare `narrative` (D6).
+   */
+  forcingDescriptor: string;
   summary: string;
   /** Likely global warming range at 2081–2100 vs 1850–1900, per IPCC AR6 WG1. */
   globalWarming2100: string | null;
@@ -113,6 +125,8 @@ export const SCENARIOS = {
     shortLabel: "Historical",
     forcing: null,
     narrative: "Observed forcing",
+    family: "Historical",
+    forcingDescriptor: "observed forcing",
     summary:
       "Models driven by observed greenhouse gases, aerosols, land use and solar/volcanic forcing. This is the reference the projections are measured against, not a prediction.",
     globalWarming2100: null,
@@ -125,6 +139,8 @@ export const SCENARIOS = {
     shortLabel: "Very low",
     forcing: 1.9,
     narrative: "Sustainability — taking the green road",
+    family: "SSP1 · Sustainability",
+    forcingDescriptor: "very low forcing · 1.9 W/m²",
     summary:
       "The most ambitious pathway in CMIP6. Net-zero CO₂ around 2050, deep and immediate cuts across all sectors. Roughly consistent with holding warming near 1.5 °C.",
     globalWarming2100: "1.0–1.8 °C",
@@ -137,6 +153,8 @@ export const SCENARIOS = {
     shortLabel: "Low",
     forcing: 2.6,
     narrative: "Sustainability — taking the green road",
+    family: "SSP1 · Sustainability",
+    forcingDescriptor: "low forcing · 2.6 W/m²",
     summary:
       "Strong, sustained mitigation with net-zero CO₂ in the second half of the century. Broadly the successor to RCP2.6 and roughly aligned with the upper end of the Paris goals.",
     globalWarming2100: "1.3–2.4 °C",
@@ -149,6 +167,8 @@ export const SCENARIOS = {
     shortLabel: "Intermediate",
     forcing: 4.5,
     narrative: "Middle of the road",
+    family: "SSP2 · Middle of the road",
+    forcingDescriptor: "intermediate forcing · 4.5 W/m²",
     summary:
       "Development follows historical patterns; emissions stay near current levels to mid-century then decline. Often treated as the closest analogue to stated national policies.",
     globalWarming2100: "2.1–3.5 °C",
@@ -161,6 +181,8 @@ export const SCENARIOS = {
     shortLabel: "High",
     forcing: 7.0,
     narrative: "Regional rivalry — a rocky road",
+    family: "SSP3 · Regional rivalry",
+    forcingDescriptor: "high forcing · 7.0 W/m²",
     summary:
       "Resurgent nationalism, weak international cooperation and slow technological change. Emissions roughly double by 2100. High aerosol and land-use forcing.",
     globalWarming2100: "2.8–4.6 °C",
@@ -173,6 +195,8 @@ export const SCENARIOS = {
     shortLabel: "Very high",
     forcing: 8.5,
     narrative: "Fossil-fuelled development — taking the highway",
+    family: "SSP5 · Fossil-fuelled development",
+    forcingDescriptor: "very high forcing · 8.5 W/m²",
     summary:
       "Rapid, energy-intensive growth built on abundant fossil fuels. The high end of the CMIP6 range; now widely regarded as a low-likelihood upper bound rather than business as usual.",
     globalWarming2100: "3.3–5.7 °C",

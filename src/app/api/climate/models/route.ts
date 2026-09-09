@@ -1,5 +1,7 @@
 import { CCKP_CITATION, handler, searchParams } from "@/lib/api";
 import { fetchCckp } from "@/lib/climate/cckp";
+import { detectCountryFromCoords } from "@/lib/climate/countries";
+import { isDegenerateSpread } from "@/lib/climate/derive";
 import { describeSpread, signalToNoise } from "@/lib/climate/interpret";
 import { resolveArea, resolvePoint } from "@/lib/climate/store";
 import {
@@ -58,11 +60,28 @@ export const GET = handler(async (request) => {
     ),
   );
 
-  const spread = {
+  const rawSpread = {
     median: median?.value ?? null,
     p10: p10?.value ?? null,
     p90: p90?.value ?? null,
   };
+
+  // D3 guard: a p10 and p90 this close together is a failed spread
+  // computation, not fake-precise agreement. Drop the band; the UI renders
+  // "model spread unavailable at this aggregation" rather than an identical
+  // range. The individual-model list below still conveys the real spread.
+  const spreadDegenerate = isDegenerateSpread(rawSpread.p10, rawSpread.p90);
+  const spread = spreadDegenerate
+    ? { median: rawSpread.median, p10: null, p90: null }
+    : rawSpread;
+
+  // D4: the individual-model list is a national aggregate — fetch it for the
+  // active country, not a hardcoded "PAK".
+  const geography =
+    query.country ??
+    (query.lat !== undefined && query.lon !== undefined
+      ? detectCountryFromCoords(query.lat, query.lon)
+      : "PAK");
 
   let members: Array<{ model: string; label: string; ecs: number | null; value: number | null }> = [];
 
@@ -72,7 +91,7 @@ export const GET = handler(async (request) => {
     const responses = await Promise.all(
       INDIVIDUAL_MODEL_IDS.map(async (modelId) => {
         const result = await fetchCckp({
-          geography: "PAK",
+          geography,
           variable: query.indicator,
           product: "anomaly",
           aggregation: "annual",
@@ -102,12 +121,13 @@ export const GET = handler(async (request) => {
       period: query.period,
       location: hasPoint ? { lat: query.lat, lon: query.lon } : { areaId: query.areaId },
       spread,
+      spreadAvailable: !spreadDegenerate && spread.p10 !== null && spread.p90 !== null,
       unit: median?.unit ?? p10?.unit ?? "",
       confidence: signalToNoise(spread),
-      description: describeSpread(spread, query.indicator),
+      description: describeSpread(spread, query.indicator, { degenerate: spreadDegenerate }),
       agreement: median?.meta.agreement ?? null,
       members,
-      membersScope: query.models ? "national" : null,
+      membersScope: query.models ? geography : null,
       source: median?.meta.source ?? null,
     },
     meta: { dataset: "cmip6-x0.25", citation: CCKP_CITATION },

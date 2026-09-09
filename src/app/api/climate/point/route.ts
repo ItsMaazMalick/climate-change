@@ -1,4 +1,9 @@
 import { CCKP_CITATION, handler, searchParams } from "@/lib/api";
+import {
+  assertProjectionInvariant,
+  deriveProjected,
+  PROJECTION_TOLERANCE,
+} from "@/lib/climate/derive";
 import { nearestPlace } from "@/lib/climate/places";
 import { resolvePoint } from "@/lib/climate/store";
 import { INDICATORS } from "@/lib/climate/taxonomy";
@@ -54,6 +59,30 @@ export const GET = handler(async (request) => {
   const nearest = nearestPlace({ lat: query.lat, lon: query.lon });
   const indicator = INDICATORS[query.indicator]!;
 
+  // D1/D2: the projected absolute is `baseline + delta`, derived here in the
+  // one place, never an independently fetched future climatology that can
+  // silently disagree. The separately resolved `projected` is used only as a
+  // fallback when the baseline or the delta is unavailable.
+  const isBaselineWindow = query.period === "1995-2014";
+  const derivedProjected = isBaselineWindow
+    ? (baseline?.value ?? null)
+    : deriveProjected(baseline?.value ?? null, anomaly?.value ?? null);
+  const projectedValue = derivedProjected ?? projected?.value ?? null;
+  const projectedUnit = projected?.unit ?? baseline?.unit ?? anomaly?.unit ?? indicator.unit;
+
+  // Dev-mode contract: throws if the numbers we are about to render contradict
+  // each other. Silent in production so a data hiccup degrades, not 500s.
+  if (!isBaselineWindow) {
+    assertProjectionInvariant({
+      indicator: query.indicator,
+      baseline: baseline?.value ?? null,
+      projected: projectedValue,
+      delta: anomaly?.value ?? null,
+      context: `point ${query.lat.toFixed(2)},${query.lon.toFixed(2)} ${query.indicator}/${query.scenario}/${query.period}`,
+      tolerance: PROJECTION_TOLERANCE,
+    });
+  }
+
   return {
     data: {
       location: {
@@ -70,7 +99,8 @@ export const GET = handler(async (request) => {
       baseline: baseline
         ? { value: baseline.value, unit: baseline.unit, period: "1995-2014" }
         : null,
-      projected: projected ? { value: projected.value, unit: projected.unit } : null,
+      projected:
+        projectedValue !== null ? { value: projectedValue, unit: projectedUnit } : null,
       anomaly: anomaly ? { value: anomaly.value, unit: anomaly.unit } : null,
       meta: (projected ?? anomaly ?? baseline)?.meta ?? null,
     },

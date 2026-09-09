@@ -124,6 +124,9 @@ export const spreadQuerySchema = z.object({
   lat: latSchema.optional(),
   lon: lonSchema.optional(),
   areaId: z.string().min(1).max(64).optional(),
+  /** Active country — drives which national aggregate the individual-model
+   *  list is fetched for. Falls back to detection from lat/lon (D4). */
+  country: z.enum(["PAK", "UZB", "AUS", "NZL"]).optional(),
   indicator: indicatorSchema.default("tas"),
   scenario: scenarioSchema.default("ssp245"),
   period: periodSchema.default("2040-2059"),

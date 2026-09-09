@@ -1,4 +1,8 @@
 import { CCKP_CITATION, handler, searchParams } from "@/lib/api";
+import {
+  assertProjectionInvariant,
+  deriveProjected,
+} from "@/lib/climate/derive";
 import { scenarioDivergence } from "@/lib/climate/interpret";
 import { resolveArea, resolvePoint } from "@/lib/climate/store";
 import {
@@ -51,17 +55,43 @@ export const GET = handler(async (request) => {
           product,
         });
 
+  // One baseline for the place — scenario-independent, since the pathways
+  // have not diverged over 1995–2014. Every pathway's absolute is this plus
+  // its own delta (D2): five forcing pathways cannot share one absolute, and
+  // they cannot each get an independently fetched one either.
+  const baselineQuery = {
+    indicator: query.indicator,
+    scenario: "historical" as ScenarioId,
+    period: "1995-2014" as const,
+    product: "climatology" as const,
+  };
+  const baseline = await (hasPoint
+    ? resolvePoint({ lat: query.lat!, lon: query.lon!, ...baselineQuery })
+    : resolveArea({ areaId: query.areaId!, ...baselineQuery })
+  ).catch(() => null);
+
   const results = await Promise.all(
     scenarios.map(async (scenario) => {
       const [anomaly, climatology] = await Promise.all([
         resolve(scenario, "anomaly").catch(() => null),
         resolve(scenario, "climatology").catch(() => null),
       ]);
+      const value =
+        deriveProjected(baseline?.value ?? null, anomaly?.value ?? null) ??
+        climatology?.value ??
+        null;
+      assertProjectionInvariant({
+        indicator: query.indicator,
+        baseline: baseline?.value ?? null,
+        projected: value,
+        delta: anomaly?.value ?? null,
+        context: `compare ${query.indicator}/${scenario}/${query.period}`,
+      });
       return {
         scenario: SCENARIOS[scenario],
         anomaly: anomaly?.value ?? null,
-        value: climatology?.value ?? null,
-        unit: anomaly?.unit ?? climatology?.unit ?? "",
+        value,
+        unit: anomaly?.unit ?? climatology?.unit ?? baseline?.unit ?? "",
         agreement: anomaly?.meta.agreement ?? null,
         source: (anomaly ?? climatology)?.meta.source ?? null,
       };

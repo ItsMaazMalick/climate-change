@@ -4,6 +4,7 @@ import {
   buildNarrative,
   mechanismsFor,
 } from "@/lib/climate/interpret";
+import { detectCountryFromCoords, getCountry } from "@/lib/climate/countries";
 import { getPlace, nearestPlace } from "@/lib/climate/places";
 import { resolvePoint } from "@/lib/climate/store";
 import {
@@ -108,6 +109,7 @@ export const GET = handler(async (request) => {
 
   const narrative = buildNarrative({
     placeName: label,
+    countryName: getCountry(detectCountryFromCoords(lat, lon)).name,
     scenario,
     period,
     baseline: pick("baseline"),

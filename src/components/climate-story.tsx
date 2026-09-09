@@ -10,6 +10,7 @@ import {
   type CycleMonth,
 } from "@/components/charts";
 import { PeriodPicker, ScenarioPicker } from "@/components/controls";
+import { getCountry } from "@/lib/climate/countries";
 import type { Place } from "@/lib/climate/places";
 import {
   formatValue,
@@ -85,6 +86,7 @@ interface TrajectoryResponse {
  * with an explicit statement of what would be needed to go further.
  */
 export function ClimateStory({ place }: { place: Place }) {
+  const countryName = getCountry(place.country).name;
   const [scenario, setScenario] = useState<ScenarioId>("ssp245");
   const [period, setPeriod] = useState<PeriodId>("2040-2059");
 
@@ -319,7 +321,7 @@ export function ClimateStory({ place }: { place: Place }) {
       {/* ---------------------------------------------------- trajectory - */}
       <Section
         title="Trajectory, 1950–2100"
-        subtitle="National annual mean temperature, 11-year smoothed. Hover any year to read every pathway at once; click a pathway in the legend to isolate it. Pakistan-wide rather than local — the archive publishes continuous time series only as spatial aggregates."
+        subtitle={`National annual mean temperature, 11-year smoothed. Hover any year to read every pathway at once; click a pathway in the legend to isolate it. ${countryName}-wide rather than local — the archive publishes continuous time series only as spatial aggregates.`}
       >
         {lines.length > 0 ? (
           <>
