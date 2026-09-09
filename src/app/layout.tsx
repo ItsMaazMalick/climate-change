@@ -1,21 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import { Inter_Tight, JetBrains_Mono } from "next/font/google";
 import { CountryProvider } from "@/lib/country-context";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
 import "./globals.css";
 
-const sansFont = Plus_Jakarta_Sans({
+const sansFont = Inter_Tight({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-ui-next",
   display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const monoFont = JetBrains_Mono({
   subsets: ["latin"],
-  variable: "--font-mono",
+  variable: "--font-mono-next",
   display: "swap",
   weight: ["400", "500", "600"],
 });
@@ -58,10 +58,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${sansFont.variable} ${monoFont.variable}`} suppressHydrationWarning>
-      <body className="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased selection:bg-emerald-500/20 selection:text-emerald-950">
+      <body className="min-h-screen">
         <a
           href="#main"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-emerald-700 focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-(--radius-control) focus:bg-accent focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-white"
         >
           Skip to content
         </a>

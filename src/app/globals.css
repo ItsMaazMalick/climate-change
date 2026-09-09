@@ -1,168 +1,193 @@
 @import "tailwindcss";
+@import "../styles/tokens.css";
 
 /*
- * Climate Intelligence Console — Earth Scan Systems
- * Premium Modern Light Mode Scientific & Geospatial Dashboard Design System
+ * Climate Intelligence Platform — Earth Scan Systems
+ *
+ * The visual system is defined entirely in styles/tokens.css. This file wires
+ * those tokens into Tailwind's theme and sets base element styles. No raw
+ * values here either.
  */
-@theme {
-  /* --- Brand & Color Accents ------------------------------------------- */
-  --color-brand: #059669;          /* Emerald 600 */
-  --color-brand-glow: #10b981;     /* Emerald 500 */
-  --color-brand-dark: #047857;     /* Emerald 700 */
-  --color-brand-deep: #065f46;     /* Emerald 800 */
-  --color-brand-tint: rgba(5, 150, 105, 0.08);
-  
-  --color-cyan-glow: #0891b2;
-  --color-sky-glow: #0284c7;
-  --color-indigo-glow: #4f46e5;
-  --color-amber-glow: #d97706;
-  --color-rose-glow: #e11d48;
 
-  /* --- Light Command Center Surfaces ----------------------------------- */
-  --color-ground: #f8fafc;
-  --color-ground-elevated: #ffffff;
-  --color-surface: #ffffff;
-  --color-surface-raised: #f1f5f9;
-  --color-surface-hover: #e2e8f0;
-  --color-border: #e2e8f0;
-  --color-border-strong: #cbd5e1;
-  --color-border-glow: rgba(5, 150, 105, 0.3);
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-recessed: var(--surface-recessed);
+  --color-surface-panel: var(--surface-panel);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-overlay: var(--surface-overlay);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-active: var(--surface-active);
+  --color-surface-inverse: var(--surface-inverse);
 
-  /* --- High-Contrast Typography ---------------------------------------- */
-  --color-ink: #0f172a;
-  --color-ink-muted: #475569;
-  --color-ink-faint: #64748b;
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-border-faint: var(--border-faint);
 
-  --color-accent: var(--color-brand);
-  --color-accent-dim: var(--color-brand-glow);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+  --color-ink-inverse: var(--ink-inverse);
 
-  /* --- Scenario Palette ------------------------------------------------ */
-  --color-ssp119: #0284c7;         /* Sky 1.5° */
-  --color-ssp126: #059669;         /* Emerald 2.0° */
-  --color-ssp245: #d97706;         /* Amber 2.7° */
-  --color-ssp370: #ea580c;         /* Orange 3.6° */
-  --color-ssp585: #e11d48;         /* Rose 4.4° */
-  --color-historical: #64748b;
+  --color-accent: var(--accent-600);
+  --color-accent-hover: var(--accent-700);
+  --color-accent-soft: var(--accent-50);
+  --color-accent-ink: var(--accent-ink);
 
-  --font-sans: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --font-mono: var(--font-mono), ui-monospace, "SF Mono", "Cascadia Code", monospace;
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+
+  --color-ssp-119: var(--ssp-119);
+  --color-ssp-126: var(--ssp-126);
+  --color-ssp-245: var(--ssp-245);
+  --color-ssp-370: var(--ssp-370);
+  --color-ssp-585: var(--ssp-585);
+
+  --font-sans: var(--font-ui);
+  --font-mono: var(--font-code);
+
+  --text-2xs: var(--fs-2xs);
+  --text-xs: var(--fs-xs);
+  --text-sm: var(--fs-sm);
+  --text-base: var(--fs-base);
+  --text-lg: var(--fs-lg);
+  --text-xl: var(--fs-xl);
+  --text-2xl: var(--fs-2xl);
+  --text-3xl: var(--fs-3xl);
 }
 
 @layer base {
-  * {
-    border-color: var(--color-border);
-  }
-
   html {
-    background: #f8fafc;
+    background: var(--surface-recessed);
     color-scheme: light;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
-    background: #f8fafc;
-    background-image: 
-      radial-gradient(circle at 10% 10%, rgba(5, 150, 105, 0.04) 0%, transparent 40%),
-      radial-gradient(circle at 90% 15%, rgba(2, 132, 199, 0.04) 0%, transparent 40%),
-      radial-gradient(circle at 50% 90%, rgba(79, 70, 229, 0.03) 0%, transparent 50%),
-      radial-gradient(rgba(15, 23, 42, 0.04) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 20px 20px;
-    background-attachment: fixed;
-    color: var(--color-ink);
-    font-family: var(--font-sans);
+    margin: 0;
+    min-height: 100vh;
+    background: var(--surface-recessed);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    font-size: var(--text-sm);
+    line-height: var(--leading-normal);
+    letter-spacing: var(--tracking-normal);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    letter-spacing: -0.015em;
-    min-height: 100vh;
   }
 
-  .tnum {
+  h1, h2, h3, h4 {
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+    font-weight: 600;
+    text-wrap: balance;
+  }
+
+  /* Every numeral in the product is tabular and monospaced. */
+  .tnum,
+  [data-numeric] {
+    font-family: var(--font-code);
     font-variant-numeric: tabular-nums;
-    font-feature-settings: "tnum";
-    font-family: var(--font-mono), monospace;
+    font-feature-settings: "tnum" 1, "cv01" 1;
+    letter-spacing: 0;
   }
 
   ::selection {
-    background: rgba(5, 150, 105, 0.2);
-    color: #065f46;
+    background: var(--accent-100);
+    color: var(--accent-700);
   }
 
   :focus-visible {
-    outline: 2px solid #059669;
-    outline-offset: 2px;
-    border-radius: 6px;
+    outline: none;
+    box-shadow: var(--focus-ring);
+    border-radius: var(--radius-control);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
   }
   ::-webkit-scrollbar-track {
-    background: rgba(241, 245, 249, 0.8);
+    background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 9999px;
+    background: var(--border-strong);
+    border-radius: var(--radius-pill);
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: var(--n-400);
   }
 }
 
 @layer components {
-  .panel {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    border-radius: 1.25rem;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+  /* The three elevation tiers as classes. */
+  .tier-recessed {
+    background: var(--surface-recessed);
+    box-shadow: var(--elevation-recessed);
+    border-radius: var(--radius-container);
+  }
+  .tier-flat {
+    background: var(--surface-panel);
+    box-shadow: var(--elevation-flat);
+    border-radius: var(--radius-container);
+  }
+  .tier-raised {
+    background: var(--surface-raised);
+    box-shadow: var(--elevation-raised);
+    border-radius: var(--radius-container);
+  }
+  .tier-overlay {
+    background: var(--surface-overlay);
+    box-shadow: var(--elevation-overlay);
+    border-radius: var(--radius-overlay);
   }
 
-  .glass-card {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    border-radius: 1.125rem;
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
-  }
-
-  .glass-card-glow {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(5, 150, 105, 0.3);
-    border-radius: 1.125rem;
-    box-shadow: 0 4px 20px -2px rgba(5, 150, 105, 0.1), 0 2px 6px -1px rgba(5, 150, 105, 0.05);
-  }
-
+  /* Back-compat: older markup uses .panel / .glass-card. Now flat, no blur. */
+  .panel,
+  .glass-card,
+  .glass-card-glow,
   .glass-card-sky {
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(2, 132, 199, 0.3);
-    border-radius: 1.125rem;
-    box-shadow: 0 4px 20px -2px rgba(2, 132, 199, 0.1);
+    background: var(--surface-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-container);
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
-
   .glass-pill {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(226, 232, 240, 0.9);
-    border-radius: 9999px;
+    background: var(--surface-panel);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-pill);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .label {
-    font-size: 0.6875rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
     text-transform: uppercase;
-    color: #64748b;
+    color: var(--ink-faint);
   }
 
   .hairline {
-    border-top: 1px solid rgba(226, 232, 240, 0.9);
+    border-top: 1px solid var(--border);
+  }
+
+  /* Diagonal hatch for areas outside data coverage. */
+  .hatch-oob {
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 5px,
+      var(--hatch) 5px,
+      var(--hatch) 6px
+    );
   }
 }
 
@@ -171,35 +196,28 @@
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }
 
-/* ---- Leaflet map overrides -------------------------------------------- */
+/* ---- Leaflet overrides ---------------------------------------------- */
 .leaflet-container {
-  font-family: inherit;
-  background: #f8fafc;
+  font-family: var(--font-ui);
+  background: var(--surface-recessed);
 }
-
-/* Ensure the map fills its parent flex container */
 .leaflet-container,
 .leaflet-map-pane,
 .leaflet-tile-pane {
   height: 100%;
   width: 100%;
 }
-
-/* Hide default Leaflet attribution (we have our own) */
-.leaflet-control-attribution {
-  display: none !important;
-}
-
-/* Hide default Leaflet zoom (we have our own) */
+.leaflet-control-attribution,
 .leaflet-control-zoom {
   display: none !important;
 }
-
-/* Smooth tile fade-in instead of sudden pop */
-.leaflet-tile {
-  transition: opacity 0.2s ease-in;
+/* Desaturate the basemap so the data ramp is the only saturated element. */
+.leaflet-tile-pane {
+  filter: saturate(0.15) brightness(1.04) contrast(0.96);
+  transition: opacity var(--dur-panel) ease-in;
 }

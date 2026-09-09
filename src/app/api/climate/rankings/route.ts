@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { getCountry } from "@/lib/climate/countries";
 import { CCKP_CITATION, handler, searchParams } from "@/lib/api";
 import { rankAreas, type AreaRanking } from "@/lib/climate/db-store";
 import { aggregateCells, loadCellIndex, loadField } from "@/lib/climate/grid";
@@ -170,7 +171,7 @@ export const GET = handler(async (request) => {
       opposite: bottom,
       unit: top[0]?.unit ?? indicator.unit,
       note: `Ranked on the ensemble median across the grid cells inside each administrative unit in ${
-        query.country === "UZB" ? "Uzbekistan" : "Pakistan"
+        getCountry(query.country).name
       }.`,
     },
     meta: { source: top[0] ? "grid" : "database", dataset: "cmip6-x0.25", citation: CCKP_CITATION },
