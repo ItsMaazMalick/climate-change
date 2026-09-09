@@ -24,7 +24,7 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface-panel shadow-[0_1px_2px_hsl(218_45%_12%/0.04),0_10px_28px_-20px_hsl(218_45%_12%/0.25)]">
+    <header className="sticky top-0 z-40 border-b border-border bg-surface-panel/95 shadow-[0_1px_0_rgba(255,255,255,0.6)_inset,0_1px_3px_hsl(220_48%_16%/0.06),0_16px_40px_-28px_hsl(220_48%_16%/0.4)]">
       <div className="mx-auto flex h-14 max-w-[1760px] items-center gap-4 px-4 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="Earth Scan Systems — home">
           <Image
@@ -39,7 +39,7 @@ export function SiteHeader() {
 
         <CountrySelect />
 
-        <div className="mx-auto">
+        <div className="mx-auto rounded-(--radius-pill) border border-border bg-surface-recessed p-1 shadow-(--elevation-recessed)">
           <ProgressRail />
         </div>
 

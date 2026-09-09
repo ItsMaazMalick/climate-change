@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { stepForPath, WORKFLOW } from "@/lib/climate/workflow";
 
 /**
- * The four-step spine, rendered as a numbered rail with the current position
+ * The four-step spine, rendered as a segmented pill with the current position
  * marked. Every primary screen is one of these four, in order.
  */
 export function ProgressRail() {
@@ -15,29 +15,29 @@ export function ProgressRail() {
 
   return (
     <nav aria-label="Workflow steps" className="hidden items-center lg:flex">
-      <ol className="flex items-center gap-1">
-        {WORKFLOW.map((step, i) => {
+      <ol className="flex items-center">
+        {WORKFLOW.map((step) => {
           const active = current?.id === step.id;
           const done = current ? step.n < current.n : false;
           const href = step.id === "profile" ? "/places" : step.route;
           return (
-            <li key={step.id} className="flex items-center">
+            <li key={step.id}>
               <Link
                 href={href}
                 aria-current={active ? "step" : undefined}
                 title={step.question}
-                className={`group flex items-center gap-2 rounded-(--radius-control) px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                className={`flex items-center gap-1.5 rounded-(--radius-pill) px-2.5 py-1.5 text-xs font-medium transition-all motion-state ${
                   active
-                    ? "bg-ink text-ink-inverse shadow-(--elevation-flat)"
-                    : "text-ink-faint hover:bg-surface-hover hover:text-ink"
+                    ? "bg-ink text-ink-inverse shadow-[0_1px_2px_hsl(220_48%_16%/0.3),0_6px_14px_-4px_hsl(220_48%_16%/0.4)]"
+                    : "text-ink-faint hover:text-ink"
                 }`}
               >
                 <span
-                  className={`flex h-5 w-5 items-center justify-center rounded-(--radius-pill) text-[11px] font-semibold tabular-nums ${
+                  className={`flex h-4.5 w-4.5 items-center justify-center rounded-(--radius-pill) text-[10px] font-semibold tabular-nums ${
                     active
-                      ? "bg-accent text-accent-ink"
+                      ? "bg-[rgb(var(--accent-glow))] text-white"
                       : done
-                        ? "bg-ok/15 text-ok"
+                        ? "bg-ok/20 text-ok"
                         : "border border-border-strong text-ink-faint"
                   }`}
                   data-numeric
@@ -46,9 +46,6 @@ export function ProgressRail() {
                 </span>
                 <span>{step.label}</span>
               </Link>
-              {i < WORKFLOW.length - 1 && (
-                <span aria-hidden className="mx-1 h-px w-4 bg-border-strong" />
-              )}
             </li>
           );
         })}

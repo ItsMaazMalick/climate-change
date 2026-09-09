@@ -115,24 +115,24 @@ export function LocationPanel({
   const nearest = point.data?.location.nearestPlace;
 
   return (
-    <div className="flex flex-col divide-y divide-slate-200">
+    <div className="flex flex-col divide-y divide-border">
       {/* ---- header ---- */}
-      <section className="p-4 bg-gradient-to-b from-slate-50/90 to-white">
+      <section className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="truncate text-[19px] font-extrabold tracking-tight text-slate-900 leading-tight">
+              <h2 className="truncate text-lg font-semibold tracking-tight text-ink leading-tight">
                 {nearest && nearest.distanceKm < 40
                   ? nearest.name
                   : `${Math.abs(lat).toFixed(2)}°N, ${Math.abs(lon).toFixed(2)}°E`}
               </h2>
               {nearest && nearest.province && (
-                <span className="rounded-full bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 text-[11px] font-mono font-bold text-emerald-800">
+                <span className="rounded-(--radius-pill) border border-border bg-surface-recessed px-2 py-0.5 text-2xs font-medium text-ink-muted">
                   {nearest.province}
                 </span>
               )}
             </div>
-            <p className="tnum mt-1 text-[11.5px] font-mono text-slate-500">
+            <p className="mt-1 text-2xs text-ink-faint tabular-nums">
               {lat.toFixed(3)}°N, {lon.toFixed(3)}°E
               {nearest && nearest.distanceKm >= 40 && (
                 <> · {nearest.distanceKm} km from {nearest.name}</>
@@ -142,7 +142,7 @@ export function LocationPanel({
           {nearest && nearest.distanceKm < 40 && (
             <Link
               href={`/places/${nearest.id}?scenario=${scenario}&period=${period}`}
-              className="shrink-0 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-[11.5px] font-bold text-emerald-800 transition-all hover:bg-emerald-100 shadow-xs"
+              className="btn btn-secondary shrink-0 py-1.5! px-3! text-xs"
             >
               Full Profile →
             </Link>
@@ -150,7 +150,7 @@ export function LocationPanel({
         </div>
 
         {point.data?.meta?.note && (
-          <p className="mt-3 rounded-xl border border-slate-200 bg-slate-50 p-2.5 text-[11px] leading-snug text-slate-600 shadow-xs">
+          <p className="mt-3 rounded-(--radius-control) border border-border bg-surface-recessed p-2.5 text-2xs leading-snug text-ink-muted">
             ℹ️ {point.data.meta.note}
           </p>
         )}
@@ -199,7 +199,7 @@ export function LocationPanel({
       {/* ---- model uncertainty ---- */}
       {!isBaseline && (
         <section className="p-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+          <div className="tier-flat p-4">
             <SectionTitle
               title="Multi-Model Uncertainty"
               hint="The spread across the 30 downscaled models, at this point, for this pathway and horizon."
@@ -236,7 +236,7 @@ export function LocationPanel({
       {/* ---- scenario comparison ---- */}
       {!isBaseline && (
         <section className="p-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+          <div className="tier-flat p-4">
             <SectionTitle
               title={`All Policy Pathways · ${PERIODS[period].shortLabel}`}
               hint="The same place and horizon under every emissions pathway. The gap between them is the part still determined by choices."
@@ -254,7 +254,7 @@ export function LocationPanel({
                   indicatorId={indicator}
                 />
                 {scenarios.data.divergence && (
-                  <p className="mt-3 text-[11.5px] leading-relaxed text-slate-600">
+                  <p className="mt-3 text-xs leading-relaxed text-ink-muted">
                     {scenarios.data.divergence}
                   </p>
                 )}
@@ -267,7 +267,7 @@ export function LocationPanel({
       {/* ---- seasonal cycle ---- */}
       {!isBaseline && cycle.data && (
         <section className="p-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
+          <div className="tier-flat p-4">
             <SectionTitle
               title="Annual Seasonality & Cycles"
               hint="Monthly climatology at this point, baseline against projection."
@@ -282,26 +282,26 @@ export function LocationPanel({
             {cycle.data.monsoonSharePercent &&
               cycle.data.monsoonSharePercent.baseline !== null &&
               cycle.data.monsoonSharePercent.projected !== null && (
-                <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-600">
+                <p className="mt-2.5 text-xs leading-relaxed text-ink-muted">
                   July–September accounts for{" "}
-                  <span className="tnum font-bold text-slate-900">
+                  <span className="font-semibold text-ink tabular-nums">
                     {cycle.data.monsoonSharePercent.baseline}%
                   </span>{" "}
                   of the annual total in the baseline and{" "}
-                  <span className="tnum font-bold text-emerald-700">
+                  <span className="font-semibold text-accent tabular-nums">
                     {cycle.data.monsoonSharePercent.projected}%
                   </span>{" "}
                   by {PERIODS[period].shortLabel}.
                 </p>
               )}
             {cycle.data.extremes?.baseline && cycle.data.extremes.projected && (
-              <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-600">
+              <p className="mt-2.5 text-xs leading-relaxed text-ink-muted">
                 Warmest month shifts from{" "}
-                <span className="tnum font-bold text-slate-900">
+                <span className="font-semibold text-ink tabular-nums">
                   {formatValue(cycle.data.extremes.baseline.max, indicator)}
                 </span>{" "}
                 to{" "}
-                <span className="tnum font-bold text-emerald-700">
+                <span className="font-semibold text-accent tabular-nums">
                   {formatValue(cycle.data.extremes.projected.max, indicator)}
                 </span>
                 .
@@ -314,9 +314,9 @@ export function LocationPanel({
       {/* ---- indicator context ---- */}
       {point.data?.indicator && (
         <section className="p-4">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 shadow-xs">
+          <div className="tier-flat p-4">
             <SectionTitle title="Scientific Variable Methodology" />
-            <p className="text-[12px] leading-relaxed text-slate-600 font-medium">
+            <p className="text-xs leading-relaxed text-ink-muted">
               {point.data.indicator.description}
             </p>
             {point.data.indicator.countryNotes?.[country] && (
@@ -376,7 +376,7 @@ function SectionTitle({ title, hint }: { title: string; hint?: string }) {
 function Skeleton({ height }: { height: number }) {
   return (
     <div
-      className="animate-pulse rounded-xl bg-slate-100"
+      className="animate-pulse rounded-(--radius-container) bg-surface-active"
       style={{ height }}
     />
   );
@@ -384,7 +384,7 @@ function Skeleton({ height }: { height: number }) {
 
 function ErrorNote({ message }: { message: string }) {
   return (
-    <p className="rounded-xl border border-rose-200 bg-rose-50 px-3.5 py-2 text-[11.5px] leading-snug text-rose-700 shadow-xs">
+    <p className="rounded-(--radius-control) border-l-4 border-danger bg-surface-recessed px-3.5 py-2 text-xs leading-snug text-ink-muted">
       {message}
     </p>
   );

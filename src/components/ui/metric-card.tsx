@@ -7,9 +7,11 @@ import { formatValue } from "@/lib/climate/taxonomy";
 
 /**
  * The focal point of the Explore readout: one number, set large in mono type,
- * with its baseline reference and signed change. Raised tier with a status
- * seam. Everything rounds at render via `formatValue` — stored values are
- * never pre-rounded (docs/AUDIT.md, D7).
+ * with its baseline reference and projected value as a small paired bar.
+ * Raised tier with a status seam and a tone-tinted glow behind the figure.
+ *
+ * Everything rounds at render via `formatValue` — stored values are never
+ * pre-rounded (docs/AUDIT.md, D7).
  */
 export function MetricCard({
   label,
@@ -40,17 +42,32 @@ export function MetricCard({
   const infoId = useId();
 
   const toneColor =
-    tone === "adverse" ? "var(--danger)" : tone === "benign" ? "var(--ok)" : "var(--ink)";
+    tone === "adverse" ? "var(--danger)" : tone === "benign" ? "var(--ok)" : "var(--accent-600)";
   const hasDelta = delta !== null && delta !== undefined;
   const Arrow = !hasDelta || delta === 0 ? Minus : delta! > 0 ? ArrowUpRight : ArrowDownRight;
 
+  // Baseline vs projected as a paired mini-bar (relative to a shared max).
+  const b = typeof baseline === "number" ? baseline : null;
+  const p = typeof projected === "number" ? projected : null;
+  const lo = b !== null && p !== null ? Math.min(0, b, p) : 0;
+  const hi = b !== null && p !== null ? Math.max(b, p) : 1;
+  const span = hi - lo || 1;
+  const pct = (v: number | null) => (v === null ? 0 : ((v - lo) / span) * 100);
+
   return (
     <div
-      className="tier-raised-seam p-5"
+      className="tier-raised-seam relative overflow-hidden p-5"
       data-tour="metric"
       style={seamColor ? ({ ["--seam-color" as string]: seamColor } as React.CSSProperties) : undefined}
     >
-      <div className="mb-3 flex items-center justify-between gap-2">
+      {/* tone glow */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-(--radius-pill) opacity-30 blur-3xl"
+        style={{ background: toneColor }}
+      />
+
+      <div className="relative mb-3 flex items-center justify-between gap-2">
         <span className="label">{label}</span>
         {info && (
           <button
@@ -67,44 +84,81 @@ export function MetricCard({
       </div>
 
       {loading ? (
-        <div className="h-11 w-32 animate-pulse rounded-(--radius-control) bg-surface-active" />
+        <div className="h-12 w-36 animate-pulse rounded-(--radius-control) bg-surface-active" />
       ) : (
-        <div className="flex items-end gap-2">
+        <div className="relative flex items-end gap-2.5">
           <span
-            className="text-[2.75rem] font-semibold leading-[0.95] tracking-tight tabular-nums"
+            className="text-[3.25rem] font-semibold leading-[0.82] tracking-tight tabular-nums"
             data-numeric
             style={{ color: toneColor }}
           >
             {hasDelta ? formatValue(delta, indicatorId, "anomaly") : "—"}
           </span>
           <span
-            className="mb-1 inline-flex h-6 w-6 items-center justify-center rounded-(--radius-pill)"
-            style={{ background: `color-mix(in oklab, ${toneColor} 12%, transparent)`, color: toneColor }}
+            className="mb-1.5 inline-flex h-7 w-7 items-center justify-center rounded-(--radius-pill)"
+            style={{
+              background: `color-mix(in oklab, ${toneColor} 16%, transparent)`,
+              color: toneColor,
+              boxShadow: `0 0 14px -2px color-mix(in oklab, ${toneColor} 60%, transparent)`,
+            }}
             aria-hidden
           >
-            <Arrow className="h-3.5 w-3.5" />
+            <Arrow className="h-4 w-4" />
           </span>
         </div>
       )}
 
-      <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 border-t border-border pt-3 text-xs">
-        <dt className="text-ink-faint">Baseline</dt>
-        <dd className="text-right tabular-nums text-ink" data-numeric>
-          {formatValue(baseline ?? null, indicatorId)}{" "}
-          <span className="text-ink-faint">{baselineLabel}</span>
-        </dd>
-        <dt className="text-ink-faint">Projected</dt>
-        <dd className="text-right tabular-nums text-ink" data-numeric>
-          {formatValue(projected ?? null, indicatorId)}{" "}
-          <span className="text-ink-faint">{epochLabel}</span>
-        </dd>
-      </dl>
+      <div className="relative mt-5 space-y-2.5 border-t border-border pt-3.5">
+        <BarRow
+          name="Baseline"
+          value={formatValue(b, indicatorId)}
+          sub={baselineLabel}
+          pct={pct(b)}
+          color="var(--n-400)"
+        />
+        <BarRow
+          name="Projected"
+          value={formatValue(p, indicatorId)}
+          sub={epochLabel}
+          pct={pct(p)}
+          color={toneColor}
+        />
+      </div>
 
       {info && open && (
-        <p id={infoId} className="mt-3 border-t border-border pt-2 text-xs leading-relaxed text-ink-muted">
+        <p id={infoId} className="relative mt-3 border-t border-border pt-2 text-xs leading-relaxed text-ink-muted">
           {info}
         </p>
       )}
+    </div>
+  );
+}
+
+function BarRow({
+  name,
+  value,
+  sub,
+  pct,
+  color,
+}: {
+  name: string;
+  value: string;
+  sub: string;
+  pct: number;
+  color: string;
+}) {
+  return (
+    <div className="grid grid-cols-[64px_1fr_auto] items-center gap-3">
+      <span className="text-2xs text-ink-faint">{name}</span>
+      <span className="h-1.5 overflow-hidden rounded-(--radius-pill) bg-surface-recessed shadow-(--elevation-recessed)">
+        <span
+          className="block h-full rounded-(--radius-pill) transition-[width] duration-500"
+          style={{ width: `${Math.max(2, Math.min(100, pct))}%`, background: color }}
+        />
+      </span>
+      <span className="text-right text-xs tabular-nums text-ink" data-numeric>
+        {value} <span className="text-ink-faint">{sub}</span>
+      </span>
     </div>
   );
 }
