@@ -211,7 +211,7 @@ export function Explorer({ places }: { places: Place[] }) {
       <aside className="w-full shrink-0 overflow-y-auto scrollbar-gutter-stable border-b border-border bg-surface-panel lg:w-77 lg:border-b-0 lg:border-r">
         <div className="space-y-6 p-4 pb-16">
           <fieldset data-tour="where" className="space-y-3">
-            <legend className="label mb-1">Where</legend>
+            <StepLegend n={1} title="Where" hint="The place you want a number for." />
             <Field label="Location">
               <PlaceSearch
                 places={countryPlaces}
@@ -246,7 +246,7 @@ export function Explorer({ places }: { places: Place[] }) {
           </fieldset>
 
           <fieldset className="space-y-3">
-            <legend className="label mb-1">What</legend>
+            <StepLegend n={2} title="What" hint="Which climate variable." />
             <Field
               label="Climate indicator"
               hint="Scientific variables downscaled from CMIP6 multi-model ensembles."
@@ -260,7 +260,7 @@ export function Explorer({ places }: { places: Place[] }) {
           </fieldset>
 
           <fieldset data-tour="which-future" className="space-y-3">
-            <legend className="label mb-1">Which future</legend>
+            <StepLegend n={3} title="Which future" hint="Emissions pathway and horizon." />
             <Field
               label="Emissions pathway (SSP)"
               hint="Shared Socioeconomic Pathways are physical forcing scenarios, not predictions."
@@ -446,6 +446,24 @@ export function Explorer({ places }: { places: Place[] }) {
         )}
       </aside>
     </div>
+  );
+}
+
+/** A numbered fieldset legend — makes the decision order explicit. */
+function StepLegend({ n, title, hint }: { n: number; title: string; hint: string }) {
+  return (
+    <legend className="mb-2 flex w-full items-center gap-2">
+      <span
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded-(--radius-pill) bg-brand text-[11px] font-semibold text-white tabular-nums"
+        data-numeric
+      >
+        {n}
+      </span>
+      <span className="min-w-0">
+        <span className="block text-xs font-semibold text-ink">{title}</span>
+        <span className="block truncate text-2xs text-ink-faint">{hint}</span>
+      </span>
+    </legend>
   );
 }
 

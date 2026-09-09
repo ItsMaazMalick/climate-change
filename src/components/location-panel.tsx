@@ -149,9 +149,11 @@ export function LocationPanel({
           )}
         </div>
 
+        {point.data?.meta && <ScopeBadge scope={point.data.meta.spatialScope} />}
+
         {point.data?.meta?.note && (
-          <p className="mt-3 rounded-(--radius-control) border border-border bg-surface-recessed p-2.5 text-2xs leading-snug text-ink-muted">
-            ℹ️ {point.data.meta.note}
+          <p className="mt-2 rounded-(--radius-control) border border-border bg-surface-recessed p-2.5 text-2xs leading-snug text-ink-muted">
+            {point.data.meta.note}
           </p>
         )}
       </section>
@@ -355,6 +357,35 @@ function toneFor(value: number | null | undefined, indicator?: Indicator): Tone 
   if (Math.abs(value) < 1e-9) return "neutral";
   if (indicator.family === "precipitation") return "neutral";
   return (value > 0) === indicator.higherIsWorse ? "adverse" : "benign";
+}
+
+/**
+ * Says, in two words, what kind of claim the number below is: a real
+ * rasterised grid cell, or a national value with modelled spatial detail.
+ * A reviewer should never have to guess.
+ */
+function ScopeBadge({ scope }: { scope: string }) {
+  const map: Record<string, { label: string; tone: "ok" | "warn" | "muted" }> = {
+    point: { label: "Grid cell · 0.25°", tone: "ok" },
+    interpolated: { label: "Interpolated from national value", tone: "warn" },
+    area: { label: "Area mean of grid cells", tone: "ok" },
+    national: { label: "National aggregate", tone: "warn" },
+  };
+  const item = map[scope] ?? { label: scope, tone: "muted" as const };
+  const cls =
+    item.tone === "ok"
+      ? "border-leaf bg-leaf-soft text-brand-deep"
+      : item.tone === "warn"
+        ? "border-warn bg-warn/10 text-warn"
+        : "border-border bg-surface-recessed text-ink-faint";
+  return (
+    <span
+      className={`mt-3 inline-flex items-center gap-1.5 rounded-(--radius-pill) border px-2 py-0.5 text-2xs font-medium ${cls}`}
+    >
+      <span aria-hidden className="h-1.5 w-1.5 rounded-(--radius-pill) bg-current" />
+      {item.label}
+    </span>
+  );
 }
 
 function SectionTitle({ title, hint }: { title: string; hint?: string }) {
