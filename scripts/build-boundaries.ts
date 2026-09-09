@@ -23,6 +23,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import path from "node:path";
 
+import difference from "@turf/difference";
 import union from "@turf/union";
 import { featureCollection } from "@turf/helpers";
 import type { Feature, MultiPolygon, Polygon, Position } from "geojson";
@@ -525,6 +526,15 @@ function normalizeName(name: string): string {
  */
 const KASHMIR_UNITS = ["jammu and kashmir", "jammu & kashmir", "ladakh"];
 
+/**
+ * Label for the claimed territory no province covers. Named as disputed rather
+ * than assigned to either administration — that is the standard cartographic
+ * treatment and matches Pakistan's own position that the status of Jammu &
+ * Kashmir is unresolved.
+ */
+const CLAIM_REMAINDER_ID = "jammu-kashmir-disputed";
+const CLAIM_REMAINDER_NAME = "Jammu & Kashmir (disputed)";
+
 async function buildPakistanClaim(adm0: FeatureCollectionLike): Promise<AnyPolygon> {
   const base = adm0.features[0];
   if (!base) throw new Error("PAK ADM0 is empty");
@@ -577,6 +587,55 @@ async function buildPakistanClaim(adm0: FeatureCollectionLike): Promise<AnyPolyg
   );
 
   return merged.geometry;
+}
+
+/**
+ * The part of the national claim that no first-level unit covers.
+ *
+ * Pakistan's official boundary takes in the whole of Jammu & Kashmir, but its
+ * provinces only cover the part Pakistan administers. That leaves a wedge on
+ * the India–China side — roughly lon 77.8 to 80.3 — inside the national border
+ * yet belonging to no province. Painted regions alone would leave it as a hole,
+ * so it reads as though it were outside the country.
+ *
+ * Subtracting the administered union from the claim yields that wedge, which is
+ * then added as a unit in its own right so the country renders as one piece.
+ */
+function claimRemainder(
+  claim: AnyPolygon,
+  units: PolyFeature[],
+): AnyPolygon | null {
+  let administered: PolyFeature | null = null;
+  for (const unit of units) {
+    const piece: PolyFeature = {
+      type: "Feature",
+      properties: {},
+      geometry: unit.geometry,
+    };
+    if (!administered) {
+      administered = piece;
+      continue;
+    }
+    const merged = union(featureCollection([administered, piece] as never));
+    if (merged) administered = merged as PolyFeature;
+  }
+  if (!administered) return null;
+
+  const remainder = difference(
+    featureCollection([
+      { type: "Feature", properties: {}, geometry: claim },
+      administered,
+    ] as never),
+  );
+  if (!remainder) return null;
+
+  // Slivers along the shared border are artefacts of the two datasets being
+  // digitised separately, not real territory. Only keep a remainder big enough
+  // to be a genuine gap.
+  const [minX, minY, maxX, maxY] = boundsOf(remainder.geometry as AnyPolygon);
+  if (Math.max(maxX - minX, maxY - minY) < 0.5) return null;
+
+  return remainder.geometry as AnyPolygon;
 }
 
 // ---------------------------------------------------------------------------
@@ -808,6 +867,22 @@ async function buildCountry(target: CountryTarget): Promise<void> {
       const resolved = cellsForUnit(raw, grid);
       cells[id] = resolved.cells;
       if (resolved.viaCentroid) viaCentroid.push(id);
+    }
+
+    // Close the gap between the national claim and the administered units, so
+    // the country paints as one piece rather than one with a bite taken out.
+    const remainder = claimRemainder(rawCountry, layer.features);
+    if (remainder) {
+      const small = simplifyToBudget(remainder, target.budgetAdm1);
+      const out = toOutFeature(CLAIM_REMAINDER_NAME, level, small, target.iso);
+      out.properties.id = CLAIM_REMAINDER_ID;
+      features.push(out);
+      const resolved = cellsForUnit(remainder, grid);
+      cells[CLAIM_REMAINDER_ID] = resolved.cells;
+      process.stdout.write(
+        `    · claim remainder added as "${CLAIM_REMAINDER_ID}"` +
+          ` (${resolved.cells.length} grid cells)\n`,
+      );
     }
 
     features.sort((a, b) => a.properties.name.localeCompare(b.properties.name));

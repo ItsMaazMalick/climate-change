@@ -164,17 +164,6 @@
   .hairline {
     border-top: 1px solid rgba(226, 232, 240, 0.9);
   }
-
-  .wordmark-earth {
-    color: #ea580c;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
-  .wordmark-systems {
-    color: #059669;
-    font-weight: 800;
-    letter-spacing: -0.02em;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

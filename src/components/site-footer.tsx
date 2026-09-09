@@ -1,6 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 
 /**
@@ -21,10 +22,13 @@ export function SiteFooter() {
     <footer className="mt-16 border-t border-[var(--color-border)] bg-[var(--color-surface)]">
       <div className="mx-auto grid max-w-[1800px] gap-8 px-5 py-9 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
-          <div className="text-[14px]">
-            <span className="wordmark-earth">EARTH SCAN</span>{" "}
-            <span className="wordmark-systems">SYSTEMS</span>
-          </div>
+          <Image
+            src="/brand/earth-scan-systems.webp"
+            alt="Earth Scan Systems"
+            width={166}
+            height={47}
+            className="h-10 w-auto"
+          />
           <p className="mt-1.5 max-w-sm text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
             Data-driven decision support for farmers, industry and the
             stakeholders around them. Towards a carbon-neutral, sustainable

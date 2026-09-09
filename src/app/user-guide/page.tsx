@@ -362,8 +362,35 @@ export default function UserGuidePage() {
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8 -mt-16">
 
+        {/* Walkthrough video — sits in the hero overlap so it is the first
+            thing under the headline, before the written steps. */}
+        <figure className="relative z-10 mb-20">
+          <div className="overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-950 shadow-2xl shadow-slate-900/30">
+            <div className="relative aspect-video w-full">
+              <iframe
+                src="https://drive.google.com/file/d/12KEbFiGuHW6lVME7oPijfj_YIHrjzyek/preview"
+                title="Climate Intelligence platform walkthrough"
+                allow="autoplay; fullscreen"
+                allowFullScreen
+                loading="lazy"
+                className="absolute inset-0 h-full w-full border-0"
+              />
+            </div>
+          </div>
+          <figcaption className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-500">
+            <span className="inline-flex items-center gap-2 font-semibold text-slate-700">
+              <span className="flex h-2 w-2 rounded-full bg-emerald-500" />
+              Video walkthrough
+            </span>
+            <span>
+              Watch the platform end to end, then use the illustrated steps below
+              as reference.
+            </span>
+          </figcaption>
+        </figure>
+
         {/* Index Grid */}
-        <div className="relative z-10 mb-24 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mb-24 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5">
           {SECTIONS.map((section) => (
             <a
               key={section.id}

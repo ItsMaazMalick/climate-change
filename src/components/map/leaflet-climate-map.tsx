@@ -244,10 +244,13 @@ function MapContent(props: ClimateMapProps) {
 
   const bboxKey = `${bbox.lonMin},${bbox.latMin},${bbox.lonMax},${bbox.latMax}`;
   useEffect(() => {
-    map.fitBounds([
-      [bbox.latMin, bbox.lonMin],
-      [bbox.latMax, bbox.lonMax],
-    ]);
+    map.fitBounds(
+      [
+        [bbox.latMin, bbox.lonMin],
+        [bbox.latMax, bbox.lonMax],
+      ],
+      { padding: [16, 16] },
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [bboxKey, map]);
 
@@ -354,6 +357,11 @@ export function ClimateMap(props: ClimateMapProps) {
       className="h-full w-full"
       zoomControl={false}
       attributionControl={false}
+      // Leaflet snaps fitBounds to whole zoom levels by default, so a bounding
+      // box a fraction too wide drops the whole country a level and halves it
+      // on screen. Quarter steps let it fit the frame properly.
+      zoomSnap={0.25}
+      zoomDelta={0.5}
       style={{ background: "#eef2f6" }}
     >
       {/*
@@ -407,7 +415,7 @@ function ZoomControl({ bounds }: { bounds: [[number, number], [number, number]] 
         type="button"
         aria-label="Reset view"
         title="Reset view"
-        onClick={() => map.fitBounds(bounds, { animate: true })}
+        onClick={() => map.fitBounds(bounds, { animate: true, padding: [16, 16] })}
         className="flex h-9 w-9 cursor-pointer items-center justify-center text-slate-600 transition-colors hover:bg-slate-50"
       >
         <svg

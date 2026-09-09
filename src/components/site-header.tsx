@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCountry } from "@/lib/country-context";
@@ -24,17 +25,27 @@ export function SiteHeader() {
       <div className="mx-auto flex h-14 max-w-[1800px] items-center justify-between gap-3 px-4 sm:gap-6 sm:px-6">
         {/* Brand & Orbit Mark */}
         <div className="flex items-center gap-4">
-          <Link href="/" className="group flex items-center gap-2.5 transition-transform hover:scale-[1.02]" aria-label="Earth Scan Systems">
-            {/* <EssMark /> */}
-            <span className="flex items-baseline gap-2">
-              <span className="text-[15px] font-extrabold tracking-tight text-slate-900">
-                <span className="text-orange-600">EARTH SCAN</span>{" "}
-                <span className="text-emerald-700">SYSTEMS</span>
-              </span>
-              <span className="hidden rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200 md:inline-flex items-center gap-1.5 shadow-xs">
-                <span>{config.flag}</span>
-                <span>{config.shortName}</span>
-              </span>
+          <Link
+            href="/"
+            className="group flex items-center gap-3 transition-transform hover:scale-[1.02]"
+            aria-label="Earth Scan Systems — home"
+          >
+            {/*
+              The official mark. `priority` because it sits above the fold and
+              is the largest element painted in the header, so it is the LCP
+              candidate on every page.
+            */}
+            <Image
+              src="/brand/earth-scan-systems.webp"
+              alt="Earth Scan Systems"
+              width={141}
+              height={40}
+              priority
+              className="h-8 w-auto sm:h-10"
+            />
+            <span className="hidden rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700 shadow-xs md:inline-flex items-center gap-1.5">
+              <span>{config.flag}</span>
+              <span>{config.shortName}</span>
             </span>
           </Link>
 
@@ -97,43 +108,5 @@ export function SiteHeader() {
         </div>
       </div>
     </header>
-  );
-}
-
-/**
- * The ESS mark, redrawn as inline SVG.
- *
- * The source logo is a 2,560 px raster with a photographic fill; at 22 px in
- * a header that is a 120 KB download to render a green circle. This keeps
- * the mark's three elements — the scanned globe, the orbit, the lens — in
- * the brand green and brown, at any size, for a few hundred bytes.
- */
-function EssMark() {
-  return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className="shrink-0"
-    >
-      <circle cx="11" cy="10.5" r="7" fill="var(--color-brand)" opacity="0.9" />
-      <path
-        d="M4.6 4.2c3.6-2 9.6-1.4 12.6 1.6"
-        stroke="var(--color-brand)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        opacity="0.65"
-      />
-      <circle cx="17.6" cy="5.6" r="1.5" fill="var(--color-earth)" />
-      <circle cx="14.2" cy="14.4" r="4.4" fill="none" stroke="var(--color-earth)" strokeWidth="1.7" />
-      <path
-        d="M17.6 17.8l3.1 3.1"
-        stroke="var(--color-earth)"
-        strokeWidth="2"
-        strokeLinecap="round"
-      />
-    </svg>
   );
 }

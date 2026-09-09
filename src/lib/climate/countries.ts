@@ -52,9 +52,12 @@ export const COUNTRIES: Record<CountryCode, CountryConfig> = {
     shortName: "Pakistan",
     flag: "🇵🇰",
     bbox: {
+      // Reaches 80.5 rather than 78.0 so the map frames the whole of the
+      // official claim. The climate grid is a separate, narrower lattice —
+      // see `grid` below — so widening the view does not imply data out here.
       lonMin: 60.5,
       latMin: 23.5,
-      lonMax: 78.0,
+      lonMax: 80.5,
       latMax: 37.25,
     },
     standardParallelLat: 30.4,
