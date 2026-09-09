@@ -39,6 +39,21 @@ export default async function MethodologyPage() {
         </p>
       </header>
 
+      <div className="mb-10 rounded-(--radius-container) border-l-4 border-warn bg-surface-recessed p-4">
+        <p className="text-[13px] font-semibold text-ink">
+          Read this before quoting an individual model
+        </p>
+        <p className="mt-1.5 text-[13px] leading-relaxed text-ink-muted">
+          The 30-member ensemble is published <strong>only as a national spatial
+          aggregate</strong>. Gridded fields exist for the ensemble percentiles
+          (median, 10th, 90th), not per model. So on this platform the
+          model-spread <em>envelope</em> at a point is local, but the
+          <em> per-model list</em> is a country-wide average — not a grid-cell
+          value at the selected coordinate. Every panel that shows individual
+          models says so. This is the limitation a reviewer should probe first.
+        </p>
+      </div>
+
       {/* ---------------------------------------------------- sources --- */}
       <Section title="Data sources">
         <div className="space-y-3">
@@ -299,6 +314,27 @@ export default async function MethodologyPage() {
               political administrative boundaries. <em>PLoS ONE</em> 15(4).
             </li>
           </ul>
+
+          <p className="mt-4 text-[12px] font-semibold text-ink">Suggested citation</p>
+          <p className="mt-1 text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
+            Earth Scan Systems (2026). <em>Climate Intelligence Platform: CMIP6
+            downscaled projections for Pakistan, Uzbekistan, Australia and New
+            Zealand.</em> Data: World Bank Climate Change Knowledge Portal.
+          </p>
+
+          <pre className="mt-3 overflow-x-auto rounded-(--radius-control) border border-[var(--color-border)] bg-surface-recessed p-3 font-mono text-[11px] leading-relaxed text-[var(--color-ink-muted)]">
+{`@misc{ess_climate_platform_2026,
+  author       = {{Earth Scan Systems}},
+  title        = {Climate Intelligence Platform: CMIP6 downscaled
+                  projections for Pakistan, Uzbekistan, Australia
+                  and New Zealand},
+  year         = {2026},
+  note         = {Data: World Bank Climate Change Knowledge Portal,
+                  CMIP6 bias-corrected downscaled projections (0.25{\\deg}).
+                  Baseline 1995--2014.},
+  howpublished = {\\url{https://climateknowledgeportal.worldbank.org/}}
+}`}
+          </pre>
         </div>
       </Section>
 

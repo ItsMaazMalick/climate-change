@@ -50,21 +50,21 @@ export function Legend({
   const precision = indicator?.precision ?? 1;
 
   return (
-    <div className="rounded-xl border border-slate-200/90 bg-white/95 p-3.5 backdrop-blur-xl shadow-lg ring-1 ring-slate-100">
-      <div className="label mb-2 text-slate-600 font-bold">
+    <div className="tier-overlay p-3">
+      <div className="label mb-2">
         {product === "anomaly" ? "Change vs 1995–2014" : indicator?.label}
-        <span className="ml-1.5 font-semibold normal-case tracking-normal text-slate-500">
+        <span className="ml-1.5 font-normal normal-case tracking-normal text-ink-faint">
           ({unit})
         </span>
       </div>
 
       <div
-        className="h-3 w-full rounded-md ring-1 ring-inset ring-slate-200 shadow-xs"
+        className="h-3 w-full rounded-xs ring-1 ring-inset ring-border"
         style={{ background: gradient }}
         role="presentation"
       />
 
-      <div className="tnum mt-1.5 flex justify-between text-[10.5px] font-bold text-slate-600">
+      <div className="mt-1.5 flex justify-between text-[10.5px] font-medium text-ink-muted tabular-nums" data-numeric>
         {labels.map((value, index) => (
           <span key={index}>
             {value > 0 && scale.diverging ? "+" : ""}
@@ -73,15 +73,20 @@ export function Legend({
         ))}
       </div>
 
+      <div className="mt-2.5 flex items-center gap-2 border-t border-border pt-2 text-[10px] leading-snug text-ink-faint">
+        <span className="hatch-oob inline-block h-3.5 w-3.5 shrink-0 rounded-xs border border-border-strong" />
+        <span>Hatched = outside data coverage.</span>
+      </div>
+
       {hasDisagreement && (
-        <div className="mt-2.5 flex items-start gap-2 border-t border-slate-200 pt-2 text-[10px] leading-snug text-slate-500">
+        <div className="mt-1.5 flex items-start gap-2 text-[10px] leading-snug text-ink-faint">
           <span
-            className="mt-0.5 inline-block h-3.5 w-3.5 shrink-0 rounded-sm border border-slate-300"
+            className="mt-0.5 inline-block h-3.5 w-3.5 shrink-0 rounded-xs border border-border-strong"
             style={{ background: "currentColor", opacity: 0.4 }}
           />
           <span>
-            Paler regions are where models disagree on the direction of change.
-            The colour is still the median, but its sign is not robust.
+            Paler regions are where models disagree on the sign of the change —
+            the colour is the median, but its direction is not robust.
           </span>
         </div>
       )}
