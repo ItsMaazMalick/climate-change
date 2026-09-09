@@ -60,13 +60,20 @@ export function Landing({
             value or a documented derivation from one.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center gap-3">
+          <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link href="/explore" className="btn btn-primary group">
               Start exploring
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
             </Link>
-            <Link href="/explore?tour=1" className="btn btn-secondary">
-              <PlayCircle className="h-4 w-4" /> Guided tour · 3 min
+            <Link 
+              href="/explore?tour=1" 
+              className="btn btn-leaf group"
+            >
+              <div className="relative flex items-center justify-center">
+                <span className="absolute h-5 w-5 animate-ping rounded-full bg-current opacity-20" />
+                <PlayCircle className="relative h-4 w-4 transition-transform duration-300 group-hover:scale-110" />
+              </div>
+              <span className="font-semibold tracking-wide">Guided tour · 3 min</span>
             </Link>
           </div>
 
