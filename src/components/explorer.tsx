@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
+import { Info, MapPin } from "lucide-react";
 
 import {
   Field,
@@ -13,7 +14,7 @@ import {
   Toggle,
 } from "@/components/controls";
 import { LocationPanel } from "@/components/location-panel";
-import { ClimateMap, type FieldData } from "@/components/map/climate-map";
+import { ClimateMap, type RegionData } from "@/components/map/climate-map";
 import { Legend } from "@/components/map/legend";
 import type { GeoCollection } from "@/components/map/projection";
 import type { Place } from "@/lib/climate/places";
@@ -108,9 +109,14 @@ export function Explorer({ places }: { places: Place[] }) {
     lat: "",
     lon: "",
     area: "",
+    // Which administrative level the choropleth resolves to. In the URL with
+    // everything else, so a district-level view is a link someone can send.
+    level: "1",
   });
 
-  const [showDistricts, setShowDistricts] = useState(false);
+  const showDistricts = state.level === "2";
+  const setShowDistricts = (next: boolean) =>
+    setState({ level: next ? "2" : "1" });
 
   // What the local grid actually holds. Used to signpost the controls rather
   // than let a reader pick a combination that will fail.
@@ -127,9 +133,9 @@ export function Explorer({ places }: { places: Place[] }) {
 
   // ---- geography (static, loaded per country) ---------------------------
   const country = useStaticJson<GeoCollection>(config.geoFiles.country);
-  const provinces = useStaticJson<GeoCollection>(config.geoFiles.level1);
-  const districts = useStaticJson<GeoCollection>(
-    showDistricts ? config.geoFiles.level2 : config.geoFiles.country,
+  // The polygons painted by the choropleth, at whichever level is selected.
+  const regionPolygons = useStaticJson<GeoCollection>(
+    showDistricts ? config.geoFiles.level2 : config.geoFiles.level1,
   );
 
   // Filter places for active country
@@ -138,11 +144,17 @@ export function Explorer({ places }: { places: Place[] }) {
     [places, countryCode],
   );
 
-  // ---- the map field ----------------------------------------------------
-  const fieldUrl =
-    `/api/climate/field?indicator=${indicator}&scenario=${scenario}` +
-    `&period=${period}&model=${model}&product=${product}&country=${countryCode}`;
-  const field = useApi<FieldData & { indicator: typeof INDICATORS[string] }>(fieldUrl);
+  // ---- the choropleth ---------------------------------------------------
+  //
+  // One request returns a value for every administrative unit in the country.
+  // The map paints the official boundary polygons directly, so the data has no
+  // geometry of its own that could drift out of alignment with the basemap.
+  const level = showDistricts ? 2 : 1;
+  const regionsUrl =
+    `/api/climate/regions?country=${countryCode}&level=${level}` +
+    `&indicator=${indicator}&scenario=${scenario}` +
+    `&period=${period}&model=${model}&product=${product}`;
+  const field = useApi<RegionData>(regionsUrl);
 
   const selection = useMemo(() => {
     const lat = Number(state.lat);
@@ -150,21 +162,16 @@ export function Explorer({ places }: { places: Place[] }) {
     if (Number.isFinite(lat) && Number.isFinite(lon) && state.lat && state.lon) {
       return { lat, lon };
     }
-    // Default to country capital on initial load
-    if (countryCode === "UZB") {
-      return { lat: 41.2995, lon: 69.2401 }; // Tashkent
-    }
-    if (countryCode === "AUS") {
-      return { lat: -35.2809, lon: 149.1300 }; // Canberra
-    }
-    if (countryCode === "NZL") {
-      return { lat: -41.2865, lon: 174.7762 }; // Wellington
-    }
-    return { lat: 33.6844, lon: 73.0479 }; // Islamabad
-  }, [state.lat, state.lon, countryCode]);
+    return null;
+  }, [state.lat, state.lon]);
 
+  // A region counts as contested when models disagree on the *sign* of the
+  // change across most of the cells inside it.
   const hasDisagreement = useMemo(
-    () => field.data?.significance?.some((flag) => flag === 2) ?? false,
+    () =>
+      field.data?.regions.some(
+        (region) => region.agreement !== null && region.agreement < 0.5,
+      ) ?? false,
     [field.data],
   );
 
@@ -274,7 +281,7 @@ export function Explorer({ places }: { places: Place[] }) {
             <Toggle
               checked={showDistricts}
               onChange={setShowDistricts}
-              label={`Show ${config.adminLevels.level2.toLowerCase()} boundaries`}
+              label={`Resolve by ${config.adminLevels.level2.toLowerCase()}`}
             />
           </div>
         </div>
@@ -284,20 +291,16 @@ export function Explorer({ places }: { places: Place[] }) {
       <div className="relative min-h-[420px] flex-1 bg-slate-100">
         <ClimateMap
           bbox={config.bbox}
-          field={field.data ?? null}
+          data={field.data ?? null}
+          regions={regionPolygons}
+          outline={country}
           indicatorId={indicator}
           product={product}
-          boundaries={{
-            country: country ?? undefined,
-            provinces: provinces ?? undefined,
-            districts: showDistricts ? districts ?? undefined : undefined,
-          }}
           selection={selection}
           onSelect={(next) =>
             setState({ lat: String(next.lat), lon: String(next.lon) })
           }
           highlightArea={state.area || null}
-          showDistricts={showDistricts}
           loading={field.loading}
         />
 
@@ -435,33 +438,33 @@ function ChipButton({
 
 function EmptyPanel() {
   return (
-    <div className="flex h-full flex-col justify-center gap-5 p-6">
-      <div>
-        <h2 className="text-[15px] font-semibold">Select a location</h2>
-        <p className="mt-1.5 text-[12.5px] leading-relaxed text-[var(--color-ink-muted)]">
-          Click anywhere on the map, or search for a city, to see the baseline
-          climate, the projected change, how much the models disagree, and how
-          the answer differs across emissions pathways.
+    <div className="flex h-full flex-col justify-center gap-8 p-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="text-center">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-8 ring-emerald-50/50">
+          <MapPin className="h-8 w-8" />
+        </div>
+        <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Select a location</h2>
+        <p className="mt-3 text-[14px] leading-relaxed text-slate-500">
+          Click anywhere on the interactive map, or search for a city in the sidebar, to instantly extract local climate telemetry.
         </p>
       </div>
 
-      <div className="space-y-2.5 border-t border-[var(--color-border)] pt-5">
-        <h3 className="label">What you are looking at</h3>
-        <Note title="Not a forecast">
-          These are climate projections: 20-year averages under an assumed
-          emissions pathway. They say nothing about a particular year, season
-          or day.
-        </Note>
-        <Note title="Not one model">
-          The default is the median of 30 downscaled global models. Individual
-          models disagree, sometimes substantially, and that disagreement is
-          shown rather than averaged away.
-        </Note>
-        <Note title="Climate variables, not impacts">
-          The platform reports temperature, rainfall and threshold days. It
-          does not claim to predict floods, crop failures or mortality — those
-          need impact models it does not have.
-        </Note>
+      <div className="space-y-4 border-t border-slate-200 pt-6">
+        <div className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-slate-400">
+          <Info className="h-3.5 w-3.5" />
+          <span>What you will discover</span>
+        </div>
+        <div className="grid gap-3">
+          <Note title="Baseline vs Projections">
+            See the historical 20-year average for this specific point, compared against future projections up to 2100.
+          </Note>
+          <Note title="Model Disagreement">
+            View the spread of 30 different downscaled global climate models to understand certainty and variance.
+          </Note>
+          <Note title="Emissions Pathways">
+            Toggle between different SSP scenarios to see how policy choices physically alter the local outcome.
+          </Note>
+        </div>
       </div>
     </div>
   );
@@ -469,9 +472,9 @@ function EmptyPanel() {
 
 function Note({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-md border border-[var(--color-border)] bg-[var(--color-surface-raised)] p-2.5">
-      <div className="text-[11.5px] font-semibold">{title}</div>
-      <p className="mt-0.5 text-[11.5px] leading-relaxed text-[var(--color-ink-muted)]">
+    <div className="rounded-xl border border-slate-200/60 bg-slate-50/50 p-3.5 transition-colors hover:bg-slate-50">
+      <div className="text-[12.5px] font-bold text-slate-800">{title}</div>
+      <p className="mt-1 text-[12px] leading-relaxed text-slate-500">
         {children}
       </p>
     </div>

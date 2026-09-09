@@ -140,9 +140,9 @@ export const COUNTRIES: Record<CountryCode, CountryConfig> = {
     geoFiles: {
       country: "/geo/australia.geojson",
       level1: "/geo/australia-states.geojson",
-      level2: "/geo/australia-states.geojson",
+      level2: "/geo/australia-lgas.geojson",
       level1Cells: "aus-states-cells.json",
-      level2Cells: "aus-states-cells.json",
+      level2Cells: "aus-lgas-cells.json",
     },
     defaultCityId: "canberra",
     description:
@@ -174,9 +174,9 @@ export const COUNTRIES: Record<CountryCode, CountryConfig> = {
     geoFiles: {
       country: "/geo/new-zealand.geojson",
       level1: "/geo/new-zealand-regions.geojson",
-      level2: "/geo/new-zealand-regions.geojson",
+      level2: "/geo/new-zealand-districts.geojson",
       level1Cells: "nzl-regions-cells.json",
-      level2Cells: "nzl-regions-cells.json",
+      level2Cells: "nzl-districts-cells.json",
     },
     defaultCityId: "wellington",
     description:

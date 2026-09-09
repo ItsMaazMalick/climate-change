@@ -20,18 +20,17 @@ export interface AsyncState<T> {
 }
 
 const responseCache = new Map<string, unknown>();
+const inflightCache = new Map<string, Promise<unknown>>();
 
 export function useApi<T>(url: string | null, deps: unknown[] = []): AsyncState<T> {
-  const [state, setState] = useState<AsyncState<T>>({
-    data: null,
-    error: null,
-    loading: Boolean(url),
+  const [state, setState] = useState<AsyncState<T>>(() => {
+    if (!url) return { data: null, error: null, loading: false };
+    const hit = responseCache.get(url) as T | undefined;
+    return hit !== undefined
+      ? { data: hit, error: null, loading: false }
+      : { data: null, error: null, loading: true };
   });
-  const latest = useRef(0);
 
-  // Both the "no request to make" and "already cached" cases are derivations
-  // from the current url, not subscriptions — resolving them during render
-  // avoids a wasted pass through a loading state that will never be seen.
   const [resolvedUrl, setResolvedUrl] = useState(url);
   if (url !== resolvedUrl) {
     setResolvedUrl(url);
@@ -40,44 +39,63 @@ export function useApi<T>(url: string | null, deps: unknown[] = []): AsyncState<
     } else {
       const hit = responseCache.get(url) as T | undefined;
       setState(
-        hit === undefined
-          ? { data: null, error: null, loading: true }
-          : { data: hit, error: null, loading: false },
+        hit !== undefined
+          ? { data: hit, error: null, loading: false }
+          : { data: null, error: null, loading: true },
       );
     }
   }
 
   useEffect(() => {
     if (!url) return;
-    if (responseCache.has(url)) return;
+    if (responseCache.has(url)) {
+      setState({ data: responseCache.get(url) as T, error: null, loading: false });
+      return;
+    }
 
-    const token = ++latest.current;
-    const controller = new AbortController();
+    let isMounted = true;
+    
+    // Attach to existing inflight request if possible
+    let promise = inflightCache.get(url) as Promise<T> | undefined;
+    
+    if (!promise) {
+      promise = fetch(url)
+        .then(async (response) => {
+          const payload = await response.json();
+          if (!response.ok) {
+            throw new Error(payload?.error?.message ?? `Request failed (${response.status})`);
+          }
+          return payload.data as T;
+        })
+        .then((data) => {
+          responseCache.set(url, data);
+          inflightCache.delete(url);
+          // Simple LRU-ish eviction
+          if (responseCache.size > 300) {
+            const oldest = responseCache.keys().next();
+            if (!oldest.done) responseCache.delete(oldest.value);
+          }
+          return data;
+        })
+        .catch((error) => {
+          inflightCache.delete(url);
+          throw error;
+        });
+        
+      inflightCache.set(url, promise);
+    }
 
-    fetch(url, { signal: controller.signal })
-      .then(async (response) => {
-        const payload = await response.json();
-        if (!response.ok) {
-          throw new Error(payload?.error?.message ?? `Request failed (${response.status})`);
-        }
-        return payload.data as T;
-      })
+    promise
       .then((data) => {
-        // Ignore a response that a newer request has already superseded.
-        if (token !== latest.current) return;
-        responseCache.set(url, data);
-        if (responseCache.size > 300) {
-          const oldest = responseCache.keys().next();
-          if (!oldest.done) responseCache.delete(oldest.value);
-        }
-        setState({ data, error: null, loading: false });
+        if (isMounted) setState({ data, error: null, loading: false });
       })
       .catch((error: Error) => {
-        if (error.name === "AbortError" || token !== latest.current) return;
-        setState({ data: null, error: error.message, loading: false });
+        if (isMounted) setState({ data: null, error: error.message, loading: false });
       });
 
-    return () => controller.abort();
+    return () => {
+      isMounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [url, ...deps]);
 
@@ -98,22 +116,37 @@ export function useStaticJson<T>(url: string): T | null {
   }
 
   useEffect(() => {
-    const cached = responseCache.get(url) as T | undefined;
-    if (cached !== undefined) {
-      setData(cached);
+    if (!url) return;
+    if (responseCache.has(url)) {
+      setData(responseCache.get(url) as T);
       return;
     }
-    let cancelled = false;
-    fetch(url)
-      .then((response) => response.json())
-      .then((payload: T) => {
-        if (cancelled) return;
-        responseCache.set(url, payload);
-        setData(payload);
-      })
-      .catch(() => undefined);
+    
+    let isMounted = true;
+    let promise = inflightCache.get(url) as Promise<T> | undefined;
+    
+    if (!promise) {
+      promise = fetch(url)
+        .then((response) => response.json())
+        .then((payload: T) => {
+          responseCache.set(url, payload);
+          inflightCache.delete(url);
+          return payload;
+        })
+        .catch((error) => {
+          inflightCache.delete(url);
+          throw error;
+        });
+        
+      inflightCache.set(url, promise);
+    }
+
+    promise.then((payload) => {
+      if (isMounted) setData(payload);
+    }).catch(() => undefined);
+
     return () => {
-      cancelled = true;
+      isMounted = false;
     };
   }, [url]);
 

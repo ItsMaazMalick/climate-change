@@ -22,22 +22,30 @@
     "db:seed": "prisma db seed",
     "db:load": "tsx scripts/load-grid.ts",
     "grid:extract": "python -m cckp_pipeline.cli extract",
-    "warm": "tsx scripts/warm-cache.ts"
+    "warm": "tsx scripts/warm-cache.ts",
+    "geo:build": "tsx scripts/build-boundaries.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "@types/d3-interpolate": "^3.0.4",
+    "@types/leaflet": "^1.9.22",
     "d3-interpolate": "^3.0.1",
     "dotenv": "^17.4.2",
+    "leaflet": "^1.9.4",
     "lucide-react": "^1.42.0",
     "next": "^16.3.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "react-leaflet": "^5.0.0",
     "zod": "^4.5.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
+    "@turf/boolean-point-in-polygon": "^7.4.0",
+    "@turf/helpers": "^7.4.0",
+    "@turf/simplify": "^7.4.0",
+    "@turf/union": "^7.4.0",
     "@types/node": "^22.10.5",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.5",

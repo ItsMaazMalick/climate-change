@@ -76,14 +76,11 @@ export function Legend({
       {hasDisagreement && (
         <div className="mt-2.5 flex items-start gap-2 border-t border-slate-200 pt-2 text-[10px] leading-snug text-slate-500">
           <span
-            className="mt-0.5 inline-block h-3.5 w-3.5 shrink-0 rounded-sm border border-slate-400"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(45deg, rgba(31,42,27,0.4) 0 0.7px, transparent 0.7px 3px)",
-            }}
+            className="mt-0.5 inline-block h-3.5 w-3.5 shrink-0 rounded-sm border border-slate-300"
+            style={{ background: "currentColor", opacity: 0.4 }}
           />
           <span>
-            Hatched cells are where models disagree on the direction of change.
+            Paler regions are where models disagree on the direction of change.
             The colour is still the median, but its sign is not robust.
           </span>
         </div>

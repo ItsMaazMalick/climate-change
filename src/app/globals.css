@@ -186,3 +186,31 @@
   }
 }
 
+/* ---- Leaflet map overrides -------------------------------------------- */
+.leaflet-container {
+  font-family: inherit;
+  background: #f8fafc;
+}
+
+/* Ensure the map fills its parent flex container */
+.leaflet-container,
+.leaflet-map-pane,
+.leaflet-tile-pane {
+  height: 100%;
+  width: 100%;
+}
+
+/* Hide default Leaflet attribution (we have our own) */
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+/* Hide default Leaflet zoom (we have our own) */
+.leaflet-control-zoom {
+  display: none !important;
+}
+
+/* Smooth tile fade-in instead of sudden pop */
+.leaflet-tile {
+  transition: opacity 0.2s ease-in;
+}

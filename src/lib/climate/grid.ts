@@ -348,6 +348,30 @@ let cellIndexCache: Map<string, number[]> | null = null;
  * would be wasteful; the pipeline resolves it once against the *unsimplified*
  * boundaries, so border cells are never lost to simplification.
  */
+/**
+ * One named cell sidecar, keyed by admin-unit id.
+ *
+ * `loadCellIndex` flattens every level of every country into a single map,
+ * which is what point and area lookups want. The choropleth needs the opposite
+ * — exactly one level of one country — so it reads the file directly.
+ */
+const cellFileCache = new Map<string, Record<string, number[]>>();
+
+export async function loadCellsFile(
+  file: string,
+): Promise<Record<string, number[]>> {
+  const hit = cellFileCache.get(file);
+  if (hit) return hit;
+  try {
+    const raw = await readFile(path.join(GEO_DIR, file), "utf8");
+    const parsed = JSON.parse(raw) as Record<string, number[]>;
+    cellFileCache.set(file, parsed);
+    return parsed;
+  } catch {
+    return {};
+  }
+}
+
 export async function loadCellIndex(): Promise<Map<string, number[]>> {
   if (cellIndexCache) return cellIndexCache;
   const index = new Map<string, number[]>();
@@ -357,7 +381,9 @@ export async function loadCellIndex(): Promise<Map<string, number[]>> {
     "uzb-regions-cells.json",
     "uzb-districts-cells.json",
     "aus-states-cells.json",
+    "aus-lgas-cells.json",
     "nzl-regions-cells.json",
+    "nzl-districts-cells.json",
   ]) {
     try {
       const raw = await readFile(path.join(GEO_DIR, file), "utf8");
