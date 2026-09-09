@@ -28,15 +28,20 @@ export function NextStepCard({
     <Link
       href={next.href}
       onMouseEnter={() => router.prefetch(next.href)}
-      className="tier-raised group mt-8 flex items-center justify-between gap-4 p-5 transition-transform motion-state hover:-translate-y-0.5"
+      className="tier-raised-seam group mt-8 flex items-center justify-between gap-4 p-5 transition-transform motion-state hover:-translate-y-1"
       data-tour="next-step"
     >
       <div>
-        <p className="label mb-1">Next · step {next.step.n} of 4</p>
-        <p className="text-base font-medium text-ink">{next.step.label}</p>
+        <p className="label mb-1.5 flex items-center gap-1.5">
+          Next
+          <span className="tabular-nums text-ink-faint" data-numeric>
+            · step {next.step.n} of 4
+          </span>
+        </p>
+        <p className="text-lg font-semibold tracking-tight text-ink">{next.step.label}</p>
         <p className="mt-0.5 text-sm text-ink-faint">{next.step.question}</p>
       </div>
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-(--radius-pill) bg-accent text-accent-ink transition-transform group-hover:translate-x-0.5">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-(--radius-pill) bg-ink text-ink-inverse transition-transform group-hover:translate-x-0.5">
         <ArrowRight className="h-5 w-5" />
       </span>
     </Link>

@@ -1,16 +1,15 @@
 "use client";
 
 import { useId, useState } from "react";
-import { Info } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, Info, Minus } from "lucide-react";
 
 import { formatValue } from "@/lib/climate/taxonomy";
 
 /**
  * The focal point of the Explore readout: one number, set large in mono type,
- * with its baseline reference and signed change. Raised elevation tier.
- *
- * Everything here rounds at render via `formatValue` — stored values are never
- * pre-rounded (see docs/AUDIT.md, D7).
+ * with its baseline reference and signed change. Raised tier with a status
+ * seam. Everything rounds at render via `formatValue` — stored values are
+ * never pre-rounded (docs/AUDIT.md, D7).
  */
 export function MetricCard({
   label,
@@ -21,6 +20,7 @@ export function MetricCard({
   epochLabel,
   baselineLabel = "1995–2014",
   tone = "neutral",
+  seamColor,
   info,
   loading,
 }: {
@@ -32,6 +32,7 @@ export function MetricCard({
   epochLabel: string;
   baselineLabel?: string;
   tone?: "adverse" | "benign" | "neutral";
+  seamColor?: string;
   info?: string;
   loading?: boolean;
 }) {
@@ -39,15 +40,17 @@ export function MetricCard({
   const infoId = useId();
 
   const toneColor =
-    tone === "adverse"
-      ? "var(--danger)"
-      : tone === "benign"
-        ? "var(--ok)"
-        : "var(--ink)";
+    tone === "adverse" ? "var(--danger)" : tone === "benign" ? "var(--ok)" : "var(--ink)";
+  const hasDelta = delta !== null && delta !== undefined;
+  const Arrow = !hasDelta || delta === 0 ? Minus : delta! > 0 ? ArrowUpRight : ArrowDownRight;
 
   return (
-    <div className="tier-raised p-4" data-tour="metric">
-      <div className="mb-2 flex items-center justify-between gap-2">
+    <div
+      className="tier-raised-seam p-5"
+      data-tour="metric"
+      style={seamColor ? ({ ["--seam-color" as string]: seamColor } as React.CSSProperties) : undefined}
+    >
+      <div className="mb-3 flex items-center justify-between gap-2">
         <span className="label">{label}</span>
         {info && (
           <button
@@ -64,29 +67,36 @@ export function MetricCard({
       </div>
 
       {loading ? (
-        <div className="h-9 w-28 animate-pulse rounded-(--radius-control) bg-surface-active" />
+        <div className="h-11 w-32 animate-pulse rounded-(--radius-control) bg-surface-active" />
       ) : (
-        <div
-          className="text-2xl font-semibold leading-none tabular-nums"
-          data-numeric
-          style={{ color: toneColor }}
-        >
-          {delta !== null && delta !== undefined
-            ? formatValue(delta, indicatorId, "anomaly")
-            : "—"}
+        <div className="flex items-end gap-2">
+          <span
+            className="text-[2.75rem] font-semibold leading-[0.95] tracking-tight tabular-nums"
+            data-numeric
+            style={{ color: toneColor }}
+          >
+            {hasDelta ? formatValue(delta, indicatorId, "anomaly") : "—"}
+          </span>
+          <span
+            className="mb-1 inline-flex h-6 w-6 items-center justify-center rounded-(--radius-pill)"
+            style={{ background: `color-mix(in oklab, ${toneColor} 12%, transparent)`, color: toneColor }}
+            aria-hidden
+          >
+            <Arrow className="h-3.5 w-3.5" />
+          </span>
         </div>
       )}
 
-      <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+      <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 border-t border-border pt-3 text-xs">
         <dt className="text-ink-faint">Baseline</dt>
         <dd className="text-right tabular-nums text-ink" data-numeric>
-          {formatValue(baseline ?? null, indicatorId)}
-          <span className="ml-1 text-ink-faint">{baselineLabel}</span>
+          {formatValue(baseline ?? null, indicatorId)}{" "}
+          <span className="text-ink-faint">{baselineLabel}</span>
         </dd>
         <dt className="text-ink-faint">Projected</dt>
         <dd className="text-right tabular-nums text-ink" data-numeric>
-          {formatValue(projected ?? null, indicatorId)}
-          <span className="ml-1 text-ink-faint">{epochLabel}</span>
+          {formatValue(projected ?? null, indicatorId)}{" "}
+          <span className="text-ink-faint">{epochLabel}</span>
         </dd>
       </dl>
 

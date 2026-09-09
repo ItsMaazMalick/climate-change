@@ -24,7 +24,7 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-surface-panel">
+    <header className="sticky top-0 z-40 border-b border-border bg-surface-panel shadow-[0_1px_2px_hsl(218_45%_12%/0.04),0_10px_28px_-20px_hsl(218_45%_12%/0.25)]">
       <div className="mx-auto flex h-14 max-w-[1760px] items-center gap-4 px-4 sm:px-6">
         <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="Earth Scan Systems — home">
           <Image

@@ -66,7 +66,6 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background: var(--surface-recessed);
     color: var(--ink);
     font-family: var(--font-ui);
     font-size: var(--text-sm);
@@ -74,6 +73,13 @@
     letter-spacing: var(--tracking-normal);
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* A quiet cool wash so white panels read as lifted off the ground. */
+    background-color: var(--surface);
+    background-image:
+      radial-gradient(1100px 520px at 8% -8%, hsl(214 74% 52% / 0.09), transparent 60%),
+      radial-gradient(900px 620px at 104% -4%, hsl(258 60% 52% / 0.07), transparent 58%),
+      radial-gradient(700px 500px at 50% 108%, hsl(200 70% 48% / 0.05), transparent 60%);
+    background-attachment: fixed;
   }
 
   h1, h2, h3, h4 {
@@ -137,14 +143,32 @@
     border-radius: var(--radius-container);
   }
   .tier-raised {
-    background: var(--surface-raised);
+    background-color: var(--surface-raised);
+    background-image: var(--raise-sheen);
     box-shadow: var(--elevation-raised);
     border-radius: var(--radius-container);
   }
   .tier-overlay {
-    background: var(--surface-overlay);
+    background-color: var(--surface-overlay);
+    background-image: var(--raise-sheen);
     box-shadow: var(--elevation-overlay);
     border-radius: var(--radius-overlay);
+  }
+  /* Raised, with a scenario/status accent seam down the left edge. */
+  .tier-raised-seam {
+    position: relative;
+    background-color: var(--surface-raised);
+    background-image: var(--raise-sheen);
+    box-shadow: var(--elevation-raised);
+    border-radius: var(--radius-container);
+    overflow: hidden;
+  }
+  .tier-raised-seam::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: var(--seam-color, var(--accent-500));
   }
 
   /* Back-compat: older markup uses .panel / .glass-card. Now flat, no blur. */
@@ -175,6 +199,78 @@
     color: var(--ink-faint);
   }
 
+  /* ---- Buttons ---------------------------------------------------- */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: var(--radius-control);
+    padding: 0.625rem 1.125rem;
+    font-size: var(--text-sm);
+    font-weight: 550;
+    line-height: 1;
+    transition: transform var(--dur-state) var(--ease),
+      box-shadow var(--dur-state) var(--ease),
+      background-color var(--dur-state) var(--ease);
+  }
+  .btn-primary {
+    color: var(--accent-ink);
+    background-image: linear-gradient(180deg, var(--accent-500), var(--accent-600));
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset,
+      0 1px 2px hsl(var(--shadow-hue) / 0.2),
+      0 8px 20px -6px rgb(var(--accent-glow) / 0.45);
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset,
+      0 2px 4px hsl(var(--shadow-hue) / 0.24),
+      0 14px 30px -8px rgb(var(--accent-glow) / 0.55);
+  }
+  .btn-dark {
+    color: var(--ink-inverse);
+    background-image: linear-gradient(180deg, var(--deep-700), var(--deep-900));
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset,
+      0 1px 2px hsl(var(--shadow-hue) / 0.28),
+      0 10px 26px -8px hsl(var(--shadow-hue) / 0.4);
+  }
+  .btn-dark:hover {
+    transform: translateY(-1px);
+  }
+  .btn-secondary {
+    color: var(--ink-muted);
+    background-color: var(--surface-panel);
+    background-image: var(--raise-sheen);
+    border: 1px solid var(--border-strong);
+    box-shadow: var(--elevation-flat);
+  }
+  .btn-secondary:hover {
+    transform: translateY(-1px);
+    color: var(--ink);
+    box-shadow: var(--elevation-raised);
+  }
+
+  /* ---- Inverted deep section (hero / footer bands) --------------- */
+  .section-deep {
+    position: relative;
+    color: var(--n-100);
+    background-color: var(--deep-900);
+    background-image:
+      radial-gradient(680px 340px at 12% 0%, rgb(var(--accent-glow) / 0.28), transparent 62%),
+      radial-gradient(520px 320px at 92% 12%, hsl(258 70% 55% / 0.22), transparent 60%),
+      linear-gradient(180deg, var(--deep-800), var(--deep-900));
+    border-radius: var(--radius-overlay);
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .section-deep::after {
+    /* very fine top hairline of light */
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.14), transparent);
+  }
+
   .hairline {
     border-top: 1px solid var(--border);
   }
@@ -187,6 +283,17 @@
   .motion-panel {
     transition-duration: var(--dur-panel);
     transition-timing-function: var(--ease);
+  }
+
+  /* Charts gain depth through soft drop shadows on the active series and
+   * elevated tooltips — never through 3D geometry. */
+  .chart-series-active {
+    filter: drop-shadow(0 2px 3px hsl(var(--shadow-hue) / 0.25));
+  }
+  .chart-tooltip {
+    background: var(--surface-overlay);
+    box-shadow: var(--elevation-overlay);
+    border-radius: var(--radius-control);
   }
 
   /* Diagonal hatch for areas outside data coverage. */

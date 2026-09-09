@@ -28,7 +28,7 @@ export function ProgressRail() {
                 title={step.question}
                 className={`group flex items-center gap-2 rounded-(--radius-control) px-2.5 py-1.5 text-xs font-medium transition-colors ${
                   active
-                    ? "bg-accent-soft text-accent"
+                    ? "bg-ink text-ink-inverse shadow-(--elevation-flat)"
                     : "text-ink-faint hover:bg-surface-hover hover:text-ink"
                 }`}
               >
@@ -38,7 +38,7 @@ export function ProgressRail() {
                       ? "bg-accent text-accent-ink"
                       : done
                         ? "bg-ok/15 text-ok"
-                        : "bg-surface-active text-ink-faint"
+                        : "border border-border-strong text-ink-faint"
                   }`}
                   data-numeric
                 >
@@ -47,7 +47,7 @@ export function ProgressRail() {
                 <span>{step.label}</span>
               </Link>
               {i < WORKFLOW.length - 1 && (
-                <span aria-hidden className="mx-0.5 h-px w-3 bg-border-strong" />
+                <span aria-hidden className="mx-1 h-px w-4 bg-border-strong" />
               )}
             </li>
           );

@@ -188,6 +188,7 @@ export function LocationPanel({
               delta={isBaseline ? null : point.data?.anomaly?.value}
               epochLabel={PERIODS[period].shortLabel}
               tone={toneFor(point.data?.anomaly?.value ?? null, point.data?.indicator)}
+              seamColor={scenarioColorVar(scenario)}
               info={point.data?.indicator?.description}
               loading={point.loading}
             />
