@@ -152,7 +152,7 @@ export function GuidedTour() {
     <div className="fixed inset-0 z-[100]" role="dialog" aria-modal="true" aria-label="Guided tour">
       {/* Scrim with a hole punched around the target via a huge spread shadow */}
       <div
-        className="absolute inset-0 bg-[rgba(17,21,27,0.45)] transition-all duration-[var(--dur-panel)]"
+        className="absolute inset-0 bg-[color:rgba(17,21,27,0.45)] transition-all motion-panel"
         style={
           box
             ? {

@@ -18,6 +18,7 @@ import { ClimateMap, type RegionData } from "@/components/map/climate-map";
 import { Legend } from "@/components/map/legend";
 import type { GeoCollection } from "@/components/map/projection";
 import { isInsideCountryBounds } from "@/lib/climate/countries";
+import { scenarioColorVar } from "@/lib/climate/scenario-style";
 import type { Place } from "@/lib/climate/places";
 import {
   displayUnit,
@@ -205,119 +206,131 @@ export function Explorer({ places }: { places: Place[] }) {
   );
 
   return (
-    <div className="flex h-[calc(100vh-3.5rem)] flex-col lg:flex-row bg-slate-50 text-slate-900">
+    <div className="flex h-[calc(100vh-3.5rem)] flex-col bg-surface-recessed text-ink lg:flex-row">
       {/* ------------------------------------------------ controls ---- */}
-      <aside className="w-full shrink-0 overflow-y-auto border-b border-slate-200 bg-white/90 backdrop-blur-xl lg:w-[290px] lg:border-b-0 lg:border-r shadow-xs">
-        <div className="space-y-4 p-4">
-          <Field label="Target Coordinate / City">
-            <PlaceSearch
-              places={countryPlaces}
-              onSelect={(place) =>
-                setState({ lat: String(place.lat), lon: String(place.lon), area: "" })
-              }
-            />
-          </Field>
-
-          <Field
-            label="Climate Indicator"
-            hint="Scientific variables downscaled from CMIP6 multi-model ensembles."
-          >
-            <IndicatorPicker
-              value={indicator}
-              onChange={(next) => setState({ indicator: next })}
-              griddedOnly
-            />
-          </Field>
-
-          <Field
-            label="Emissions Pathway (SSP)"
-            hint="Shared Socioeconomic Pathways represent different global climate policy futures."
-          >
-            <ScenarioPicker
-              value={scenario}
-              onChange={(next) => setState({ scenario: next })}
-            />
-          </Field>
-
-          <Field label="Time Horizon">
-            <PeriodPicker value={period} onChange={(next) => setState({ period: next })} />
-          </Field>
-
-          <Field
-            label="Display Mode"
-            hint="Change is the anomaly relative to 1995–2014; Absolute shows physical values."
-          >
-            <ProductToggle
-              value={product}
-              onChange={(next) => setState({ product: next })}
-              disabled={isBaseline}
-            />
-          </Field>
-
-          <Field
-            label="Downscaled GCM Model"
-            hint="Ensemble median aggregates 30 global climate models to minimize individual model bias."
-          >
-            <ModelPicker
-              value={model}
-              onChange={(next) => setState({ model: next })}
-              mappableModels={
-                gridModels && perModelVariables.includes(indicator)
-                  ? gridModels
-                  : gridModels && gridModels.length <= 1
-                    ? gridModels
-                    : undefined
-              }
-            />
-            {model !== "ensemble-all" &&
-              !perModelVariables.includes(indicator) && (
-                <p className="mt-1.5 text-[11px] leading-snug text-slate-500">
-                  The map draws the ensemble for {INDICATORS[indicator]?.shortLabel};
-                  individual models are available on{" "}
-                  <a href="/compare" className="text-emerald-700 underline font-semibold">
-                    Compare
-                  </a>
-                  .
-                </p>
-              )}
-          </Field>
-
-          <Field label={config.adminLevels.level1.split(" ")[0] ?? "Region"}>
-            <div className="flex flex-wrap gap-1.5">
-              <ChipButton
-                active={!state.area}
-                onClick={() => setState({ area: "" })}
-                label="All Regions"
+      <aside className="w-full shrink-0 overflow-y-auto border-b border-border bg-surface-panel lg:w-[300px] lg:border-b-0 lg:border-r">
+        <div className="space-y-6 p-4">
+          <fieldset data-tour="where" className="space-y-3">
+            <legend className="label mb-1">Where</legend>
+            <Field label="Location">
+              <PlaceSearch
+                places={countryPlaces}
+                onSelect={(place) =>
+                  setState({ lat: String(place.lat), lon: String(place.lon), area: "" })
+                }
               />
-              {(REGIONS_BY_COUNTRY[countryCode] ?? []).map((region) => (
+            </Field>
+            <Field label={config.adminLevels.level1.split(" ")[0] ?? "Region"}>
+              <div className="flex flex-wrap gap-1.5">
                 <ChipButton
-                  key={region.id}
-                  active={state.area === region.id}
-                  onClick={() =>
-                    setState({
-                      area: state.area === region.id ? "" : region.id,
-                      lat: "",
-                      lon: "",
-                    })
-                  }
-                  label={region.name}
+                  active={!state.area}
+                  onClick={() => setState({ area: "" })}
+                  label="All regions"
                 />
-              ))}
-            </div>
-          </Field>
+                {(REGIONS_BY_COUNTRY[countryCode] ?? []).map((region) => (
+                  <ChipButton
+                    key={region.id}
+                    active={state.area === region.id}
+                    onClick={() =>
+                      setState({
+                        area: state.area === region.id ? "" : region.id,
+                        lat: "",
+                        lon: "",
+                      })
+                    }
+                    label={region.name}
+                  />
+                ))}
+              </div>
+            </Field>
+          </fieldset>
 
-          <div className="hairline pt-3">
-            <Toggle
-              checked={showDistricts}
-              onChange={setShowDistricts}
-              label={`Resolve by ${config.adminLevels.level2.toLowerCase()}`}
-            />
-          </div>
+          <fieldset className="space-y-3">
+            <legend className="label mb-1">What</legend>
+            <Field
+              label="Climate indicator"
+              hint="Scientific variables downscaled from CMIP6 multi-model ensembles."
+            >
+              <IndicatorPicker
+                value={indicator}
+                onChange={(next) => setState({ indicator: next })}
+                griddedOnly
+              />
+            </Field>
+          </fieldset>
+
+          <fieldset data-tour="which-future" className="space-y-3">
+            <legend className="label mb-1">Which future</legend>
+            <Field
+              label="Emissions pathway (SSP)"
+              hint="Shared Socioeconomic Pathways are physical forcing scenarios, not predictions."
+            >
+              <ScenarioPicker
+                value={scenario}
+                onChange={(next) => setState({ scenario: next })}
+              />
+            </Field>
+            <Field label="Time horizon">
+              <PeriodPicker value={period} onChange={(next) => setState({ period: next })} />
+            </Field>
+          </fieldset>
+
+          <details className="group rounded-(--radius-container) border border-border">
+            <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-2 text-xs font-medium text-ink-muted [&::-webkit-details-marker]:hidden">
+              Advanced
+              <span className="text-ink-faint transition-transform group-open:rotate-90">›</span>
+            </summary>
+            <div className="space-y-3 border-t border-border p-3">
+              <Field
+                label="Display mode"
+                hint="Change is the anomaly relative to 1995–2014; Absolute shows physical values."
+              >
+                <ProductToggle
+                  value={product}
+                  onChange={(next) => setState({ product: next })}
+                  disabled={isBaseline}
+                />
+              </Field>
+              <Field
+                label="Downscaled GCM model"
+                hint="Ensemble median aggregates 30 global climate models to minimise individual model bias."
+              >
+                <ModelPicker
+                  value={model}
+                  onChange={(next) => setState({ model: next })}
+                  mappableModels={
+                    gridModels && perModelVariables.includes(indicator)
+                      ? gridModels
+                      : gridModels && gridModels.length <= 1
+                        ? gridModels
+                        : undefined
+                  }
+                />
+                {model !== "ensemble-all" && !perModelVariables.includes(indicator) && (
+                  <p className="mt-1.5 text-xs leading-snug text-ink-faint">
+                    The map draws the ensemble for {INDICATORS[indicator]?.shortLabel};
+                    individual models are available on{" "}
+                    <a href="/compare" className="font-medium text-accent underline">
+                      Compare
+                    </a>
+                    .
+                  </p>
+                )}
+              </Field>
+              <div className="hairline pt-3">
+                <Toggle
+                  checked={showDistricts}
+                  onChange={setShowDistricts}
+                  label={`Resolve by ${config.adminLevels.level2.toLowerCase()}`}
+                />
+              </div>
+            </div>
+          </details>
         </div>
       </aside>
 
       {/* ----------------------------------------------------- map ---- */}
-      <div className="relative min-h-[420px] flex-1 bg-slate-100">
+      <div data-tour="map" className="relative min-h-[420px] flex-1 bg-surface-recessed">
         <ClimateMap
           bbox={config.bbox}
           data={field.data ?? null}
@@ -333,39 +346,32 @@ export function Explorer({ places }: { places: Place[] }) {
           loading={field.loading}
         />
 
-        {/* Floating Light HUD Card */}
-        <div className="pointer-events-none absolute left-3.5 top-3.5 max-w-[min(100%-4rem,440px)] rounded-2xl border border-slate-200/90 bg-white/95 p-4 backdrop-blur-xl shadow-lg ring-1 ring-slate-100">
-          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+        {/* Persistent scenario / epoch context bar — keeps every screenshot self-describing */}
+        <div className="tier-overlay pointer-events-none absolute left-3.5 top-3.5 max-w-[min(100%-4rem,440px)] p-3">
+          <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
             <span
-              className="inline-block h-2.5 w-2.5 rounded-full shadow-xs"
-              style={{
-                background: SCENARIOS[scenario].color,
-              }}
+              aria-hidden
+              className="inline-block h-2.5 w-2.5 rounded-xs"
+              style={{ background: scenarioColorVar(scenario) }}
             />
-            <span
-              className="rounded-md px-2 py-0.5 text-[11px] font-mono font-bold"
-              style={{
-                backgroundColor: `${SCENARIOS[scenario].color}18`,
-                color: SCENARIOS[scenario].color,
-                border: `1px solid ${SCENARIOS[scenario].color}35`,
-              }}
-            >
-              {SCENARIOS[scenario].label} · {SCENARIOS[scenario].globalWarming2100}
+            <span className="text-xs font-semibold text-ink" data-numeric>
+              {SCENARIOS[scenario].label}
             </span>
-            <span className="rounded-md bg-slate-100 border border-slate-200 px-2 py-0.5 text-[11px] font-mono font-bold text-slate-700">
+            <span className="text-2xs text-ink-faint">
+              {SCENARIOS[scenario].forcingDescriptor}
+            </span>
+            <span className="rounded-(--radius-control) border border-border bg-surface-recessed px-1.5 py-0.5 text-2xs font-medium text-ink-muted" data-numeric>
               {PERIODS[period].shortLabel}
             </span>
           </div>
-          <h1 className="text-[15px] font-extrabold text-slate-900 tracking-tight leading-tight">
+          <p className="text-sm font-medium text-ink">
             {INDICATORS[indicator]?.label}
             {product === "anomaly" && (
-              <span className="font-semibold text-emerald-700 ml-1.5">
-                (Relative Change Δ)
-              </span>
+              <span className="ml-1.5 font-normal text-ink-faint">· change vs 1995–2014</span>
             )}
-          </h1>
-          <p className="mt-1 text-[11px] font-mono text-slate-500">
-            {model === "ensemble-all" ? "30-Model CMIP6 Ensemble Median" : model} · 0.25° Spatial Grid
+          </p>
+          <p className="mt-0.5 text-2xs text-ink-faint" data-numeric>
+            {model === "ensemble-all" ? "30-model CMIP6 ensemble median" : model} · 0.25° grid
           </p>
         </div>
 
@@ -390,13 +396,10 @@ export function Explorer({ places }: { places: Place[] }) {
       </div>
 
       {/* --------------------------------------------------- panel ---- */}
-      <aside className="w-full shrink-0 overflow-y-auto border-t border-slate-200 bg-white/90 backdrop-blur-xl lg:w-[380px] lg:border-l lg:border-t-0 shadow-xs">
-        {/* Quick city pill shortcuts */}
-        <div className="border-b border-slate-200 bg-slate-50/80 px-4 py-3">
-          <div className="text-[10px] font-mono font-extrabold uppercase tracking-widest text-slate-500 mb-2 flex items-center justify-between">
-            <span>CITY ORBIT ({config.shortName})</span>
-            <span className="text-emerald-700 font-bold">1-CLICK</span>
-          </div>
+      <aside className="w-full shrink-0 overflow-y-auto border-t border-border bg-surface-panel lg:w-[380px] lg:border-l lg:border-t-0">
+        {/* Quick city shortcuts */}
+        <div className="border-b border-border bg-surface-recessed px-4 py-3">
+          <p className="label mb-2">Cities · {config.shortName}</p>
           <div className="flex flex-wrap gap-1.5">
             {countryPlaces.slice(0, 7).map((p) => {
               const isActive =
@@ -410,10 +413,10 @@ export function Explorer({ places }: { places: Place[] }) {
                   onClick={() =>
                     setState({ lat: String(p.lat), lon: String(p.lon), area: "" })
                   }
-                  className={`rounded-lg px-2.5 py-1 text-[11.5px] font-bold transition-all cursor-pointer ${
+                  className={`cursor-pointer rounded-(--radius-control) border px-2.5 py-1 text-xs font-medium transition-colors motion-state ${
                     isActive
-                      ? "bg-emerald-600 text-white shadow-xs ring-1 ring-emerald-700"
-                      : "bg-white border border-slate-200 text-slate-700 hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800"
+                      ? "border-accent bg-accent text-accent-ink"
+                      : "border-border bg-surface-panel text-ink-muted hover:bg-surface-hover hover:text-ink"
                   }`}
                 >
                   {p.name}
@@ -454,10 +457,10 @@ function ChipButton({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className={`rounded-lg border px-2.5 py-1 text-[11px] font-bold transition-all cursor-pointer ${
+      className={`cursor-pointer rounded-(--radius-control) border px-2.5 py-1 text-xs font-medium transition-colors motion-state ${
         active
-          ? "border-emerald-300 bg-emerald-50 text-emerald-800 shadow-xs ring-1 ring-emerald-400"
-          : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900"
+          ? "border-accent bg-accent-soft text-accent"
+          : "border-border bg-surface-panel text-ink-muted hover:bg-surface-hover hover:text-ink"
       }`}
     >
       {label}
@@ -467,31 +470,31 @@ function ChipButton({
 
 function EmptyPanel() {
   return (
-    <div className="flex h-full flex-col justify-center gap-8 p-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      <div className="text-center">
-        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-8 ring-emerald-50/50">
-          <MapPin className="h-8 w-8" />
-        </div>
-        <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">Select a location</h2>
-        <p className="mt-3 text-[14px] leading-relaxed text-slate-500">
-          Click anywhere on the interactive map, or search for a city in the sidebar, to instantly extract local climate telemetry.
+    <div className="flex h-full flex-col justify-center gap-6 p-6">
+      <div>
+        <span className="text-ink-faint">
+          <MapPin className="h-5 w-5" />
+        </span>
+        <h2 className="mt-2 text-lg font-semibold text-ink">Pick a location</h2>
+        <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+          Click anywhere on the map, or choose a city, to read the projected
+          change for that point against the 1995–2014 baseline.
         </p>
       </div>
 
-      <div className="space-y-4 border-t border-slate-200 pt-6">
-        <div className="flex items-center gap-2 text-[11px] font-extrabold uppercase tracking-widest text-slate-400">
-          <Info className="h-3.5 w-3.5" />
-          <span>What you will discover</span>
-        </div>
-        <div className="grid gap-3">
-          <Note title="Baseline vs Projections">
-            See the historical 20-year average for this specific point, compared against future projections up to 2100.
+      <div className="space-y-2 border-t border-border pt-4">
+        <p className="label flex items-center gap-1.5">
+          <Info className="h-3.5 w-3.5" /> What you&rsquo;ll see
+        </p>
+        <div className="grid gap-2">
+          <Note title="Baseline vs projected">
+            The historical 20-year average for this point, and the projected value for the chosen horizon.
           </Note>
-          <Note title="Model Disagreement">
-            View the spread of 30 different downscaled global climate models to understand certainty and variance.
+          <Note title="Model spread">
+            Where the 10th–90th percentile of the 30-model ensemble sits — the honest error bar.
           </Note>
-          <Note title="Emissions Pathways">
-            Toggle between different SSP scenarios to see how policy choices physically alter the local outcome.
+          <Note title="Every pathway">
+            The same place and horizon under all five SSPs — the gap is the part still up to us.
           </Note>
         </div>
       </div>
@@ -501,11 +504,9 @@ function EmptyPanel() {
 
 function Note({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-slate-200/60 bg-slate-50/50 p-3.5 transition-colors hover:bg-slate-50">
-      <div className="text-[12.5px] font-bold text-slate-800">{title}</div>
-      <p className="mt-1 text-[12px] leading-relaxed text-slate-500">
-        {children}
-      </p>
+    <div className="tier-flat p-3">
+      <div className="text-xs font-semibold text-ink">{title}</div>
+      <p className="mt-1 text-xs leading-relaxed text-ink-faint">{children}</p>
     </div>
   );
 }

@@ -28,7 +28,7 @@ export function NextStepCard({
     <Link
       href={next.href}
       onMouseEnter={() => router.prefetch(next.href)}
-      className="tier-raised group mt-8 flex items-center justify-between gap-4 p-5 transition-transform duration-[var(--dur-state)] ease-[var(--ease)] hover:-translate-y-0.5"
+      className="tier-raised group mt-8 flex items-center justify-between gap-4 p-5 transition-transform motion-state hover:-translate-y-0.5"
       data-tour="next-step"
     >
       <div>

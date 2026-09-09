@@ -15,7 +15,10 @@ export function CountrySelect() {
   const { country, config, setCountry } = useCountry();
 
   return (
-    <label className="relative inline-flex items-center gap-2 rounded-(--radius-control) border border-border bg-surface-panel py-1.5 pl-2.5 pr-2 text-sm shadow-[var(--elevation-flat)] transition-colors hover:bg-surface-hover focus-within:shadow-[var(--focus-ring)]">
+    <label
+      data-tour="country"
+      className="relative inline-flex items-center gap-2 rounded-(--radius-control) border border-border bg-surface-panel py-1.5 pl-2.5 pr-2 text-sm shadow-(--elevation-flat) transition-colors hover:bg-surface-hover focus-within:shadow-(--focus-ring)"
+    >
       <span aria-hidden className="text-base leading-none">
         {config.flag}
       </span>

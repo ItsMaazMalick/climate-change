@@ -2,8 +2,13 @@
 
 import Link from "next/link";
 
-import { ModelSpread, ScenarioComparison, SeasonalCycle, type CycleMonth } from "@/components/charts";
+import { ScenarioComparison, SeasonalCycle, type CycleMonth } from "@/components/charts";
+import { MetricCard } from "@/components/ui/metric-card";
+import { NextStepCard } from "@/components/nav/next-step-card";
+import { UncertaintyStrip } from "@/components/ui/uncertainty-strip";
+import { DataProvenanceFooter } from "@/components/ui/data-provenance-footer";
 import { useApi } from "@/lib/hooks";
+import { scenarioColorVar } from "@/lib/climate/scenario-style";
 import {
   formatValue,
   PERIODS,
@@ -56,6 +61,8 @@ interface CycleResponse {
 
 interface SpreadResponse {
   spread: { median: number | null; p10: number | null; p90: number | null };
+  spreadAvailable?: boolean;
+  members?: Array<{ value: number | null }>;
   description: string;
   confidence: "strong" | "moderate" | "weak";
 }
@@ -86,7 +93,7 @@ export function LocationPanel({
   period: PeriodId;
   model: string;
 }) {
-  const { country } = useCountry();
+  const { country, config } = useCountry();
   const base = `lat=${lat}&lon=${lon}&indicator=${indicator}`;
   const isBaseline = isBaselineParam(period);
 
@@ -97,7 +104,7 @@ export function LocationPanel({
     `/api/climate/scenarios?${base}&period=${period}`,
   );
   const spread = useApi<SpreadResponse>(
-    `/api/climate/models?${base}&scenario=${scenario}&period=${period}`,
+    `/api/climate/models?${base}&scenario=${scenario}&period=${period}&country=${country}`,
   );
   const cycle = useApi<CycleResponse>(
     isBaselineParam(period)
@@ -149,43 +156,42 @@ export function LocationPanel({
         )}
       </section>
 
-      {/* ---- headline numbers ---- */}
-      <section className="p-4">
+      {/* ---- headline readout ---- */}
+      <section className="space-y-3 p-4" data-tour="readout">
         {point.error ? (
           <ErrorNote message={point.error} />
         ) : (
-          <div className="grid grid-cols-3 gap-2.5">
-            <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-xs">
-              <Stat
-                label="Baseline"
-                value={formatValue(point.data?.baseline?.value ?? null, indicator)}
-                caption="1995–2014"
-                loading={point.loading}
-              />
-            </div>
-            <div className="rounded-2xl border border-slate-200 bg-white p-3 shadow-xs">
-              <Stat
-                label="Projected"
-                value={formatValue(point.data?.projected?.value ?? null, indicator)}
-                caption={PERIODS[period].shortLabel}
-                loading={point.loading}
-              />
-            </div>
-            <div className="rounded-2xl border border-emerald-300 bg-emerald-50/60 p-3 shadow-xs ring-1 ring-emerald-500/20">
-              <Stat
-                label="Change (Δ)"
-                value={
-                  isBaseline
-                    ? "—"
-                    : formatValue(point.data?.anomaly?.value ?? null, indicator, "anomaly")
-                }
-                caption={isBaseline ? "Baseline" : `vs 1995–2014`}
-                emphasis
-                tone={toneFor(point.data?.anomaly?.value ?? null, point.data?.indicator)}
-                loading={point.loading}
-              />
-            </div>
-          </div>
+          <>
+            {!isBaseline && (
+              <p className="text-sm leading-relaxed text-ink">
+                {point.data?.anomaly?.value !== null && point.data?.anomaly?.value !== undefined ? (
+                  <>
+                    Under {SCENARIOS[scenario].label},{" "}
+                    {nearest && nearest.distanceKm < 40 ? nearest.name : "this location"}
+                    &rsquo;s {point.data.indicator.label.toLowerCase()} is projected to{" "}
+                    {(point.data.anomaly.value ?? 0) >= 0 ? "rise" : "fall"}{" "}
+                    <span className="font-semibold tabular-nums" data-numeric>
+                      {formatValue(Math.abs(point.data.anomaly.value ?? 0), indicator, "anomaly", { signed: false })}
+                    </span>{" "}
+                    by {PERIODS[period].shortLabel} relative to 1995–2014.
+                  </>
+                ) : (
+                  `A projection for this combination isn't published for ${config.name}.`
+                )}
+              </p>
+            )}
+            <MetricCard
+              label={isBaseline ? "Baseline value" : "Projected change"}
+              indicatorId={indicator}
+              baseline={point.data?.baseline?.value}
+              projected={point.data?.projected?.value}
+              delta={isBaseline ? null : point.data?.anomaly?.value}
+              epochLabel={PERIODS[period].shortLabel}
+              tone={toneFor(point.data?.anomaly?.value ?? null, point.data?.indicator)}
+              info={point.data?.indicator?.description}
+              loading={point.loading}
+            />
+          </>
         )}
       </section>
 
@@ -201,19 +207,24 @@ export function LocationPanel({
               <Skeleton height={64} />
             ) : spread.data ? (
               <>
-                <ModelSpread
+                <UncertaintyStrip
                   median={spread.data.spread.median}
                   p10={spread.data.spread.p10}
                   p90={spread.data.spread.p90}
+                  members={(spread.data.members ?? [])
+                    .map((m) => m.value)
+                    .filter((v): v is number => v !== null)}
                   indicatorId={indicator}
-                  color={SCENARIOS[scenario].color}
+                  color={scenarioColorVar(scenario)}
                 />
-                <p className="mt-2.5 text-[11.5px] leading-relaxed text-slate-600">
-                  {spread.data.description}
-                </p>
+                <DataProvenanceFooter
+                  variable={indicator}
+                  aggregation="annual · ensemble percentiles"
+                  epoch={PERIODS[period].shortLabel}
+                />
               </>
             ) : (
-              <p className="text-[11.5px] text-slate-500">
+              <p className="text-xs text-ink-faint">
                 Percentile bounds are not published for this combination.
               </p>
             )}
@@ -299,44 +310,6 @@ export function LocationPanel({
         </section>
       )}
 
-      {/* ---- sector impact intelligence ---- */}
-      {!isBaseline && point.data?.anomaly?.value !== null && point.data?.anomaly?.value !== undefined && (
-        <section className="p-4">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xs">
-            <SectionTitle
-              title="Sector Impact & Vulnerability Intelligence"
-              hint="Domain-specific risk assessment for this location under the selected climate pathway."
-            />
-            <div className="grid grid-cols-2 gap-2 mt-2">
-              <SectorRiskCard
-                icon="💧"
-                title="Water & Basins"
-                risk={getRiskLevel(indicator, point.data.anomaly.value, "water")}
-                detail="Runoff timing shift & canal evaporative loss."
-              />
-              <SectorRiskCard
-                icon="🌾"
-                title="Agriculture"
-                risk={getRiskLevel(indicator, point.data.anomaly.value, "agri")}
-                detail="Crop heat stress & growing season shifts."
-              />
-              <SectorRiskCard
-                icon="🌡️"
-                title="Urban & Health"
-                risk={getRiskLevel(indicator, point.data.anomaly.value, "urban")}
-                detail="Urban heat island & heat-index exposure."
-              />
-              <SectorRiskCard
-                icon="⚡"
-                title="Energy Grid"
-                risk={getRiskLevel(indicator, point.data.anomaly.value, "energy")}
-                detail="Peak cooling demand & thermal line derating."
-              />
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* ---- indicator context ---- */}
       {point.data?.indicator && (
         <section className="p-4">
@@ -346,76 +319,28 @@ export function LocationPanel({
               {point.data.indicator.description}
             </p>
             {point.data.indicator.countryNotes?.[country] && (
-              <p className="mt-2.5 rounded-xl border-l-3 border-emerald-500 bg-white p-3 text-[11.5px] leading-relaxed text-slate-600 shadow-xs">
+              <p className="mt-2.5 rounded-(--radius-control) border-l-2 border-accent bg-surface-panel p-3 text-xs leading-relaxed text-ink-muted">
                 {point.data.indicator.countryNotes[country]}
               </p>
             )}
           </div>
         </section>
       )}
-    </div>
-  );
-}
 
-function getRiskLevel(
-  indicator: string,
-  anomaly: number,
-  sector: "water" | "agri" | "urban" | "energy",
-): "Low" | "Moderate" | "High" | "Severe" {
-  const abs = Math.abs(anomaly);
-  if (indicator === "tas") {
-    if (abs < 1.5) return "Low";
-    if (abs < 2.5) return sector === "urban" ? "High" : "Moderate";
-    if (abs < 4.0) return "High";
-    return "Severe";
-  }
-  if (indicator === "tx40") {
-    if (abs < 5) return "Low";
-    if (abs < 15) return "Moderate";
-    if (abs < 30) return "High";
-    return "Severe";
-  }
-  if (indicator === "cdd") {
-    if (abs < 5) return "Low";
-    if (abs < 12) return "Moderate";
-    return "High";
-  }
-  return abs > 15 ? "High" : abs > 5 ? "Moderate" : "Low";
-}
-
-const RISK_BADGES: Record<"Low" | "Moderate" | "High" | "Severe", { bg: string; text: string; ring: string }> = {
-  Low: { bg: "bg-emerald-50", text: "text-emerald-700", ring: "ring-emerald-300" },
-  Moderate: { bg: "bg-amber-50", text: "text-amber-700", ring: "ring-amber-300" },
-  High: { bg: "bg-orange-50", text: "text-orange-700", ring: "ring-orange-300" },
-  Severe: { bg: "bg-rose-50", text: "text-rose-700", ring: "ring-rose-300" },
-};
-
-function SectorRiskCard({
-  icon,
-  title,
-  risk,
-  detail,
-}: {
-  icon: string;
-  title: string;
-  risk: "Low" | "Moderate" | "High" | "Severe";
-  detail: string;
-}) {
-  const badge = RISK_BADGES[risk];
-  return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-2.5 shadow-xs">
-      <div className="flex items-center justify-between gap-1 mb-1">
-        <span className="text-[11.5px] font-bold text-slate-900 flex items-center gap-1.5 truncate">
-          <span>{icon}</span>
-          <span className="truncate">{title}</span>
-        </span>
-        <span
-          className={`shrink-0 rounded-md px-1.5 py-0.5 text-[9.5px] font-mono font-bold ring-1 ${badge.bg} ${badge.text} ${badge.ring}`}
-        >
-          {risk}
-        </span>
-      </div>
-      <p className="text-[10px] leading-tight text-slate-500">{detail}</p>
+      {/* ---- next step ---- */}
+      <section className="p-4">
+        <NextStepCard
+          from="explore"
+          state={{
+            lat: String(lat),
+            lon: String(lon),
+            place: nearest && nearest.distanceKm < 40 ? nearest.id : undefined,
+            indicator,
+            scenario,
+            period,
+          }}
+        />
+      </section>
     </div>
   );
 }
@@ -431,57 +356,14 @@ function toneFor(value: number | null | undefined, indicator?: Indicator): Tone 
   return (value > 0) === indicator.higherIsWorse ? "adverse" : "benign";
 }
 
-const TONE_COLOR: Record<Tone, string> = {
-  adverse: "#e11d48",
-  benign: "#059669",
-  neutral: "#0f172a",
-};
-
-function Stat({
-  label,
-  value,
-  caption,
-  emphasis,
-  tone = "neutral",
-  loading,
-}: {
-  label: string;
-  value: string;
-  caption: string;
-  emphasis?: boolean;
-  tone?: Tone;
-  loading?: boolean;
-}) {
-  return (
-    <div>
-      <div className="label mb-1 text-slate-500">{label}</div>
-      {loading ? (
-        <div className="h-6 w-16 animate-pulse rounded bg-slate-200" />
-      ) : (
-        <div
-          className={`tnum whitespace-nowrap leading-none font-mono ${
-            emphasis
-              ? `font-black ${value.length > 7 ? "text-[17px]" : "text-[23px]"}`
-              : `font-extrabold ${value.length > 7 ? "text-[15px]" : "text-[20px]"} text-slate-900`
-          }`}
-          style={emphasis ? { color: TONE_COLOR[tone] } : undefined}
-        >
-          {value}
-        </div>
-      )}
-      <div className="mt-1 text-[10px] font-mono text-slate-400">{caption}</div>
-    </div>
-  );
-}
-
 function SectionTitle({ title, hint }: { title: string; hint?: string }) {
   return (
-    <h3 className="label mb-2.5 flex items-center gap-1.5 text-slate-700 font-bold">
+    <h3 className="label mb-2.5 flex items-center gap-1.5 text-ink-muted">
       {title}
       {hint && (
         <span
           title={hint}
-          className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-full border border-slate-300 bg-slate-100 text-[8px] font-bold normal-case text-slate-500"
+          className="inline-flex h-3.5 w-3.5 cursor-help items-center justify-center rounded-(--radius-pill) border border-border-strong bg-surface-recessed text-[8px] font-bold normal-case text-ink-faint"
         >
           ?
         </span>

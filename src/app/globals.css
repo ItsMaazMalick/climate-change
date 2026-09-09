@@ -179,6 +179,16 @@
     border-top: 1px solid var(--border);
   }
 
+  /* One easing curve; two durations. Pair with Tailwind's `transition-*`. */
+  .motion-state {
+    transition-duration: var(--dur-state);
+    transition-timing-function: var(--ease);
+  }
+  .motion-panel {
+    transition-duration: var(--dur-panel);
+    transition-timing-function: var(--ease);
+  }
+
   /* Diagonal hatch for areas outside data coverage. */
   .hatch-oob {
     background-image: repeating-linear-gradient(

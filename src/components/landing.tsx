@@ -32,7 +32,7 @@ export function Landing({
   return (
     <div className="mx-auto flex min-h-[calc(100vh-3.5rem)] max-w-5xl flex-col justify-center px-6 py-12">
       <p className="label mb-3">Earth Scan Systems · Climate Intelligence</p>
-      <h1 className="max-w-3xl text-[var(--fs-2xl)] font-semibold leading-[1.1] tracking-[var(--tracking-tight)]">
+      <h1 className="max-w-3xl text-2xl font-semibold leading-[1.1] tracking-[var(--tracking-tight)]">
         How the climate of Pakistan, Uzbekistan, Australia and New Zealand could
         change under each emissions pathway.
       </h1>
@@ -54,14 +54,14 @@ export function Landing({
             key={h.code}
             href={`/explore?country=${h.code.toLowerCase()}`}
             onClick={() => setCountry(h.code)}
-            className="tier-raised group flex flex-col gap-3 p-4 transition-transform duration-[var(--dur-state)] ease-[var(--ease)] hover:-translate-y-0.5"
+            className="tier-raised group flex flex-col gap-3 p-4 transition-transform motion-state hover:-translate-y-0.5"
           >
             <div className="flex items-center gap-2">
               <span aria-hidden className="text-lg leading-none">{h.flag}</span>
               <span className="text-sm font-medium text-ink">{h.name}</span>
             </div>
             <div>
-              <div className="text-[var(--fs-xl)] font-semibold leading-none text-ink" data-numeric>
+              <div className="text-xl font-semibold leading-none text-ink" data-numeric>
                 {h.delta !== null ? formatValue(h.delta, "tas", "anomaly") : "—"}
               </div>
               <p className="mt-1.5 text-xs leading-snug text-ink-faint">
