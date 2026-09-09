@@ -113,7 +113,9 @@ export function Explorer({ places }: { places: Place[] }) {
     area: "",
     // Which administrative level the choropleth resolves to. In the URL with
     // everything else, so a district-level view is a link someone can send.
-    level: "1",
+    // Defaults to level 2 (districts) — the finer grain reads as a real
+    // gradient rather than a handful of flat provinces.
+    level: "2",
   });
 
   const showDistricts = state.level === "2";

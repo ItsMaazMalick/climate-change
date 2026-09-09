@@ -88,3 +88,36 @@ describe("boundary geometry stays inside each country's extent", () => {
     }
   }
 });
+
+/**
+ * The precomputed cell sidecars in `data/geo` must not name an admin unit the
+ * boundary files no longer contain. When `geo:normalize` dropped Australia's
+ * Christmas and Cocos Islands and New Zealand's Chatham Islands, their cell
+ * entries were left behind — so the regions API reported more units than the
+ * map could draw, and each orphan rendered as a permanent "no data" row.
+ */
+describe("cell sidecars match the boundary geometry", () => {
+  const PAIRS: Array<[string, string]> = [
+    ["provinces.geojson", "provinces-cells.json"],
+    ["districts.geojson", "districts-cells.json"],
+    ["uzbekistan-regions.geojson", "uzb-regions-cells.json"],
+    ["uzbekistan-districts.geojson", "uzb-districts-cells.json"],
+    ["australia-states.geojson", "aus-states-cells.json"],
+    ["australia-lgas.geojson", "aus-lgas-cells.json"],
+    ["new-zealand-regions.geojson", "nzl-regions-cells.json"],
+    ["new-zealand-districts.geojson", "nzl-districts-cells.json"],
+  ];
+
+  for (const [geoFile, cellFile] of PAIRS) {
+    it(`${cellFile} names no unit missing from ${geoFile}`, () => {
+      const ids = new Set(
+        load(geoFile).map((f) => String((f.properties as { id?: unknown }).id)),
+      );
+      const cells = JSON.parse(
+        readFileSync(path.join(process.cwd(), "data", "geo", cellFile), "utf8"),
+      ) as Record<string, number[]>;
+      const orphans = Object.keys(cells).filter((id) => !ids.has(id));
+      expect(orphans).toEqual([]);
+    });
+  }
+});
