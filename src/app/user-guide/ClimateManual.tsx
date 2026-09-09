@@ -1,17 +1,16 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { 
-  Home, BookOpen, Rocket, Map, Scale, Flame, MapPin, Library, Microscope, HelpCircle, Phone, 
-  Check, RefreshCw, BarChart2, Lightbulb, Search, Target, Building, SunDim, TrendingUp, 
-  Thermometer, Ruler, Radio, Settings, AlertTriangle, Globe, Building2, Mail, MessageCircle, 
-  Menu, X 
+import {
+  Home, BookOpen, Rocket, Map, Scale, Flame, MapPin, Library, Microscope, HelpCircle, Phone,
+  Check, RefreshCw, BarChart2, Lightbulb, Search, Target, Building, SunDim, TrendingUp,
+  Thermometer, Ruler, Radio, Settings, AlertTriangle, Globe, Building2, Mail, MessageCircle,
+  Menu, X
 } from 'lucide-react';
 
 export default function ClimateManual() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -68,9 +67,9 @@ export default function ClimateManual() {
 
   return (
     <div className="font-sans text-slate-900 bg-slate-50 min-h-screen overflow-x-hidden antialiased">
-      
+
       {/* Mobile Menu Button */}
-      <button 
+      <button
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         className="lg:hidden fixed top-4 left-4 z-50 w-10 h-10 bg-white border border-slate-200 rounded-md shadow-md flex items-center justify-center text-slate-900"
       >
@@ -85,21 +84,20 @@ export default function ClimateManual() {
             <div className="ml-1 text-emerald-700 text-base font-bold tracking-tight">Climate Intelligence Explorer</div>
           </div>
         </div>
-        
+
         <ul className="flex-1 overflow-y-auto p-4 space-y-1">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
             return (
               <li key={item.id}>
-                <a 
+                <a
                   href={`#${item.id}`}
                   onClick={(e) => scrollTo(e, item.id)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-colors ${
-                    isActive 
-                      ? 'bg-emerald-100 text-emerald-700 border border-emerald-500/20' 
-                      : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-                  }`}
+                  className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold transition-colors ${isActive
+                    ? 'bg-emerald-100 text-emerald-700 border border-emerald-500/20'
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                    }`}
                 >
                   <Icon size={18} className={isActive ? 'text-emerald-600' : 'text-slate-400'} />
                   {item.label}
@@ -108,7 +106,7 @@ export default function ClimateManual() {
             );
           })}
         </ul>
-        
+
         <div className="p-5 border-t border-slate-200 text-xs font-medium text-slate-500">
           &copy; 2026 Earth Scan Systems
         </div>
@@ -116,7 +114,7 @@ export default function ClimateManual() {
 
       {/* Sidebar Overlay for Mobile */}
       {isSidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-30 lg:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
@@ -124,7 +122,7 @@ export default function ClimateManual() {
 
       {/* Main Content */}
       <main className="lg:ml-72 flex flex-col min-h-screen">
-        
+
         {/* HERO SECTION */}
         <section id="hero" className="relative px-6 md:px-12 pt-32 pb-24 bg-white border-b border-slate-200 flex items-center min-h-[500px] overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,_rgba(22,163,74,0.08)_0%,_transparent_40%),radial-gradient(circle_at_0%_100%,_rgba(234,88,12,0.05)_0%,_transparent_40%)]" />
@@ -138,7 +136,7 @@ export default function ClimateManual() {
             <p className="text-lg text-slate-600 font-medium max-w-2xl mb-10 leading-relaxed">
               Your complete guide to exploring CMIP6 climate projections across Uzbekistan, Pakistan, Australia &amp; New Zealand &mdash; by location and emissions pathway.
             </p>
-            
+
             <div className="flex flex-wrap items-center gap-6 p-5 bg-slate-50 border border-slate-200 rounded-xl mb-10">
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase font-bold tracking-wider text-slate-400">Version</span>
@@ -166,7 +164,7 @@ export default function ClimateManual() {
                 Explore Features
               </a>
               <a href="https://ess-climate-change.vercel.app/" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center px-7 py-3 rounded-lg text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:border-slate-400 shadow-sm hover:-translate-y-px transition-all">
-                Open Platform &nearr;
+                Open Platform
               </a>
             </div>
           </div>
@@ -179,7 +177,7 @@ export default function ClimateManual() {
             <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">What is Climate Intelligence Explorer?</h2>
             <p className="text-base text-slate-500 font-medium">High-resolution climate projections, made accessible.</p>
           </div>
-          
+
           {/* Walkthrough video */}
           <figure className="relative z-10 mb-16 mx-auto">
             <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-950 shadow-2xl">
@@ -229,7 +227,7 @@ export default function ClimateManual() {
                   ))}
                 </div>
               </div>
-              
+
               <div>
                 <h3 className="text-lg font-bold text-slate-900 border-b border-slate-200 pb-3 mb-5">Platform Pages</h3>
                 <div className="space-y-2">
@@ -268,7 +266,7 @@ export default function ClimateManual() {
 
             <div className="relative pl-10 md:pl-12">
               <div className="absolute left-[19px] md:left-[23px] top-0 bottom-0 w-0.5 bg-slate-200" />
-              
+
               {[
                 { title: "Open the Platform", desc: <>Navigate to <a href="https://ess-climate-change.vercel.app/" target="_blank" rel="noreferrer" className="text-emerald-600 font-bold hover:underline underline-offset-2">ess-climate-change.vercel.app</a> in any modern browser. Works on desktop, tablet, and mobile.</> },
                 { title: "Select a Country", desc: "Use the country switcher in the header to toggle between Uzbekistan, Pakistan, Australia, and New Zealand." },
@@ -297,38 +295,35 @@ export default function ClimateManual() {
             <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Explorer &mdash; Interactive Climate Map</h2>
             <p className="text-base text-slate-500 font-medium">Click anywhere to see how its climate could change.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1">
-              <div 
-                className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden cursor-zoom-in hover:shadow-2xl transition-all"
-                onClick={() => setZoomedImage('/images/01-explorer-map.jpeg')}
-              >
+              <div className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden">
                 <img src="/images/01-explorer-map.jpeg" alt="Explorer map" className="w-full rounded-xl border border-slate-200" />
               </div>
-              <span className="block text-center text-xs text-slate-500 font-mono">Figure 1 &mdash; Explorer Map with climate projection overlay (Click to enlarge)</span>
+              <span className="block text-center text-xs text-slate-500 font-mono">Figure 1 &mdash; Explorer Map with climate projection overlay</span>
             </div>
-            
+
             <div className="order-1 lg:order-2">
               <h3 className="text-2xl font-extrabold text-slate-900 mb-3 tracking-tight">The Explorer Interface</h3>
               <p className="text-sm text-slate-500 font-medium mb-6">The Explorer is the main page. It combines an interactive map with a control sidebar and data panel.</p>
-              
+
               <div className="space-y-4">
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Map size={18} className="text-emerald-600"/> Interactive Raster Map</h4>
+                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Map size={18} className="text-emerald-600" /> Interactive Raster Map</h4>
                   <p className="text-sm text-slate-500 font-medium">The central map displays color-coded raster at 0.25&deg; resolution (~25 km). Major cities are labeled. Click any point to query its data. Use zoom controls to navigate.</p>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                  <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><Settings size={18} className="text-emerald-600"/> Left Sidebar Controls</h4>
+                  <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><Settings size={18} className="text-emerald-600" /> Left Sidebar Controls</h4>
                   <ul className="space-y-2 text-sm text-slate-600">
-                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0"/><span><strong>Target Coordinate / City</strong> &mdash; Search bar</span></li>
-                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0"/><span><strong>Climate Indicator</strong> &mdash; 16 scientific variables</span></li>
-                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0"/><span><strong>Emissions Pathway (SSP)</strong> &mdash; 5 scenario buttons</span></li>
-                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0"/><span><strong>Time Horizon</strong> &mdash; 5 periods from baseline to 2080-2099</span></li>
+                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" /><span><strong>Target Coordinate / City</strong> &mdash; Search bar</span></li>
+                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" /><span><strong>Climate Indicator</strong> &mdash; 16 scientific variables</span></li>
+                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" /><span><strong>Emissions Pathway (SSP)</strong> &mdash; 5 scenario buttons</span></li>
+                    <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" /><span><strong>Time Horizon</strong> &mdash; 5 periods from baseline to 2080-2099</span></li>
                   </ul>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><TrendingUp size={18} className="text-emerald-600"/> Right Data Panel</h4>
+                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><TrendingUp size={18} className="text-emerald-600" /> Right Data Panel</h4>
                   <p className="text-sm text-slate-500 font-medium">Shows: Baseline value (1995-2014), Projected value, Change (&Delta;), Multi-Model Uncertainty (10th-90th percentile), and All Policy Pathways comparison.</p>
                 </div>
               </div>
@@ -344,40 +339,37 @@ export default function ClimateManual() {
               <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Compare &mdash; Side-by-Side Analysis</h2>
               <p className="text-base text-slate-500 font-medium">Compare scenarios, regions, and indicators in one view.</p>
             </div>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h3 className="text-2xl font-extrabold text-slate-900 mb-3 tracking-tight">Comparing Climate Futures</h3>
                 <p className="text-sm text-slate-500 font-medium mb-6">The Compare page puts two different climate scenarios side by side.</p>
-                
+
                 <div className="space-y-4">
                   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Scale size={18} className="text-emerald-600"/> Dual Panel Layout</h4>
+                    <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Scale size={18} className="text-emerald-600" /> Dual Panel Layout</h4>
                     <p className="text-sm text-slate-500 font-medium">View two configurations simultaneously &mdash; e.g., SSP1-2.6 vs SSP5-8.5, or same scenario for two cities. Each panel has independent controls.</p>
                   </div>
                   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><BarChart2 size={18} className="text-emerald-600"/> Visual Comparison</h4>
+                    <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><BarChart2 size={18} className="text-emerald-600" /> Visual Comparison</h4>
                     <p className="text-sm text-slate-500 font-medium">Both panels use the same color scale. The gap between scenarios shows the part of the future still determined by policy choices.</p>
                   </div>
                   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><Lightbulb size={18} className="text-emerald-600"/> Use Cases</h4>
+                    <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><Lightbulb size={18} className="text-emerald-600" /> Use Cases</h4>
                     <ul className="space-y-2 text-sm text-slate-600">
-                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0"/><span>Compare low-emissions vs high-emissions future</span></li>
-                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0"/><span>Compare mid-century vs end-of-century</span></li>
-                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0"/><span>Compare two different regions under same scenario</span></li>
+                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" /><span>Compare low-emissions vs high-emissions future</span></li>
+                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" /><span>Compare mid-century vs end-of-century</span></li>
+                      <li className="flex gap-2"><div className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-1.5 shrink-0" /><span>Compare two different regions under same scenario</span></li>
                     </ul>
                   </div>
                 </div>
               </div>
 
               <div>
-                <div 
-                  className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden cursor-zoom-in hover:shadow-2xl transition-all"
-                  onClick={() => setZoomedImage('/images/02-compare-view.jpeg')}
-                >
+                <div className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden">
                   <img src="/images/02-compare-view.jpeg" alt="Compare View" className="w-full rounded-xl border border-slate-200" />
                 </div>
-                <span className="block text-center text-xs text-slate-500 font-mono">Figure 2 &mdash; Compare View (Click to enlarge)</span>
+                <span className="block text-center text-xs text-slate-500 font-mono">Figure 2 &mdash; Compare View</span>
               </div>
             </div>
           </div>
@@ -390,33 +382,30 @@ export default function ClimateManual() {
             <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Hotspots &mdash; Most Affected Areas</h2>
             <p className="text-base text-slate-500 font-medium">Ranked list of provinces and districts by projected climate change.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1">
-              <div 
-                className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden cursor-zoom-in hover:shadow-2xl transition-all"
-                onClick={() => setZoomedImage('/images/03-hotspots.jpeg')}
-              >
+              <div className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden">
                 <img src="/images/03-hotspots.jpeg" alt="Hotspots Ranking" className="w-full rounded-xl border border-slate-200" />
               </div>
-              <span className="block text-center text-xs text-slate-500 font-mono">Figure 3 &mdash; Hotspots Ranking (Click to enlarge)</span>
+              <span className="block text-center text-xs text-slate-500 font-mono">Figure 3 &mdash; Hotspots Ranking</span>
             </div>
-            
+
             <div className="order-1 lg:order-2">
               <h3 className="text-2xl font-extrabold text-slate-900 mb-3 tracking-tight">Identifying Climate Hotspots</h3>
               <p className="text-sm text-slate-500 font-medium mb-6">The Hotspots page ranks every province and district by projected climate change magnitude.</p>
-              
+
               <div className="space-y-4">
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><BarChart2 size={18} className="text-emerald-600"/> Ranked Table</h4>
+                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><BarChart2 size={18} className="text-emerald-600" /> Ranked Table</h4>
                   <p className="text-sm text-slate-500 font-medium">Regions sorted by projected change. Each row shows baseline, projected value, and change magnitude with color severity indicators.</p>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Search size={18} className="text-emerald-600"/> Filterable</h4>
+                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Search size={18} className="text-emerald-600" /> Filterable</h4>
                   <p className="text-sm text-slate-500 font-medium">Select any indicator and SSP pathway. Find which districts face the greatest change &mdash; e.g., most additional hot days above 40&deg;C under SSP5-8.5.</p>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Target size={18} className="text-emerald-600"/> Decision Support</h4>
+                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Target size={18} className="text-emerald-600" /> Decision Support</h4>
                   <p className="text-sm text-slate-500 font-medium">Helps governments and organizations prioritize climate resilience investments where needed most.</p>
                 </div>
               </div>
@@ -432,36 +421,33 @@ export default function ClimateManual() {
               <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Places &mdash; Pre-Built City Profiles</h2>
               <p className="text-base text-slate-500 font-medium">Explore climate data for major cities with weather forecasts.</p>
             </div>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h3 className="text-2xl font-extrabold text-slate-900 mb-3 tracking-tight">City-Level Climate Intelligence</h3>
                 <p className="text-sm text-slate-500 font-medium mb-6">Pre-built profiles combining long-term projections with short-range weather data.</p>
-                
+
                 <div className="space-y-4">
                   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Building size={18} className="text-emerald-600"/> City Quick-Select</h4>
+                    <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Building size={18} className="text-emerald-600" /> City Quick-Select</h4>
                     <p className="text-sm text-slate-500 font-medium">Click any city name to load its profile. Includes Tashkent, Samarkand, Bukhara, Nukus, Andijan, Namangan, Fergana, and more.</p>
                   </div>
                   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><SunDim size={18} className="text-emerald-600"/> Weather + Climate</h4>
+                    <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><SunDim size={18} className="text-emerald-600" /> Weather + Climate</h4>
                     <p className="text-sm text-slate-500 font-medium">Each profile shows short-range weather forecasts (Open-Meteo, 16 days) alongside long-term CMIP6 projections.</p>
                   </div>
                   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><TrendingUp size={18} className="text-emerald-600"/> Historical Context</h4>
+                    <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><TrendingUp size={18} className="text-emerald-600" /> Historical Context</h4>
                     <p className="text-sm text-slate-500 font-medium">ERA5 reanalysis data (1950-present) shows what the climate has actually been, before exploring what it could become.</p>
                   </div>
                 </div>
               </div>
 
               <div>
-                <div 
-                  className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden cursor-zoom-in hover:shadow-2xl transition-all"
-                  onClick={() => setZoomedImage('/images/04-places.jpeg')}
-                >
+                <div className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden">
                   <img src="/images/04-places.jpeg" alt="Places Profiles" className="w-full rounded-xl border border-slate-200" />
                 </div>
-                <span className="block text-center text-xs text-slate-500 font-mono">Figure 4 &mdash; Places &amp; City Profiles (Click to enlarge)</span>
+                <span className="block text-center text-xs text-slate-500 font-mono">Figure 4 &mdash; Places &amp; City Profiles</span>
               </div>
             </div>
           </div>
@@ -474,25 +460,22 @@ export default function ClimateManual() {
             <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Learn &mdash; Understanding Projections</h2>
             <p className="text-base text-slate-500 font-medium">How to read and interpret climate projection data.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="order-2 lg:order-1">
-              <div 
-                className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden cursor-zoom-in hover:shadow-2xl transition-all"
-                onClick={() => setZoomedImage('/images/05-learn.jpeg')}
-              >
+              <div className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden">
                 <img src="/images/05-learn.jpeg" alt="Learn Page" className="w-full rounded-xl border border-slate-200" />
               </div>
-              <span className="block text-center text-xs text-slate-500 font-mono">Figure 5 &mdash; Learn Page (Click to enlarge)</span>
+              <span className="block text-center text-xs text-slate-500 font-mono">Figure 5 &mdash; Learn Page</span>
             </div>
-            
+
             <div className="order-1 lg:order-2">
               <h3 className="text-2xl font-extrabold text-slate-900 mb-3 tracking-tight">Reading Climate Projections</h3>
               <p className="text-sm text-slate-500 font-medium mb-6">Explains key concepts to correctly interpret the data.</p>
-              
+
               <div className="space-y-4">
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                  <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><Thermometer size={18} className="text-emerald-600"/> SSP Pathways Explained</h4>
+                  <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><Thermometer size={18} className="text-emerald-600" /> SSP Pathways Explained</h4>
                   <div className="grid gap-2">
                     {[
                       { ssp: "SSP1-1.9", color: "bg-cyan-700", desc: "Very low · 1.0-1.8°C" },
@@ -509,11 +492,11 @@ export default function ClimateManual() {
                   </div>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Ruler size={18} className="text-emerald-600"/> Baseline & Anomalies</h4>
+                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><Ruler size={18} className="text-emerald-600" /> Baseline & Anomalies</h4>
                   <p className="text-sm text-slate-500 font-medium">All changes are against 1995-2014 baseline. +2.1°C means the 20-year average is projected 2.1°C warmer. It does not predict any single year.</p>
                 </div>
                 <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><BarChart2 size={18} className="text-emerald-600"/> Model Uncertainty</h4>
+                  <h4 className="text-sm font-bold text-slate-800 mb-2 flex items-center gap-2"><BarChart2 size={18} className="text-emerald-600" /> Model Uncertainty</h4>
                   <p className="text-sm text-slate-500 font-medium">The 10th-90th percentile spread shows inter-model uncertainty &mdash; how much 30 climate models disagree. Narrow = high confidence.</p>
                 </div>
               </div>
@@ -529,15 +512,15 @@ export default function ClimateManual() {
               <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Methodology &amp; Data Sources</h2>
               <p className="text-base text-slate-500 font-medium">Where the numbers come from and what they cannot tell you.</p>
             </div>
-            
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
                 <h3 className="text-2xl font-extrabold text-slate-900 mb-3 tracking-tight">Data &amp; Processing</h3>
                 <p className="text-sm text-slate-500 font-medium mb-6">Documents every data source, processing step, and known limitation.</p>
-                
+
                 <div className="space-y-4">
                   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><Radio size={18} className="text-emerald-600"/> Three Data Sources</h4>
+                    <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><Radio size={18} className="text-emerald-600" /> Three Data Sources</h4>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-lg text-center">
                         <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold font-mono mb-2 bg-white border border-slate-200 text-slate-500">PROJECTION</span>
@@ -556,9 +539,9 @@ export default function ClimateManual() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><Settings size={18} className="text-emerald-600"/> Processing Pipeline</h4>
+                    <h4 className="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2"><Settings size={18} className="text-emerald-600" /> Processing Pipeline</h4>
                     <ol className="space-y-2 text-sm text-slate-500 list-decimal pl-5">
                       <li><strong className="text-slate-800">Source</strong> &mdash; Global 0.25&deg; NetCDF from World Bank S3</li>
                       <li><strong className="text-slate-800">Subset</strong> &mdash; Clip to national bounding box</li>
@@ -567,7 +550,7 @@ export default function ClimateManual() {
                       <li><strong className="text-slate-800">Serve</strong> &mdash; Point queries read lattice directly</li>
                     </ol>
                   </div>
-                  
+
                   <div className="flex gap-4 p-5 bg-orange-50 rounded-xl border-l-4 border-orange-600 mt-4">
                     <AlertTriangle size={20} className="text-orange-600 shrink-0" />
                     <div>
@@ -579,13 +562,10 @@ export default function ClimateManual() {
               </div>
 
               <div>
-                <div 
-                  className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden cursor-zoom-in hover:shadow-2xl transition-all"
-                  onClick={() => setZoomedImage('/images/06-methodology.jpeg')}
-                >
+                <div className="bg-white p-2 rounded-2xl shadow-xl border border-slate-200 mb-4 overflow-hidden">
                   <img src="/images/06-methodology.jpeg" alt="Methodology" className="w-full rounded-xl border border-slate-200" />
                 </div>
-                <span className="block text-center text-xs text-slate-500 font-mono">Figure 6 &mdash; Methodology &amp; Data Sources (Click to enlarge)</span>
+                <span className="block text-center text-xs text-slate-500 font-mono">Figure 6 &mdash; Methodology &amp; Data Sources</span>
               </div>
             </div>
           </div>
@@ -598,7 +578,7 @@ export default function ClimateManual() {
             <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Platform Navigation</h2>
             <p className="text-base text-slate-500 font-medium">Access all features from the top header bar.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
             {[
               { icon: Map, title: "Explorer", desc: "Interactive climate map with raster overlays." },
@@ -615,7 +595,7 @@ export default function ClimateManual() {
               </div>
             ))}
           </div>
-          
+
           <div className="bg-slate-50 border border-slate-200 p-8 rounded-xl text-center max-w-3xl mx-auto">
             <h3 className="text-base font-bold text-slate-900 mb-1.5">Country Switcher</h3>
             <p className="text-sm text-slate-500 mb-5">Toggle between supported countries:</p>
@@ -636,11 +616,11 @@ export default function ClimateManual() {
               <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Frequently Asked Questions</h2>
               <p className="text-base text-slate-500 font-medium">Common questions answered.</p>
             </div>
-            
+
             <div className="flex flex-col gap-3">
               {faqs.map((faq, index) => (
                 <div key={index} className={`bg-white border rounded-xl shadow-sm transition-all duration-300 overflow-hidden ${openFaq === index ? 'border-emerald-200' : 'border-slate-200'}`}>
-                  <button 
+                  <button
                     onClick={() => toggleFaq(index)}
                     className="flex justify-between items-center w-full p-5 text-left font-bold text-[15px] text-slate-900"
                   >
@@ -665,7 +645,7 @@ export default function ClimateManual() {
             <h2 className="text-3xl font-extrabold text-slate-900 mb-3 tracking-tight">Need Help?</h2>
             <p className="text-base text-slate-500 font-medium">Our team is here to support you.</p>
           </div>
-          
+
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
               { icon: Globe, title: "Open Platform", desc: "Access the Climate Explorer directly.", link: "ess-climate-change.vercel.app", href: "https://ess-climate-change.vercel.app/" },
@@ -698,7 +678,7 @@ export default function ClimateManual() {
                 Craigieburn, Victoria 3064, Australia &middot; DHA Phase V Sector G, Islamabad, Pakistan
               </p>
             </div>
-            
+
             <div className="md:col-span-3">
               <h4 className="text-[13px] font-extrabold uppercase tracking-widest text-slate-800 mb-4 font-mono">Platform</h4>
               <div className="flex flex-col space-y-2.5">
@@ -709,7 +689,7 @@ export default function ClimateManual() {
                 <a href="https://ess-climate-change.vercel.app/methodology" target="_blank" rel="noreferrer" className="text-sm text-slate-500 font-medium hover:text-emerald-600 transition-colors">Methodology</a>
               </div>
             </div>
-            
+
             <div className="md:col-span-3">
               <h4 className="text-[13px] font-extrabold uppercase tracking-widest text-slate-800 mb-4 font-mono">Data Sources</h4>
               <div className="flex flex-col space-y-2.5">
@@ -719,36 +699,13 @@ export default function ClimateManual() {
               </div>
             </div>
           </div>
-          
+
           <div className="text-center py-6 text-xs text-slate-400 font-medium">
             &copy; 2026 Earth Scan Systems. All rights reserved. | Climate Intelligence Explorer User Manual v1.0
           </div>
         </footer>
 
       </main>
-
-      {/* Lightbox Overlay for Zooming Images */}
-      {zoomedImage && (
-        <div 
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-4 md:p-10 cursor-zoom-out transition-all animate-in fade-in duration-300"
-          onClick={() => setZoomedImage(null)}
-        >
-          <div className="relative max-w-7xl max-h-full w-full h-full flex items-center justify-center">
-            <button 
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 backdrop-blur-md transition-colors"
-              onClick={(e) => { e.stopPropagation(); setZoomedImage(null); }}
-            >
-              <X size={20} />
-            </button>
-            <img 
-              src={zoomedImage} 
-              alt="Zoomed interface" 
-              className="max-h-full max-w-full object-contain rounded-xl shadow-2xl"
-              onClick={(e) => e.stopPropagation()} // Prevent clicking image from closing it immediately
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
