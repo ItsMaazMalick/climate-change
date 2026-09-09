@@ -180,13 +180,67 @@ policy is genuinely single-source (Phase 2).
 
 ---
 
+## D8 — Invented magnitudes in generated fields · **fixed** (found after the original brief)
+
+**Root cause:** Pakistan is served from 1,512 locally rasterised CMIP6 fields —
+real data. Uzbekistan, Australia and New Zealand had no raster, so their fields
+came from generators carrying **hand-written constants**. Uzbekistan's happened
+to be calibrated to the archive; the other two were not:
+
+| | generator | CCKP published | |
+|---|---|---|---|
+| UZB tas SSP2-4.5 2040–2059 | 1.76 | 1.76 | ✅ |
+| AUS tas SSP2-4.5 2040–2059 | 1.48 | **1.27** | ❌ |
+| NZL tas SSP2-4.5 2040–2059 | 1.24 | **0.91** | ❌ |
+
+**Fix:**
+1. `scripts/fetch-national-anchors.ts` (`pnpm anchors:fetch`) pulls the real
+   published values from the CCKP aggregate API — **1,344 / 1,344 resolved**
+   across 4 countries × 16 indicators × 5 pathways × 4 horizons, plus the
+   1995–2014 baseline climatology — into `data/cckp-national.json`.
+2. [`national-anchors.ts`](../src/lib/climate/national-anchors.ts) +
+   [`synthetic-field.ts`](../src/lib/climate/synthetic-field.ts): generators now
+   supply only a **spatial pattern**. `composeAnchoredField()` shifts or scales
+   that pattern so its area mean equals the published national value. Every
+   quoted magnitude therefore traces to the archive; only the within-country
+   variation is modelled.
+3. Point values for those three countries report `spatialScope:
+   "interpolated"` with a note, and the readout shows a **ScopeBadge**
+   ("Grid cell · 0.25°" vs "Interpolated from national value").
+   `/methodology` states it up front and points at `pnpm grid:extract` to
+   replace the interpolation with real rasters.
+
+**Guard/tests:** `tests/synthetic-grid.test.ts` asserts each generated field's
+area mean equals the published anchor, and that a future absolute's mean equals
+`baseline anchor + anomaly anchor`. D1–D3 invariants still hold after anchoring.
+
+---
+
+## D9 — Displayed numbers did not add up · **fixed**
+
+**Reproduction:** the Explore readout showed `+1.5 °C`, baseline `24.5 °C`,
+projected `25.9 °C` — visibly inconsistent.
+
+**Root cause:** the true values were 24.45 / 1.46 / 25.91. Each was rounded to
+one decimal *independently*, which is individually correct and collectively
+wrong on screen. This is the render half of D7.
+
+**Fix:** `coherentDisplay()` in the derivation layer rounds the baseline and the
+change from source and derives the **displayed** projected as their sum, so the
+panel is always self-consistent. `MetricCard` uses it.
+
+**Guard/tests:** `tests/derive.test.ts` → `coherentDisplay`, including the exact
+24.45 / 1.46 case and integer-precision indicators.
+
+---
+
 ## Test / check status
 
 | Check | Result |
 |---|---|
 | `pnpm typecheck` | clean |
 | `pnpm build` | succeeds |
-| `pnpm test` | 120 passed (10 files) — +31 (`derive`, `synthetic-grid`) |
+| `pnpm test` | 133 passed (10 files) — +44 (`derive`, `synthetic-grid`) |
 | `pnpm test:e2e` | spec written (`tests/e2e/demo-path.spec.ts`); browser not installed in this environment |
 | `pnpm lint` | 26 problems (9 errors, 17 warnings) — baseline was 27/10; pre-existing `react-hooks` debt in `hooks.ts`, no new errors introduced |
 
