@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Info, MapPin } from "lucide-react";
+import { ChevronRight, Info, MapPin } from "lucide-react";
 
 import {
   Field,
@@ -208,8 +208,8 @@ export function Explorer({ places }: { places: Place[] }) {
   return (
     <div className="flex h-[calc(100vh-3.5rem)] flex-col bg-surface-recessed text-ink lg:flex-row">
       {/* ------------------------------------------------ controls ---- */}
-      <aside className="w-full shrink-0 overflow-y-auto border-b border-border bg-surface-panel lg:w-[300px] lg:border-b-0 lg:border-r">
-        <div className="space-y-6 p-4">
+      <aside className="w-full shrink-0 overflow-y-auto scrollbar-gutter-stable border-b border-border bg-surface-panel lg:w-77 lg:border-b-0 lg:border-r">
+        <div className="space-y-6 p-4 pb-16">
           <fieldset data-tour="where" className="space-y-3">
             <legend className="label mb-1">Where</legend>
             <Field label="Location">
@@ -275,12 +275,12 @@ export function Explorer({ places }: { places: Place[] }) {
             </Field>
           </fieldset>
 
-          <details className="group rounded-(--radius-container) border border-border">
-            <summary className="flex cursor-pointer list-none items-center justify-between px-3 py-2 text-xs font-medium text-ink-muted [&::-webkit-details-marker]:hidden">
+          <details className="group rounded-(--radius-container) border border-border bg-surface-recessed">
+            <summary className="label flex cursor-pointer list-none items-center justify-between px-3 py-2.5 text-ink-muted [&::-webkit-details-marker]:hidden">
               Advanced
-              <span className="text-ink-faint transition-transform group-open:rotate-90">›</span>
+              <ChevronRight className="h-3.5 w-3.5 text-ink-faint transition-transform group-open:rotate-90" />
             </summary>
-            <div className="space-y-3 border-t border-border p-3">
+            <div className="space-y-3 border-t border-border bg-surface-panel p-3">
               <Field
                 label="Display mode"
                 hint="Change is the anomaly relative to 1995–2014; Absolute shows physical values."
@@ -347,14 +347,20 @@ export function Explorer({ places }: { places: Place[] }) {
         />
 
         {/* Persistent scenario / epoch context bar — keeps every screenshot self-describing */}
-        <div className="tier-overlay pointer-events-none absolute left-3.5 top-3.5 max-w-[min(100%-4rem,440px)] p-3">
-          <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
+        <div
+          className="tier-raised-seam pointer-events-none absolute left-3.5 top-3.5 max-w-[min(100%-4rem,440px)] p-3.5"
+          style={{ ["--seam-color" as string]: scenarioColorVar(scenario) }}
+        >
+          <div className="mb-2 flex flex-wrap items-center gap-1.5">
             <span
-              aria-hidden
-              className="inline-block h-2.5 w-2.5 rounded-xs"
-              style={{ background: scenarioColorVar(scenario) }}
-            />
-            <span className="text-xs font-semibold text-ink" data-numeric>
+              className="rounded-(--radius-control) px-1.5 py-0.5 text-2xs font-semibold tabular-nums"
+              data-numeric
+              style={{
+                color: scenarioColorVar(scenario),
+                background: `color-mix(in oklab, ${scenarioColorVar(scenario)} 12%, transparent)`,
+                border: `1px solid color-mix(in oklab, ${scenarioColorVar(scenario)} 32%, transparent)`,
+              }}
+            >
               {SCENARIOS[scenario].label}
             </span>
             <span className="text-2xs text-ink-faint">
@@ -364,10 +370,10 @@ export function Explorer({ places }: { places: Place[] }) {
               {PERIODS[period].shortLabel}
             </span>
           </div>
-          <p className="text-sm font-medium text-ink">
+          <p className="text-base font-semibold tracking-tight text-ink">
             {INDICATORS[indicator]?.label}
             {product === "anomaly" && (
-              <span className="ml-1.5 font-normal text-ink-faint">· change vs 1995–2014</span>
+              <span className="ml-1.5 text-sm font-normal text-ink-faint">· change vs 1995–2014</span>
             )}
           </p>
           <p className="mt-0.5 text-2xs text-ink-faint" data-numeric>
@@ -389,14 +395,14 @@ export function Explorer({ places }: { places: Place[] }) {
         )}
 
         {field.error && !field.loading && (
-          <div className="absolute bottom-3.5 left-3.5 max-w-sm rounded-2xl border border-rose-200 bg-white px-4 py-3 text-[12px] leading-snug text-rose-700 backdrop-blur-xl shadow-lg">
-            ⚠️ {field.error}
+          <div className="tier-overlay absolute bottom-3.5 left-3.5 max-w-sm border-l-4 border-danger px-4 py-3 text-xs leading-snug text-ink-muted">
+            {field.error}
           </div>
         )}
       </div>
 
       {/* --------------------------------------------------- panel ---- */}
-      <aside className="w-full shrink-0 overflow-y-auto border-t border-border bg-surface-panel lg:w-[380px] lg:border-l lg:border-t-0">
+      <aside className="w-full shrink-0 overflow-y-auto scrollbar-gutter-stable border-t border-border bg-surface-panel lg:w-[380px] lg:border-l lg:border-t-0">
         {/* Quick city shortcuts */}
         <div className="border-b border-border bg-surface-recessed px-4 py-3">
           <p className="label mb-2">Cities · {config.shortName}</p>
