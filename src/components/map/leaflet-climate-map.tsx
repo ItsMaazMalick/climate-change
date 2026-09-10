@@ -22,7 +22,7 @@ import L from "leaflet";
 import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 
-import { buildScale, NO_DATA_COLOR } from "@/lib/colors";
+import { buildClassedScale, NO_DATA_COLOR } from "@/lib/colors";
 import { displayUnit, formatValue, type ProductId } from "@/lib/climate/taxonomy";
 import type { GeoCollection, GeoFeature } from "./projection";
 
@@ -114,11 +114,17 @@ function ChoroplethLayer({
     return table;
   }, [data]);
 
+  // Classed over the values actually present, not a continuous scale anchored
+  // symmetrically about zero. Every region of a country shares the sign of the
+  // warming signal, so a zero-anchored ramp put the whole country in 4–17% of
+  // its colour range and the map read as one flat block.
   const scale = useMemo(() => {
     if (!data) return null;
-    const min = data.stats.p02 ?? data.stats.min ?? 0;
-    const max = data.stats.p98 ?? data.stats.max ?? 1;
-    return buildScale({ min, max, indicatorId, product });
+    return buildClassedScale({
+      values: data.regions.map((r) => r.value),
+      indicatorId,
+      product,
+    });
   }, [data, indicatorId, product]);
 
   const styleFor = useCallback(

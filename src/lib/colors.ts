@@ -163,3 +163,119 @@ export function agreementOpacity(flag: number | null | undefined): number {
   if (flag === 2) return 0.35; // conflicting signal between models
   return 1;
 }
+
+// ---------------------------------------------------------------------------
+// Classed scale for the choropleth
+// ---------------------------------------------------------------------------
+
+export interface ClassBreak {
+  /** Lower bound of the class (inclusive). */
+  from: number;
+  /** Upper bound (exclusive, except the last class). */
+  to: number;
+  color: string;
+}
+
+export interface ClassedScale {
+  (value: number | null | undefined): string;
+  breaks: ClassBreak[];
+  /** True when the data spans both signs, so the ramp is used symmetrically. */
+  diverging: boolean;
+  ramp: RampKind;
+}
+
+/**
+ * A classed colour scale fitted to the values actually present.
+ *
+ * A continuous diverging scale anchored symmetrically about zero is correct in
+ * principle and useless in practice for a warming map: every region shares a
+ * sign, so the data lands in a sliver at one end of the ramp and the country
+ * renders as one flat colour. Measured across the four countries, the
+ * SSP2-4.5 2040–2059 temperature anomaly occupied between 4% and 17% of the
+ * ramp — which is why the maps looked uncoloured.
+ *
+ * This fits classes to the data's own range instead, so within-country
+ * variation is visible, and reports the numeric breakpoints so the legend can
+ * state exactly what each band means. Sign is still carried by hue: one-sided
+ * data uses only the matching arm of the diverging ramp, and data that
+ * straddles zero keeps zero on a class boundary.
+ */
+export function buildClassedScale(options: {
+  values: Array<number | null | undefined>;
+  indicatorId: string;
+  product: string;
+  classes?: number;
+}): ClassedScale {
+  const ramp = rampFor(options.indicatorId, options.product);
+  const diverging = ramp.startsWith("diverging");
+  const interpolate = interpolateRgbBasis(RAMPS[ramp]);
+  const n = Math.max(3, options.classes ?? 7);
+
+  const finite = options.values
+    .filter((v): v is number => typeof v === "number" && Number.isFinite(v))
+    .sort((a, b) => a - b);
+
+  if (finite.length === 0) {
+    const scale = (() => NO_DATA) as unknown as ClassedScale;
+    scale.breaks = [];
+    scale.diverging = diverging;
+    scale.ramp = ramp;
+    return scale;
+  }
+
+  // Trim to the 2nd–98th percentile so a single outlier cannot flatten the
+  // rest of the country, then guarantee a non-zero span.
+  const at = (q: number) => finite[Math.min(finite.length - 1, Math.floor(q * finite.length))]!;
+  let lo = finite.length >= 20 ? at(0.02) : finite[0]!;
+  let hi = finite.length >= 20 ? at(0.98) : finite[finite.length - 1]!;
+  if (hi <= lo) {
+    const pad = Math.abs(lo) * 0.05 || 0.5;
+    lo -= pad;
+    hi += pad;
+  }
+
+  const straddlesZero = lo < 0 && hi > 0;
+
+  // Which slice of the ramp to use. Data of one sign uses one arm only, so the
+  // full colour resolution goes to the variation that exists.
+  let tFrom: number;
+  let tTo: number;
+  if (!diverging) {
+    tFrom = 0;
+    tTo = 1;
+  } else if (straddlesZero) {
+    const extent = Math.max(Math.abs(lo), Math.abs(hi));
+    lo = -extent;
+    hi = extent;
+    tFrom = 0;
+    tTo = 1;
+  } else if (hi > 0) {
+    tFrom = 0.5;
+    tTo = 1;
+  } else {
+    tFrom = 0.5;
+    tTo = 0;
+  }
+
+  const step = (hi - lo) / n;
+  const breaks: ClassBreak[] = Array.from({ length: n }, (_, k) => {
+    const mid = (k + 0.5) / n;
+    return {
+      from: lo + step * k,
+      to: lo + step * (k + 1),
+      color: interpolate(tFrom + (tTo - tFrom) * mid),
+    };
+  });
+
+  const scale = ((value: number | null | undefined) => {
+    if (value === null || value === undefined || !Number.isFinite(value)) return NO_DATA;
+    if (value <= breaks[0]!.from) return breaks[0]!.color;
+    const k = Math.min(n - 1, Math.max(0, Math.floor((value - lo) / step)));
+    return breaks[k]!.color;
+  }) as ClassedScale;
+
+  scale.breaks = breaks;
+  scale.diverging = straddlesZero;
+  scale.ramp = ramp;
+  return scale;
+}

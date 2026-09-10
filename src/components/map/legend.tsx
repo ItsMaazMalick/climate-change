@@ -2,12 +2,12 @@
 
 import { useMemo } from "react";
 
-import { buildScale } from "@/lib/colors";
-import { INDICATORS, type ProductId } from "@/lib/climate/taxonomy";
+import { buildClassedScale } from "@/lib/colors";
+import { formatValue, INDICATORS, type ProductId } from "@/lib/climate/taxonomy";
 
 interface LegendProps {
-  min: number | null;
-  max: number | null;
+  /** The region values actually drawn, so the legend and the map agree. */
+  values: Array<number | null | undefined>;
   unit: string;
   indicatorId: string;
   product: ProductId;
@@ -15,39 +15,29 @@ interface LegendProps {
 }
 
 /**
- * Colour legend.
+ * Discrete swatches with numeric breakpoints.
  *
- * Rendered as a continuous gradient rather than binned swatches because the
- * underlying field is continuous, and binning invites reading a class
- * boundary as a physical threshold when it is only a rendering choice.
+ * A continuous gradient bar is honest about the underlying field being
+ * continuous, but it cannot tell a reader which band a given polygon falls in
+ * — and once the scale is classed to the data, the class edges *are* the
+ * information. Each swatch is labelled with its lower bound, so any colour on
+ * the map can be read back to a number and a unit.
  */
 export function Legend({
-  min,
-  max,
+  values,
   unit,
   indicatorId,
   product,
   hasDisagreement,
 }: LegendProps) {
-  const scale = useMemo(() => {
-    if (min === null || max === null) return null;
-    return buildScale({ min, max, indicatorId, product });
-  }, [min, max, indicatorId, product]);
+  const scale = useMemo(
+    () => buildClassedScale({ values, indicatorId, product }),
+    [values, indicatorId, product],
+  );
 
-  if (!scale) return null;
-
-  const stops = scale.ticks(24);
-  const gradient = `linear-gradient(to right, ${stops
-    .map((stop, index) => `${stop.color} ${(index / (stops.length - 1)) * 100}%`)
-    .join(", ")})`;
-
-  const [lo, hi] = scale.domain;
-  const labels = scale.diverging
-    ? [lo, lo / 2, 0, hi / 2, hi]
-    : [lo, lo + (hi - lo) / 4, lo + (hi - lo) / 2, lo + (3 * (hi - lo)) / 4, hi];
+  if (scale.breaks.length === 0) return null;
 
   const indicator = INDICATORS[indicatorId];
-  const precision = indicator?.precision ?? 1;
 
   return (
     <div className="tier-overlay p-3">
@@ -58,22 +48,40 @@ export function Legend({
         </span>
       </div>
 
-      <div
-        className="h-3 w-full rounded-xs ring-1 ring-inset ring-border"
-        style={{ background: gradient }}
-        role="presentation"
-      />
-
-      <div className="mt-1.5 flex justify-between text-[10.5px] font-medium text-ink-muted tabular-nums" data-numeric>
-        {labels.map((value, index) => (
-          <span key={index}>
-            {value > 0 && scale.diverging ? "+" : ""}
-            {value.toFixed(precision)}
-          </span>
+      <div className="flex" role="img" aria-label={`Colour scale, ${scale.breaks.length} classes`}>
+        {scale.breaks.map((b, i) => (
+          <div key={i} className="flex-1">
+            <div
+              className="h-3 first:rounded-l-xs last:rounded-r-xs"
+              style={{ background: b.color }}
+            />
+          </div>
         ))}
       </div>
 
-      <div className="mt-2.5 flex items-center gap-2 border-t border-border pt-2 text-[10px] leading-snug text-ink-faint">
+      <div className="mt-1 flex justify-between text-[10px] font-medium tabular-nums text-ink-muted" data-numeric>
+        <span>{formatValue(scale.breaks[0]!.from, indicatorId, product)}</span>
+        <span>
+          {formatValue(scale.breaks[scale.breaks.length - 1]!.to, indicatorId, product)}
+        </span>
+      </div>
+
+      <ul className="mt-2 grid grid-cols-2 gap-x-3 gap-y-0.5 border-t border-border pt-2 text-[10px] text-ink-muted">
+        {scale.breaks.map((b, i) => (
+          <li key={i} className="flex items-center gap-1.5">
+            <span
+              aria-hidden
+              className="h-2.5 w-2.5 shrink-0 rounded-xs ring-1 ring-inset ring-border"
+              style={{ background: b.color }}
+            />
+            <span className="tabular-nums" data-numeric>
+              {formatValue(b.from, indicatorId, product)}
+            </span>
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-2 flex items-center gap-2 border-t border-border pt-2 text-[10px] leading-snug text-ink-faint">
         <span className="hatch-oob inline-block h-3.5 w-3.5 shrink-0 rounded-xs border border-border-strong" />
         <span>Hatched = outside data coverage.</span>
       </div>

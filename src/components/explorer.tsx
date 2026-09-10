@@ -395,8 +395,7 @@ export function Explorer({ places }: { places: Place[] }) {
         {field.data && (
           <div className="absolute bottom-3.5 right-3.5 w-[280px]">
             <Legend
-              min={field.data.stats.p02 ?? field.data.stats.min}
-              max={field.data.stats.p98 ?? field.data.stats.max}
+              values={field.data.regions.map((r) => r.value)}
               unit={displayUnit(field.data.unit, indicator, product)}
               indicatorId={indicator}
               product={product}
