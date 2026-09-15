@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Search, X } from "lucide-react";
+import { ChevronDown, Search, X, LocateFixed, Loader2, MapPin, Upload } from "lucide-react";
+import { useDebounced } from "@/lib/hooks";
 
 import { scenarioColorVar } from "@/lib/climate/scenario-style";
 import {
@@ -381,16 +382,41 @@ export function Toggle({
 export function PlaceSearch({
   onSelect,
   places,
+  onKmlUpload,
 }: {
   onSelect: (place: { id: string; name: string; lat: number; lon: number }) => void;
   places: Array<{ id: string; name: string; province: string; lat: number; lon: number; population: number }>;
+  onKmlUpload?: (geoJson: any) => void;
 }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [geocodingResults, setGeocodingResults] = useState<Array<{ id: string; name: string; province: string; lat: number; lon: number; isGlobal: boolean; population: number }>>([]);
+  const [isLocating, setIsLocating] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  
+  const debouncedQuery = useDebounced(query, 400);
 
-  const matches = places
+  // 1. Check if query is a valid coordinate pair
+  const parseCoordinates = (str: string): { lat: number, lon: number } | null => {
+    const parts = str.trim().split(/[, ]+/);
+    if (parts.length === 2) {
+      const lat = parseFloat(parts[0]!);
+      const lon = parseFloat(parts[1]!);
+      if (!isNaN(lat) && !isNaN(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180) {
+        return { lat, lon };
+      }
+    }
+    return null;
+  };
+  
+  const coords = parseCoordinates(query);
+
+  // 2. Local matches
+  const localMatches = places
     .filter((place) => {
       const needle = query.trim().toLowerCase();
       if (!needle) return true;
@@ -400,7 +426,78 @@ export function PlaceSearch({
       );
     })
     .sort((a, b) => b.population - a.population)
-    .slice(0, 8);
+    .slice(0, 5)
+    .map(p => ({ ...p, isGlobal: false }));
+
+  // 3. Global Geocoding with Nominatim
+  useEffect(() => {
+    const needle = debouncedQuery.trim();
+    if (!needle || needle.length < 3 || coords) {
+      setGeocodingResults([]);
+      setIsSearching(false);
+      return;
+    }
+    
+    // Don't geocode if we already have perfect local matches
+    if (localMatches.some(m => m.name.toLowerCase() === needle.toLowerCase())) {
+        return;
+    }
+
+    setIsSearching(true);
+    const controller = new AbortController();
+    
+    fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(needle)}&format=json&limit=5&featuretype=city`, {
+      signal: controller.signal,
+      headers: { 'Accept-Language': 'en' }
+    })
+      .then(res => res.json())
+      .then((data: any[]) => {
+        const results = data.map(item => {
+          const parts = item.display_name.split(', ');
+          const name = parts[0];
+          const province = parts.slice(1).join(', ');
+          return {
+            id: `geo-${item.place_id}`,
+            name,
+            province,
+            lat: parseFloat(item.lat),
+            lon: parseFloat(item.lon),
+            isGlobal: true,
+            population: 0
+          };
+        });
+        setGeocodingResults(results);
+      })
+      .catch((err) => {
+        if (err.name !== 'AbortError') {
+          console.error('Geocoding error:', err);
+        }
+      })
+      .finally(() => {
+        setIsSearching(false);
+      });
+
+    return () => controller.abort();
+  }, [debouncedQuery]);
+
+  // Combine matches
+  const matches = [...localMatches];
+  
+  if (coords) {
+    matches.unshift({
+      id: `coord-${coords.lat}-${coords.lon}`,
+      name: `${coords.lat.toFixed(4)}°, ${coords.lon.toFixed(4)}°`,
+      province: "Coordinates",
+      lat: coords.lat,
+      lon: coords.lon,
+      isGlobal: true,
+      population: 0,
+    });
+  } else if (geocodingResults.length > 0) {
+    // Add global results that aren't already in local matches (by roughly matching name)
+    const filteredGlobal = geocodingResults.filter(g => !localMatches.some(l => l.name.toLowerCase() === g.name.toLowerCase()));
+    matches.push(...filteredGlobal);
+  }
 
   useEffect(() => {
     const handler = (event: MouseEvent) => {
@@ -410,81 +507,170 @@ export function PlaceSearch({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const choose = (place: (typeof places)[number]) => {
+  const choose = (place: { id: string; name: string; lat: number; lon: number }) => {
     onSelect(place);
     setQuery(place.name);
     setOpen(false);
   };
+  
+  const handleLiveLocation = () => {
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser");
+      return;
+    }
+    
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        // Optionally reverse geocode, but for now we just use coordinates
+        choose({
+          id: `live-${latitude}-${longitude}`,
+          name: "Current Location",
+          lat: latitude,
+          lon: longitude
+        });
+        setIsLocating(false);
+      },
+      (error) => {
+        console.error("Error getting location:", error);
+        alert("Unable to retrieve your location.");
+        setIsLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
+  
+  const handleKmlUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !onKmlUpload) return;
+    
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const text = e.target?.result as string;
+      if (!text) return;
+      
+      try {
+        const toGeoJSON = (await import("@tmcw/togeojson")).kml;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, "text/xml");
+        const geoJson = toGeoJSON(doc);
+        onKmlUpload(geoJson);
+      } catch (err) {
+        console.error("Failed to parse KML:", err);
+        alert("Failed to parse KML file.");
+      }
+    };
+    reader.readAsText(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
 
   return (
     <div ref={containerRef} className="relative">
-      <div className="relative">
-        <Search
-          aria-hidden
-          className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint"
-        />
+      <div className="relative flex gap-2">
+        <div className="relative flex-1">
+            <Search
+              aria-hidden
+              className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-faint"
+            />
+            <input
+              type="search"
+              value={query}
+              placeholder="Search city, region, or lat/lng..."
+              aria-label="Search for a place"
+              onFocus={() => setOpen(true)}
+              onChange={(event) => {
+                setQuery(event.target.value);
+                setOpen(true);
+                setHighlighted(0);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowDown") {
+                  event.preventDefault();
+                  setHighlighted((h) => Math.min(h + 1, matches.length - 1));
+                } else if (event.key === "ArrowUp") {
+                  event.preventDefault();
+                  setHighlighted((h) => Math.max(h - 1, 0));
+                } else if (event.key === "Enter" && matches[highlighted]) {
+                  choose(matches[highlighted]!);
+                } else if (event.key === "Escape") {
+                  setOpen(false);
+                }
+              }}
+              className="w-full rounded-(--radius-control) border border-border-strong bg-surface-panel py-2.5 pl-9 pr-8 text-[13px] font-medium text-ink shadow-(--elevation-recessed) transition-colors placeholder:text-ink-faint hover:border-ink-faint focus:outline-none focus-visible:shadow-(--focus-ring)"
+            />
+            {query && (
+              <button
+                type="button"
+                aria-label="Clear"
+                onClick={() => {
+                  setQuery("");
+                  setOpen(false);
+                }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-(--radius-control) p-1 text-ink-faint hover:bg-surface-hover hover:text-ink"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+        </div>
         <input
-          type="search"
-          value={query}
-          placeholder="Search city or region…"
-          aria-label="Search for a place"
-          onFocus={() => setOpen(true)}
-          onChange={(event) => {
-            setQuery(event.target.value);
-            setOpen(true);
-            setHighlighted(0);
-          }}
-          onKeyDown={(event) => {
-            if (event.key === "ArrowDown") {
-              event.preventDefault();
-              setHighlighted((h) => Math.min(h + 1, matches.length - 1));
-            } else if (event.key === "ArrowUp") {
-              event.preventDefault();
-              setHighlighted((h) => Math.max(h - 1, 0));
-            } else if (event.key === "Enter" && matches[highlighted]) {
-              choose(matches[highlighted]!);
-            } else if (event.key === "Escape") {
-              setOpen(false);
-            }
-          }}
-          className="w-full rounded-(--radius-control) border border-border-strong bg-surface-panel py-2.5 pl-9 pr-8 text-[13px] font-medium text-ink shadow-(--elevation-recessed) transition-colors placeholder:text-ink-faint hover:border-ink-faint focus:outline-none focus-visible:shadow-(--focus-ring)"
+          type="file"
+          accept=".kml"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleKmlUpload}
         />
-        {query && (
+        {onKmlUpload && (
           <button
             type="button"
-            aria-label="Clear"
-            onClick={() => {
-              setQuery("");
-              setOpen(false);
-            }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-(--radius-control) p-1 text-ink-faint hover:bg-surface-hover hover:text-ink"
+            onClick={() => fileInputRef.current?.click()}
+            title="Upload KML Boundary"
+            className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-(--radius-control) border border-border-strong bg-surface-panel text-ink-faint hover:bg-surface-hover hover:text-ink hover:border-ink-faint transition-colors shadow-(--elevation-recessed)"
           >
-            <X className="h-3.5 w-3.5" />
+            <Upload className="h-4 w-4" />
           </button>
         )}
+        <button
+          type="button"
+          onClick={handleLiveLocation}
+          disabled={isLocating}
+          title="Use Current Location"
+          className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-(--radius-control) border border-border-strong bg-surface-panel text-ink-faint hover:bg-surface-hover hover:text-ink hover:border-ink-faint transition-colors disabled:opacity-50 shadow-(--elevation-recessed)"
+        >
+          {isLocating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
+        </button>
       </div>
 
-      {open && matches.length > 0 && (
-        <ul className="tier-overlay absolute z-30 mt-1.5 max-h-64 w-full overflow-auto py-1">
+      {open && (matches.length > 0 || isSearching) && (
+        <ul className="tier-overlay absolute z-30 mt-1.5 max-h-64 w-full overflow-auto py-1 text-[13px]">
           {matches.map((place, index) => (
             <li key={place.id}>
               <button
                 type="button"
                 onClick={() => choose(place)}
                 onMouseEnter={() => setHighlighted(index)}
-                className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-[13px] transition-colors ${
- index === highlighted
+                className={`flex w-full items-center justify-between gap-2 px-3 py-2 text-left transition-colors ${
+                  index === highlighted
                     ? "bg-accent-soft text-ink"
                     : "text-ink-muted hover:bg-surface-hover"
                 }`}
               >
-                <span className="font-medium text-ink">{place.name}</span>
-                <span className="rounded-(--radius-control) bg-surface-recessed px-1.5 py-0.5 text-2xs text-ink-faint" data-numeric>
+                <span className="flex items-center gap-2 font-medium text-ink truncate">
+                  {place.isGlobal && !place.id.startsWith('coord-') && <MapPin className="h-3 w-3 shrink-0 text-ink-faint" />}
+                  {place.isGlobal && place.id.startsWith('coord-') && <LocateFixed className="h-3 w-3 shrink-0 text-ink-faint" />}
+                  <span className="truncate">{place.name}</span>
+                </span>
+                <span className="shrink-0 rounded-(--radius-control) bg-surface-recessed px-1.5 py-0.5 text-2xs text-ink-faint truncate max-w-[50%]" data-numeric>
                   {place.province}
                 </span>
               </button>
             </li>
           ))}
+          {isSearching && matches.length === 0 && (
+             <li className="px-3 py-2 text-ink-faint flex items-center gap-2">
+                <Loader2 className="h-3 w-3 animate-spin" /> Searching globally...
+             </li>
+          )}
         </ul>
       )}
     </div>

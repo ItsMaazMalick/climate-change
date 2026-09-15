@@ -118,6 +118,8 @@ export function Explorer({ places }: { places: Place[] }) {
     level: "2",
   });
 
+  const [customLayer, setCustomLayer] = useState<any>(null);
+
   const showDistricts = state.level === "2";
   const setShowDistricts = (next: boolean) =>
     setState({ level: next ? "2" : "1" });
@@ -224,33 +226,10 @@ export function Explorer({ places }: { places: Place[] }) {
                 onSelect={(place) =>
                   setState({ lat: String(place.lat), lon: String(place.lon), area: "" })
                 }
+                onKmlUpload={(geoJson) => setCustomLayer(geoJson)}
               />
             </Field>
-            <Field label={config.adminLevels.level1.split(" ")[0] ?? "Region"}>
-              <div className="-mx-0.5 max-h-[8.5rem] overflow-y-auto px-0.5">
-                <div className="flex flex-wrap gap-1.5">
-                  <ChipButton
-                    active={!state.area}
-                    onClick={() => setState({ area: "" })}
-                    label="All regions"
-                  />
-                  {(REGIONS_BY_COUNTRY[countryCode] ?? []).map((region) => (
-                    <ChipButton
-                      key={region.id}
-                      active={state.area === region.id}
-                      onClick={() =>
-                        setState({
-                          area: state.area === region.id ? "" : region.id,
-                          lat: "",
-                          lon: "",
-                        })
-                      }
-                      label={region.name}
-                    />
-                  ))}
-                </div>
-              </div>
-            </Field>
+
           </StepCard>
 
           <StepCard n={2} title="What" hint="Which climate variable">
@@ -292,16 +271,7 @@ export function Explorer({ places }: { places: Place[] }) {
               <ChevronRight className="h-3.5 w-3.5 text-ink-faint transition-transform group-open:rotate-90" />
             </summary>
             <div className="space-y-3 border-t border-border bg-surface-panel p-3">
-              <Field
-                label="Display mode"
-                hint="Change is the anomaly relative to 1995–2014; Absolute shows physical values."
-              >
-                <ProductToggle
-                  value={product}
-                  onChange={(next) => setState({ product: next })}
-                  disabled={isBaseline}
-                />
-              </Field>
+
               <Field
                 label="Downscaled GCM model"
                 hint="Ensemble median aggregates 30 global climate models to minimise individual model bias."
@@ -355,6 +325,7 @@ export function Explorer({ places }: { places: Place[] }) {
           }
           highlightArea={state.area || null}
           loading={field.loading}
+          customGeoJson={customLayer}
         />
 
         {/* Persistent scenario / epoch context bar — keeps every screenshot self-describing */}
@@ -413,39 +384,7 @@ export function Explorer({ places }: { places: Place[] }) {
 
       {/* --------------------------------------------------- panel ---- */}
       <aside className="w-full shrink-0 overflow-y-auto scrollbar-gutter-stable border-t border-border bg-surface-panel lg:w-[380px] lg:border-l lg:border-t-0">
-        {/* Quick city shortcuts — a rail, so a long list scrolls rather than
-            wrapping into a block that pushes the readout below the fold. */}
-        <div className="sticky top-0 z-10 border-b border-border bg-surface-recessed px-4 py-3">
-          <div className="mb-2 flex items-baseline justify-between gap-2">
-            <p className="label">Cities</p>
-            <p className="text-2xs text-ink-faint">{config.shortName}</p>
-          </div>
-          <div className="chip-rail">
-            {countryPlaces.slice(0, 10).map((p) => {
-              const isActive =
-                selection &&
-                Math.abs(selection.lat - p.lat) < 0.05 &&
-                Math.abs(selection.lon - p.lon) < 0.05;
-              return (
-                <button
-                  key={p.id}
-                  type="button"
-                  aria-pressed={Boolean(isActive)}
-                  onClick={() =>
-                    setState({ lat: String(p.lat), lon: String(p.lon), area: "" })
-                  }
-                  className={`cursor-pointer rounded-(--radius-pill) border px-2.5 py-1 text-xs font-medium transition-all motion-state ${
-                    isActive
-                      ? "border-brand bg-brand text-white shadow-[0_2px_8px_-2px_hsl(128_26%_14%/0.45)]"
-                      : "border-border bg-surface-panel text-ink-muted hover:border-border-strong hover:bg-surface-hover hover:text-ink"
-                  }`}
-                >
-                  {p.name}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+
 
         {selection ? (
           <LocationPanel

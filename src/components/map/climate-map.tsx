@@ -11,8 +11,25 @@ import dynamic from "next/dynamic";
 
 // Re-export the types so existing imports from "@/components/map/climate-map"
 // continue to work without any changes in explorer.tsx or elsewhere.
+import type { RegionData, MapSelection } from "./leaflet-climate-map";
+import type { GeoCollection } from "./projection";
+
 export type { RegionData, RegionValue, MapSelection } from "./leaflet-climate-map";
 export type { GeoCollection } from "./projection";
+
+interface ClimateMapProps {
+  bbox: { lonMin: number; latMin: number; lonMax: number; latMax: number };
+  data: RegionData | null;
+  regions: GeoCollection | null;
+  outline: GeoCollection | null;
+  indicatorId: string;
+  product: string;
+  selection: MapSelection | null;
+  onSelect: (selection: MapSelection) => void;
+  highlightArea?: string | null;
+  loading?: boolean;
+  customGeoJson?: any;
+}
 
 const LeafletClimateMap = dynamic(
   () =>
@@ -30,4 +47,6 @@ const LeafletClimateMap = dynamic(
   },
 );
 
-export { LeafletClimateMap as ClimateMap };
+export function ClimateMap(props: ClimateMapProps) {
+  return <LeafletClimateMap {...props as any} />;
+}

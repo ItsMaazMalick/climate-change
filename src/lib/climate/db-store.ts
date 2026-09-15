@@ -100,6 +100,7 @@ export async function rankAreas(options: {
   level?: number;
   direction?: "asc" | "desc";
   limit?: number;
+  country?: string;
 }): Promise<AreaRanking[]> {
   const rows = await prisma.projection.findMany({
     where: {
@@ -112,7 +113,13 @@ export async function rankAreas(options: {
       modelId: options.model ?? "ensemble-all",
       percentile: options.percentile ?? "median",
       value: { not: null },
-      area: options.level === undefined ? undefined : { level: options.level },
+      area: options.level !== undefined
+        ? options.country && options.country !== "all"
+          ? options.level === 1
+            ? { level: 1, parentId: options.country }
+            : { level: options.level, parent: { parentId: options.country } }
+          : { level: options.level }
+        : undefined,
     },
     select: {
       areaId: true,

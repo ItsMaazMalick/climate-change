@@ -3,7 +3,7 @@ import { z } from "zod";
 import { getCountry } from "@/lib/climate/countries";
 import { CCKP_CITATION, handler, searchParams } from "@/lib/api";
 import { rankAreas, type AreaRanking } from "@/lib/climate/db-store";
-import { aggregateCells, loadCellIndex, loadField } from "@/lib/climate/grid";
+import { aggregateCells, loadCellsFile, loadField } from "@/lib/climate/grid";
 import { INDICATORS, type ProductId, type ScenarioId } from "@/lib/climate/taxonomy";
 import { hasDatabase } from "@/lib/env";
 import { ApiError } from "@/lib/errors";
@@ -24,7 +24,7 @@ const querySchema = z.object({
   level: z.coerce.number().int().min(0).max(2).default(2),
   direction: z.enum(["asc", "desc"]).default("desc"),
   limit: z.coerce.number().int().min(1).max(126).default(15),
-  country: z.enum(["PAK", "UZB", "all"]).default("PAK"),
+  country: z.enum(["PAK", "UZB", "AUS", "NZL", "all"]).default("PAK"),
 });
 
 const AREA_NAMES: Record<string, { name: string; level: number; country: string; centroid: [number, number] }> = {
@@ -91,8 +91,8 @@ export const GET = handler(async (request) => {
   if (hasDatabase) {
     try {
       [top, bottom] = await Promise.all([
-        rankAreas({ ...query, direction: query.direction }),
-        rankAreas({ ...query, direction: query.direction === "desc" ? "asc" : "desc", limit: 5 }),
+        rankAreas({ ...query, direction: query.direction, country: query.country }),
+        rankAreas({ ...query, direction: query.direction === "desc" ? "asc" : "desc", limit: 5, country: query.country }),
       ]);
     } catch {
       // Fall through to grid ranking
@@ -112,17 +112,20 @@ export const GET = handler(async (request) => {
     });
 
     if (field) {
-      const cellIndex = await loadCellIndex();
+      let fileName = "";
+      if (query.country === "PAK") fileName = query.level === 1 ? "provinces-cells.json" : "districts-cells.json";
+      else if (query.country === "UZB") fileName = query.level === 1 ? "uzb-regions-cells.json" : "uzb-districts-cells.json";
+      else if (query.country === "AUS") fileName = query.level === 1 ? "aus-states-cells.json" : "aus-lgas-cells.json";
+      else if (query.country === "NZL") fileName = query.level === 1 ? "nzl-regions-cells.json" : "nzl-districts-cells.json";
+
       const list: AreaRanking[] = [];
 
-      for (const [areaId, cells] of cellIndex.entries()) {
-        const meta = AREA_NAMES[areaId];
-        const isDistrict = areaId.startsWith("d-");
-        const areaLevel = meta?.level ?? (isDistrict ? 2 : 1);
-        const areaCountry = meta?.country ?? (areaId.includes("uzb") ? "UZB" : "PAK");
+      if (fileName) {
+        const areaCells = await loadCellsFile(fileName);
 
-        if (query.level !== areaLevel) continue;
-        if (query.country !== "all" && areaCountry !== query.country) continue;
+        for (const [areaId, cells] of Object.entries(areaCells)) {
+          const meta = AREA_NAMES[areaId];
+          const areaLevel = query.level;
 
         const stats = aggregateCells(field, cells);
         if (stats.mean !== null) {
@@ -136,6 +139,7 @@ export const GET = handler(async (request) => {
             centroid: { lat: meta?.centroid[1] ?? 0, lon: meta?.centroid[0] ?? 0 },
           });
         }
+      }
       }
 
       list.sort((a, b) => (query.direction === "desc" ? b.value - a.value : a.value - b.value));

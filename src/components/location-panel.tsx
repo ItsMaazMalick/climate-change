@@ -100,12 +100,8 @@ export function LocationPanel({
   const point = useApi<PointResponse>(
     `/api/climate/point?${base}&scenario=${scenario}&period=${period}&model=${model}`,
   );
-  const scenarios = useApi<ScenarioResponse>(
-    `/api/climate/scenarios?${base}&period=${period}`,
-  );
-  const spread = useApi<SpreadResponse>(
-    `/api/climate/models?${base}&scenario=${scenario}&period=${period}&country=${country}`,
-  );
+
+
   const cycle = useApi<CycleResponse>(
     isBaselineParam(period)
       ? null
@@ -202,71 +198,9 @@ export function LocationPanel({
         )}
       </section>
 
-      {/* ---- model uncertainty ---- */}
-      {!isBaseline && (
-        <section className="px-4 pb-4">
-          <Panel
-            title="Model spread"
-            hint="The spread across the 30 downscaled models, at this point, for this pathway and horizon."
-          >
-            {spread.loading ? (
-              <Skeleton height={64} />
-            ) : spread.data ? (
-              <>
-                <UncertaintyStrip
-                  median={spread.data.spread.median}
-                  p10={spread.data.spread.p10}
-                  p90={spread.data.spread.p90}
-                  members={(spread.data.members ?? [])
-                    .map((m) => m.value)
-                    .filter((v): v is number => v !== null)}
-                  indicatorId={indicator}
-                  color={scenarioColorVar(scenario)}
-                />
-                <DataProvenanceFooter
-                  variable={indicator}
-                  aggregation="annual · ensemble percentiles"
-                  epoch={PERIODS[period].shortLabel}
-                />
-              </>
-            ) : (
-              <p className="text-xs text-ink-faint">
-                Percentile bounds are not published for this combination.
-              </p>
-            )}
-          </Panel>
-        </section>
-      )}
 
-      {/* ---- scenario comparison ---- */}
-      {!isBaseline && (
-        <section className="px-4 pb-4">
-          <Panel
-            title={`All pathways · ${PERIODS[period].shortLabel}`}
-            hint="The same place and horizon under every emissions pathway. The gap between them is the part still determined by choices."
-          >
-            {scenarios.loading ? (
-              <Skeleton height={110} />
-            ) : scenarios.data ? (
-              <>
-                <ScenarioComparison
-                  bars={scenarios.data.results.map((result) => ({
-                    scenario: result.scenario.id,
-                    value: result.anomaly,
-                    agreement: result.agreement,
-                  }))}
-                  indicatorId={indicator}
-                />
-                {scenarios.data.divergence && (
-                  <p className="mt-3 text-xs leading-relaxed text-ink-muted">
-                    {scenarios.data.divergence}
-                  </p>
-                )}
-              </>
-            ) : null}
-          </Panel>
-        </section>
-      )}
+
+
 
       {/* ---- seasonal cycle ---- */}
       {!isBaseline && cycle.data && (
@@ -314,21 +248,7 @@ export function LocationPanel({
         </section>
       )}
 
-      {/* ---- indicator context ---- */}
-      {point.data?.indicator && (
-        <section className="px-4 pb-4">
-          <Panel title="About this indicator">
-            <p className="text-xs leading-relaxed text-ink-muted">
-              {point.data.indicator.description}
-            </p>
-            {point.data.indicator.countryNotes?.[country] && (
-              <p className="mt-2.5 rounded-(--radius-control) border-l-2 border-accent bg-surface-panel p-3 text-xs leading-relaxed text-ink-muted">
-                {point.data.indicator.countryNotes[country]}
-              </p>
-            )}
-          </Panel>
-        </section>
-      )}
+
 
       {/* ---- next step ---- */}
       <section className="p-4">

@@ -72,6 +72,7 @@ interface ClimateMapProps {
   /** Region id to emphasise, e.g. from the sidebar filter. */
   highlightArea?: string | null;
   loading?: boolean;
+  customGeoJson?: any;
 }
 
 /* ------------------------------------------------------- choropleth layer */
@@ -228,6 +229,70 @@ function OutlineLayer({ outline }: { outline: GeoCollection | null }) {
   return null;
 }
 
+/* --------------------------------------------------------- custom kml layer */
+
+function CustomGeoJsonLayer({
+  data,
+  onSelect
+}: {
+  data: any | null;
+  onSelect: (selection: MapSelection) => void;
+}) {
+  const map = useMap();
+  
+  useEffect(() => {
+    if (!data) return;
+    
+    // Check if it's a Point. If so, automatically trigger onSelect
+    const isPoint = data.type === 'Feature' && data.geometry?.type === 'Point';
+    const isPointCollection = data.type === 'FeatureCollection' && data.features?.[0]?.geometry?.type === 'Point';
+    
+    if (isPoint) {
+       const [lon, lat] = data.geometry.coordinates;
+       onSelect({ lat: Number(lat.toFixed(4)), lon: Number(lon.toFixed(4)) });
+    } else if (isPointCollection) {
+       const [lon, lat] = data.features[0].geometry.coordinates;
+       onSelect({ lat: Number(lat.toFixed(4)), lon: Number(lon.toFixed(4)) });
+    }
+
+    const layer = L.geoJSON(data, {
+      style: {
+        color: '#ff5500',
+        weight: 3,
+        fillColor: '#ff5500',
+        fillOpacity: 0.15
+      },
+      onEachFeature: (feature, featureLayer) => {
+        featureLayer.on({
+          click: (event: L.LeafletMouseEvent) => {
+            onSelect({
+              lat: Number(event.latlng.lat.toFixed(4)),
+              lon: Number(event.latlng.lng.toFixed(4)),
+            });
+            L.DomEvent.stopPropagation(event);
+          }
+        });
+      }
+    });
+    
+    layer.addTo(map);
+    
+    // Zoom to layer bounds
+    try {
+      const bounds = layer.getBounds();
+      if (bounds.isValid()) {
+        map.fitBounds(bounds, { padding: [32, 32], maxZoom: 12 });
+      }
+    } catch(e) {}
+    
+    return () => {
+      map.removeLayer(layer);
+    };
+  }, [map, data, onSelect]);
+  
+  return null;
+}
+
 /* ----------------------------------------- inner component (needs useMap) */
 
 function MapContent(props: ClimateMapProps) {
@@ -242,6 +307,7 @@ function MapContent(props: ClimateMapProps) {
     highlightArea,
     loading,
     bbox,
+    customGeoJson,
   } = props;
 
   const map = useMap();
@@ -304,6 +370,7 @@ function MapContent(props: ClimateMapProps) {
         onSelect={onSelect}
       />
       <OutlineLayer outline={outline} />
+      <CustomGeoJsonLayer data={customGeoJson} onSelect={onSelect} />
 
       {hover && (
         <div className="pointer-events-none absolute bottom-3.5 left-3.5 z-[1000] rounded-(--radius-container) border border-border/90 bg-surface-panel px-4 py-3 shadow-(--elevation-overlay) ring-1 ring-border ">
