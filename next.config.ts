@@ -45,6 +45,25 @@ const config: NextConfig = {
           { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
+      /*
+       * The /iofs dashboard is meant to be embedded as an iframe on partner
+       * sites (escan-systems.com). The site-wide `X-Frame-Options:
+       * SAMEORIGIN` above blocks that for every route by default; this adds
+       * a `frame-ancestors` CSP for just this one path, which every modern
+       * browser treats as taking precedence over X-Frame-Options when both
+       * are present (and Next.js header overriding applies per header key,
+       * not per rule, so the SAMEORIGIN value above is untouched for every
+       * other route). Add more partner origins to the list as needed.
+       */
+      {
+        source: "/iofs",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "frame-ancestors 'self' https://escan-systems.com https://*.escan-systems.com;",
+          },
+        ],
+      },
     ];
   },
 };
