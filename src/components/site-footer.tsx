@@ -18,6 +18,10 @@ export function SiteFooter() {
   // three-column layout. It belongs on the document pages only.
   if (pathname === "/") return null;
 
+  // /iofs is a standalone page with its own self-contained header-less
+  // layout — the platform chrome footer doesn't belong there either.
+  if (pathname.startsWith("/iofs")) return null;
+
   return (
     <footer className="mt-16 border-t border-border bg-surface-panel">
       <div className="mx-auto grid max-w-[1800px] gap-8 px-5 py-9 md:grid-cols-[1.4fr_1fr_1fr]">

@@ -23,6 +23,11 @@ export function SiteHeader() {
     router.push(`${step}?tour=1`);
   };
 
+  // /iofs is a standalone page with its own self-contained layout — the
+  // four-country guided-tour chrome (country switcher, Explore/Compare/
+  // Hotspots/Place-profile rail) doesn't apply to it at all.
+  if (pathname.startsWith("/iofs")) return null;
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-surface-panel/95 shadow-[0_1px_0_rgba(255,255,255,0.6)_inset,0_1px_3px_hsl(220_48%_16%/0.06),0_16px_40px_-28px_hsl(220_48%_16%/0.4)]">
       <div className="mx-auto flex h-14 max-w-[1760px] items-center gap-4 px-4 sm:px-6">

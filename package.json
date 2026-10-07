@@ -26,7 +26,10 @@
     "warm": "tsx scripts/warm-cache.ts",
     "geo:build": "tsx scripts/build-boundaries.ts",
     "anchors:fetch": "tsx scripts/fetch-national-anchors.ts",
-    "geo:normalize": "tsx scripts/normalize-boundaries.ts"
+    "geo:normalize": "tsx scripts/normalize-boundaries.ts",
+    "iofs:warm": "tsx scripts/warm-iofs-cache.ts",
+    "iofs:geo": "tsx scripts/build-iofs-boundaries.ts",
+    "iofs:warm-translations": "tsx scripts/warm-iofs-translations.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
