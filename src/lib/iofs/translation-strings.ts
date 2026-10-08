@@ -19,12 +19,24 @@ export const STATIC_STRINGS: readonly string[] = [
   "Explore today's live ENSO conditions, compare them with past Super El Niño events, and discover each IOFS Member State's CMIP6 climate projections from 1950 to 2099",
 
   // Section titles/subtitles
-  "El Niño right now",
+  "Current ENSO Status",
   "Live from NOAA's Climate Prediction Center",
+  "How exceptional is the current event?",
+  "Compared with the strongest El Niño episodes since 1950, aligned by RONI",
   "Projected warming across the IOFS",
   "All four emissions pathways, 1995–2014 baseline through 2080–2099 — ensemble median, World Bank CCKP",
-  "One member's climate, 1950 → 2099",
+  "Climate Trajectory of Each IOFS Member State, 1950–2099",
   "Pick any IOFS member state and emissions pathway",
+
+  // Section 1 — "Super El Niño" disclaimer
+  "“Super El Niño” is an informal term for exceptionally strong El Niño events. NOAA CPC’s own formal name for this highest category is “very strong.”",
+
+  // Scenario cards
+  "Change relative to",
+
+  // Country trajectory — confidence note + updated CMIP6/national-aggregate citation
+  "Confidence varies by variable and region: temperature projections are generally more robust than regional precipitation projections, especially for monsoon-affected areas.",
+  "World Bank Climate Change Knowledge Portal — national aggregate from the CMIP6 (0.25°) archive, ensemble median. The shared line before 2015 is the observed/reanalysis historical run; each pathway diverges from it after that, exactly as published by the archive — nothing here is interpolated between the two.",
 
   // Error/empty states
   "Couldn't load the member ranking",
@@ -114,7 +126,6 @@ export const STATIC_STRINGS: readonly string[] = [
   "Indicator",
   "Horizon for the cards below",
   "Annual trajectory under each pathway",
-  "World Bank Climate Change Knowledge Portal — CMIP6 (0.25°), ensemble median. The shared line before 2015 is the observed-forcing historical run; each pathway diverges from it after that, exactly as published by the archive — nothing here is interpolated between the two.",
 
   // Member select
   "IOFS member country",

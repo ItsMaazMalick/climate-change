@@ -9,8 +9,6 @@ import type { EnsoOutlook } from "@/lib/iofs/enso-outlook";
 
 import { EnsoHistoryChart } from "./enso-history-chart";
 import { EnsoOutlookChart } from "./enso-outlook-chart";
-import { EpisodeComparator } from "./episode-comparator";
-import { EpisodeRanking } from "./episode-ranking";
 import { InfoButton } from "./info-dialog";
 import { PacificSstMap } from "./pacific-sst-map";
 import { T, useTranslatedText } from "./translation-context";
@@ -49,7 +47,7 @@ export function EnsoSection() {
     return <EmptyState title={noDataTitle} />;
   }
 
-  const { current, tier, discussion, elNinoEpisodes, outlook } = data;
+  const { current, tier, discussion, outlook } = data;
   const color = PHASE_COLOR[tier.phase] ?? PHASE_COLOR.Neutral;
 
   const statusMeaning = `As of ${current.label}, the Pacific is in a ${
@@ -121,6 +119,14 @@ export function EnsoSection() {
                   <InfoButton id="nino34-sst" meaningOverride={nino34Meaning} label="Niño 3.4 SST anomaly" />
                 </span>
               </p>
+              {tier.tier === "Super" && (
+                <p className="mt-1.5 max-w-md text-2xs leading-relaxed text-ink-faint">
+                  <T>
+                    “Super El Niño” is an informal term for exceptionally strong El Niño events.
+                    NOAA CPC’s own formal name for this highest category is “very strong.”
+                  </T>
+                </p>
+              )}
             </div>
           </div>
 
@@ -194,12 +200,6 @@ export function EnsoSection() {
         </h4>
         <EnsoOutlookChart outlook={outlook} />
       </div>
-
-      {/* Event-aligned comparison with a past episode */}
-      <EpisodeComparator history={data.history} episodes={elNinoEpisodes} current={current} />
-
-      {/* Historical episode ranking — derived live from the series above */}
-      <EpisodeRanking episodes={elNinoEpisodes} current={current} />
     </div>
   );
 }

@@ -47,6 +47,13 @@ export function CountryTrajectory({ country }: { country: string }) {
         </div>
       </div>
 
+      <p className="text-2xs leading-relaxed text-ink-faint">
+        <T>
+          Confidence varies by variable and region: temperature projections are generally more
+          robust than regional precipitation projections, especially for monsoon-affected areas.
+        </T>
+      </p>
+
       {loading && <SkeletonBlock height={260} />}
       {error && <ErrorState title={errorTitle} detail={error} />}
 
@@ -90,10 +97,10 @@ export function CountryTrajectory({ country }: { country: string }) {
 
           <p className="text-2xs leading-relaxed text-ink-faint">
             <T>
-              World Bank Climate Change Knowledge Portal — CMIP6 (0.25°), ensemble median. The
-              shared line before 2015 is the observed-forcing historical run; each pathway
-              diverges from it after that, exactly as published by the archive — nothing here is
-              interpolated between the two.
+              World Bank Climate Change Knowledge Portal — national aggregate from the CMIP6
+              (0.25°) archive, ensemble median. The shared line before 2015 is the
+              observed/reanalysis historical run; each pathway diverges from it after that,
+              exactly as published by the archive — nothing here is interpolated between the two.
             </T>
           </p>
         </>

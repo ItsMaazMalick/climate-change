@@ -45,7 +45,11 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
       },
       {
         term: "What does \"Strong\" or \"Super\" mean?",
-        text: "NOAA grades an event by its peak RONI: Weak (0.5–0.9), Moderate (1.0–1.4), Strong (1.5–1.9), and Super/Very Strong (2.0 °C or more) — the same bins this page uses to label the current reading.",
+        text: "NOAA grades an event by its peak RONI: Weak (0.5–0.9), Moderate (1.0–1.4), Strong (1.5–1.9), and Super/Very Strong (2.0 °C or more) — the same bins this page uses to label the current reading. \"Super El Niño\" is an informal term commonly used for this highest category; NOAA's own formal name for it is \"very strong.\"",
+      },
+      {
+        term: "What makes a season officially El Niño or La Niña?",
+        text: "NOAA's historical classification requires the ±0.5 °C RONI threshold to persist for five consecutive overlapping three-month seasons, together with a matching atmospheric response — shifts in tropical rainfall and wind patterns — not a single month crossing the line on its own.",
       },
     ],
     implication:
@@ -141,7 +145,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     implication:
       "The width of the band is itself the finding for a ranking table like this one: a country with a wide band faces very different outcomes depending on how much the world cuts emissions, while a narrow band means the pathways mostly agree.",
     takeaway: "Compare the band's width, not just its position — a narrow high band can matter as much as a wide one.",
-    source: "World Bank Climate Change Knowledge Portal — CMIP6 (0.25°), ensemble median",
+    source: "World Bank Climate Change Knowledge Portal — national aggregate from the CMIP6 (0.25°) archive, ensemble median",
   },
 
   "emissions-pathways": {
@@ -177,8 +181,12 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
         term: "Ensemble median",
         text: "The World Bank's archive downscales 30 separate climate models for each pathway. The median is the middle value across all 30 — a central estimate, not any single model's output.",
       },
+      {
+        term: "Is this gridded to 0.25° for every country?",
+        text: "The underlying CMIP6 models run at 0.25° resolution, but the figure shown for each IOFS member here is that country's single national aggregate — the same country-level statistic the Climate Change Knowledge Portal itself publishes, not a per-pixel map of that country's own climate variation.",
+      },
     ],
     takeaway: "Every figure on this page is \"how much change, relative to 1995–2014, do the models typically agree on\" — never a raw forecast from one model.",
-    source: "World Bank Climate Change Knowledge Portal — CMIP6 (0.25°)",
+    source: "World Bank Climate Change Knowledge Portal — national aggregate from the CMIP6 (0.25°) archive",
   },
 };

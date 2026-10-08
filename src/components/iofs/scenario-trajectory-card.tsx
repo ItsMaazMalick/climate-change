@@ -6,7 +6,14 @@ import { ArrowDownRight, ArrowUpRight, Info, Minus } from "lucide-react";
 import { AXIS_TEXT, tooltipStyle, useChartHover } from "@/components/charts/hover";
 import { coherentDisplay } from "@/lib/climate/derive";
 import { scenarioColorVar } from "@/lib/climate/scenario-style";
-import { formatValue, PERIODS, SCENARIOS, type PeriodId, type ScenarioId } from "@/lib/climate/taxonomy";
+import {
+  BASELINE_PERIOD,
+  formatValue,
+  PERIODS,
+  SCENARIOS,
+  type PeriodId,
+  type ScenarioId,
+} from "@/lib/climate/taxonomy";
 import type { SeriesPoint } from "@/lib/iofs/climate";
 import { T } from "./translation-context";
 
@@ -191,7 +198,7 @@ export function ScenarioTrajectoryCard({
 
       <div className="relative mt-2 flex items-center justify-between text-2xs text-ink-faint">
         <span>
-          <T>Baseline</T>{" "}
+          <T>Change relative to</T> {PERIODS[BASELINE_PERIOD].shortLabel}{" "}
           <strong className="font-semibold text-ink">{formatValue(shown.baseline, indicatorId)}</strong>
         </span>
         <span>

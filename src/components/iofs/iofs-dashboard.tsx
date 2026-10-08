@@ -11,6 +11,7 @@ import { DEFAULT_IOFS_MEMBER } from "@/lib/iofs/members";
 import type { IofsRankingEntry } from "@/lib/iofs/ranking";
 
 import { EnsoSection } from "./enso-section";
+import { HistoricalComparisonSection } from "./historical-comparison-section";
 import { InfoButton, InfoDialogProvider } from "./info-dialog";
 import { LanguageSwitcher } from "./language-switcher";
 import { MemberSelect } from "./member-select";
@@ -64,7 +65,7 @@ function IofsDashboardContent() {
       <section className="mb-10">
         <SectionTitle
           n={1}
-          title="El Niño right now"
+          title="Current ENSO Status"
           subtitle="Live from NOAA's Climate Prediction Center"
           infoId="enso-status"
         />
@@ -74,6 +75,16 @@ function IofsDashboardContent() {
       <section className="mb-10">
         <SectionTitle
           n={2}
+          title="How exceptional is the current event?"
+          subtitle="Compared with the strongest El Niño episodes since 1950, aligned by RONI"
+          infoId="episode-comparator"
+        />
+        <HistoricalComparisonSection />
+      </section>
+
+      <section className="mb-10">
+        <SectionTitle
+          n={3}
           title="Projected warming across the IOFS"
           subtitle="All four emissions pathways, 1995–2014 baseline through 2080–2099 — ensemble median, World Bank CCKP"
           infoId="warming-fan-chart"
@@ -112,8 +123,8 @@ function IofsDashboardContent() {
 
       <section>
         <SectionTitle
-          n={3}
-          title="One member's climate, 1950 → 2099"
+          n={4}
+          title="Climate Trajectory of Each IOFS Member State, 1950–2099"
           subtitle="Pick any IOFS member state and emissions pathway"
           infoId="cmip6-baseline"
         />
