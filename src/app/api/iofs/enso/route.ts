@@ -6,9 +6,9 @@ export const runtime = "nodejs";
 
 /**
  * Live ENSO status, history, NOAA's own written discussion (lib/iofs/enso.ts)
- * and the IRI/CPC 9-season probability outlook (lib/iofs/enso-outlook.ts).
- * `outlook` is `null` when that page's wording can't be reliably parsed this
- * month — the UI shows that honestly rather than guessing.
+ * and NOAA CPC's official 9-season outlook tables (lib/iofs/enso-outlook.ts).
+ * `outlook` is `null` when the CPC tables are missing, can't be parsed, or are from a different
+ * month than the bulletin — the UI says so rather than guessing.
  */
 export const GET = handler(async () => {
   const [snapshot, outlook] = await Promise.all([getEnsoSnapshot(), getEnsoOutlook()]);
@@ -16,8 +16,8 @@ export const GET = handler(async () => {
     data: { ...snapshot, outlook },
     meta: {
       source: "upstream",
-      dataset: "NOAA CPC — RONI, Niño 3.4, ENSO diagnostic discussion; IRI/CPC probability outlook",
-      citation: "NOAA Climate Prediction Center, cpc.ncep.noaa.gov; IRI, iri.columbia.edu.",
+      dataset: "NOAA CPC — RONI, Niño 3.4, ENSO diagnostic discussion; official outlook tables (probabilities, strengths, RONI forecast)",
+      citation: "NOAA Climate Prediction Center, cpc.ncep.noaa.gov.",
     },
   };
 });

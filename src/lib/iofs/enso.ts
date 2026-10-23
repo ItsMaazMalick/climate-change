@@ -34,6 +34,8 @@ const SEASON_MONTH: Record<string, number> = {
 export interface EnsoPoint {
   year: number;
   month: number;
+  /** The 3-month season this RONI value covers, e.g. "JAS" (month/label are its MIDDLE month, so JAS is Aug). */
+  season: string;
   label: string;
   roni: number | null;
   nino34: number | null;
@@ -61,7 +63,7 @@ export function classifyRoni(roni: number | null): EnsoTier {
   return { phase, tier, label: `${tier} ${phase}` };
 }
 
-async function fetchNoaaText(url: string): Promise<string> {
+export async function fetchNoaaText(url: string): Promise<string> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 20_000);
   try {
@@ -81,8 +83,8 @@ async function fetchNoaaText(url: string): Promise<string> {
   }
 }
 
-function parseRoni(text: string): Array<{ year: number; month: number; roni: number | null }> {
-  const out: Array<{ year: number; month: number; roni: number | null }> = [];
+function parseRoni(text: string): Array<{ year: number; month: number; season: string; roni: number | null }> {
+  const out: Array<{ year: number; month: number; season: string; roni: number | null }> = [];
   for (const line of text.trim().split("\n")) {
     const parts = line.trim().split(/\s+/);
     if (parts.length < 3) continue;
@@ -92,7 +94,7 @@ function parseRoni(text: string): Array<{ year: number; month: number; roni: num
     const raw = Number(parts[2]);
     if (!Number.isFinite(year)) continue;
     const roni = Number.isFinite(raw) && raw !== -99.9 && raw !== -999 ? raw : null;
-    out.push({ year, month, roni });
+    out.push({ year, month, season: parts[0]!.toUpperCase(), roni });
   }
   return out;
 }
@@ -133,7 +135,7 @@ function parseDiscussion(text: string): DiscussionInfo {
 
 async function loadHistory(): Promise<EnsoPoint[]> {
   return cached(
-    "iofs:enso:history",
+    "iofs:enso:history:v2",
     async () => {
       const [roniText, nino34Text] = await Promise.all([
         fetchNoaaText(RONI_URL),
@@ -148,6 +150,7 @@ async function loadHistory(): Promise<EnsoPoint[]> {
           return {
             year: r.year,
             month: r.month,
+            season: r.season,
             label: `${MONTH_NAMES[r.month]} ${r.year}`,
             roni: r.roni,
             nino34: n34?.anom ?? null,

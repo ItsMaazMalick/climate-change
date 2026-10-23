@@ -66,8 +66,6 @@ export const STATIC_STRINGS: readonly string[] = [
   "Source",
   "RONI ≥ +0.5 °C marks an El Niño season, ≤ −0.5 °C a La Niña season. RONI adjusts the classic Niño 3.4 anomaly for the global warming trend, so a season is compared against the climate of its own time rather than a fixed 1991–2020 baseline.",
   "Where is El Niño heading? 9-season probability outlook",
-  "The written forecast still has it — see the",
-  "IRI/CPC outlook page",
   "directly rather than a guessed number here.",
 
   // ENSO history chart
@@ -81,9 +79,21 @@ export const STATIC_STRINGS: readonly string[] = [
 
   // ENSO outlook chart
   "El Niño probability",
-  "As stated by the source for that season",
-  "Remainder",
-  "Neutral / La Niña — not separately broken out in the source text",
+  "NOAA's probability outlook isn't available right now",
+  "Nothing is estimated in its place — see NOAA's own",
+  "ENSO probabilities page",
+  "Chance of each state",
+  "Very strong · median RONI",
+  "Chance that the 3-month RONI is ≥ +0.5 °C",
+  "Chance of ENSO-neutral conditions",
+  "Chance that the 3-month RONI is ≤ −0.5 °C",
+  "“Very strong” is the chance that RONI reaches +2.0 °C or more. The median is NOAA's central RONI forecast. 100% and 0% are rounded, not guarantees.",
+  "NOAA forecast",
+  "Latest 3-month season",
+  "measured",
+  "rounded",
+  "from NOAA's bulletin",
+  "These are forecasts, not observations. 100% and 0% are rounded probabilities, not guarantees. All strength categories use RONI (ERSSTv6-based); older ONI values are not comparable.",
 
   // Episode comparator
   "Current episode vs. a past one, aligned by month since onset",

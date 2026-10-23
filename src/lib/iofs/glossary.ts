@@ -115,7 +115,7 @@ export const GLOSSARY: Record<string, GlossaryEntry> = {
     implication:
       "Continued El Niño conditions mean that climate-sensitive sectors such as agriculture should keep monitoring rainfall, temperature and water availability. It does not mean agricultural damage is inevitable.",
     takeaway: "This is an outlook for the Pacific climate system. Actual agricultural risk must be assessed using observations.",
-    source: "IRI / NOAA CPC objective ENSO outlook",
+    source: "NOAA CPC official ENSO outlook",
   },
 
   "episode-comparator": {

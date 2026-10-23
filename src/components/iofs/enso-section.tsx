@@ -9,6 +9,7 @@ import type { EnsoOutlook } from "@/lib/iofs/enso-outlook";
 
 import { EnsoHistoryChart } from "./enso-history-chart";
 import { EnsoOutlookChart } from "./enso-outlook-chart";
+import { longDate, seasonName, signed } from "@/lib/iofs/enso-format";
 import { InfoButton } from "./info-dialog";
 import { PacificSstMap } from "./pacific-sst-map";
 import { T, useTranslatedText } from "./translation-context";
@@ -50,13 +51,14 @@ export function EnsoSection() {
   const { current, tier, discussion, outlook } = data;
   const color = PHASE_COLOR[tier.phase] ?? PHASE_COLOR.Neutral;
 
-  const statusMeaning = `As of ${current.label}, the Pacific is in a ${
+  const observedSeason = seasonName(`${current.season} ${current.year}`);
+  const statusMeaning = `For ${observedSeason}, the Pacific is in a ${
     tier.tier ? `${tier.tier} ` : ""
   }${tier.phase} state (RONI ${formatSigned(current.roni)})${
     discussion.alertStatus ? ` — NOAA's own alert level: ${discussion.alertStatus}.` : "."
   }`;
 
-  const roniMeaning = `The current ${current.label} RONI of ${formatSigned(current.roni)} places the Pacific in ${tier.label.toLowerCase()}${
+  const roniMeaning = `The latest RONI (${observedSeason}) of ${formatSigned(current.roni)} places the Pacific in ${tier.label.toLowerCase()}${
     tier.tier ? ` — a ${tier.tier.toLowerCase()}-tier signal by NOAA's own thresholds` : ""
   }.`;
 
@@ -106,7 +108,7 @@ export function EnsoSection() {
               </h3>
               <p className="mt-1 flex flex-wrap items-center gap-x-1 text-xs text-ink-faint">
                 <span>
-                  <T>As of</T> {current.label} ·
+                  <T>Latest 3-month season</T>: {observedSeason} ·
                 </span>
                 <span className="inline-flex items-center gap-0.5">
                   NOAA CPC RONI {formatSigned(current.roni)}
@@ -156,6 +158,8 @@ export function EnsoSection() {
           </blockquote>
         )}
       </div>
+
+      {outlook && <EnsoAdvisorySummary outlook={outlook} observed={current.roni} observedSeason={observedSeason} />}
 
       {/* Live Pacific SST imagery */}
       <div className="tier-flat overflow-hidden p-0">
@@ -207,4 +211,60 @@ export function EnsoSection() {
 function formatSigned(value: number | null): string {
   if (value === null || !Number.isFinite(value)) return "—";
   return `${value > 0 ? "+" : ""}${value.toFixed(2)} °C`;
+}
+
+/**
+ * The headline forecast, written from NOAA's own numbers: the chance of a record-strength event and the key figures
+ * behind it. Observed and forecast values are kept visibly separate.
+ */
+function EnsoAdvisorySummary({
+  outlook,
+  observed,
+  observedSeason,
+}: {
+  outlook: EnsoOutlook;
+  observed: number | null;
+  observedSeason: string;
+}) {
+  const top = [...(outlook.historicChances ?? [])].sort((a, b) => b.pct - a.pct)[0];
+  const row = top ? outlook.seasons.find((s) => s.season === top.season) : undefined;
+  if (!top || !row) return null;
+  const when = seasonName(top.season);
+  const lead = `El Niño is strengthening. According to NOAA's ${longDate(outlook.issued)} advisory, there is a ${top.pct}% probability that the ${when} El Niño will reach or exceed a historic RONI threshold of +2.5 °C — stronger than any event in NOAA's record since 1950.`;
+  const tiles: Array<[string, string, string]> = [
+    [`Observed RONI, ${observedSeason}`, `${signed(observed)} °C`, "measured"],
+    [`Forecast median RONI, ${when}`, `${signed(row.roniMedian)} °C`, `90% range ${signed(row.roniP5)} to ${signed(row.roniP95)}`],
+    [`El Niño probability, ${when}`, `${row.elNino}%`, "rounded"],
+    [`Very strong (≥ +2.0 °C), ${when}`, row.veryStrong === null ? "—" : `${row.veryStrong}%`, "rounded"],
+    [`Historic (≥ +2.5 °C), ${when}`, `${top.pct}%`, "from NOAA's bulletin"],
+  ];
+  return (
+    <div className="tier-flat p-5" aria-label="NOAA ENSO forecast summary">
+      <p className="label">
+        <T>NOAA forecast</T> · {longDate(outlook.issued)}
+      </p>
+      <p className="mt-1 text-sm leading-relaxed text-ink">
+        <T>{lead}</T>
+      </p>
+      <dl className="mt-3 grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
+        {tiles.map(([k, v, note]) => (
+          <div key={k} className="rounded-(--radius-control) bg-surface-recessed p-3">
+            <dt className="text-2xs text-ink-faint">
+              <T>{k}</T>
+            </dt>
+            <dd className="mt-0.5 text-lg font-semibold tabular-nums text-ink">{v}</dd>
+            <dd className="text-2xs text-ink-faint">
+              <T>{note}</T>
+            </dd>
+          </div>
+        ))}
+      </dl>
+      <p className="mt-3 text-2xs leading-relaxed text-ink-faint">
+        <T>
+          These are forecasts, not observations. 100% and 0% are rounded probabilities, not guarantees. All strength
+          categories use RONI (ERSSTv6-based); older ONI values are not comparable.
+        </T>
+      </p>
+    </div>
+  );
 }
