@@ -1,8 +1,10 @@
+import { z } from "zod";
+
 import { CCKP_CITATION, handler, searchParams } from "@/lib/api";
 import { isInsideCountryBounds } from "@/lib/climate/countries";
 import { deriveProjected } from "@/lib/climate/derive";
 import { nearestPlace } from "@/lib/climate/places";
-import { resolvePoint } from "@/lib/climate/store";
+import { resolvePoint, resolveSeries } from "@/lib/climate/store";
 import {
   FUTURE_PERIOD_IDS,
   INDICATORS,
@@ -17,12 +19,70 @@ import { parseSearchParams, pointQuerySchema } from "@/lib/validation";
 
 export const runtime = "nodejs";
 
-const querySchema = pointQuerySchema.pick({
-  lat: true,
-  lon: true,
-  indicator: true,
-  model: true,
-});
+const querySchema = pointQuerySchema
+  .pick({ lat: true, lon: true, indicator: true, model: true })
+  .extend({ annual: z.enum(["0", "1"]).default("0") });
+
+/** Window each anchor year stands for, for averaging the national series. */
+const ANCHOR_SPAN: Record<number, [number, number]> = {
+  2005: [1995, 2014],
+  2030: [2020, 2039],
+  2050: [2040, 2059],
+  2070: [2060, 2079],
+  2090: [2080, 2099],
+};
+
+type Anchor = { year: number; value: number | null };
+
+/**
+ * An estimated year-by-year path for one point.
+ *
+ * Annual series exist only as national aggregates; a point has five real
+ * 20-year values. This keeps the national curve's year-to-year shape and
+ * shifts it so each 20-year window averages to the point's own value — the
+ * offset is interpolated between window centres. It is a labelled estimate
+ * (a standard delta/offset method), never presented as grid data.
+ */
+function localAnnual(
+  national: Array<{ year: number; value: number | null }>,
+  anchors: Anchor[],
+  baseline: number,
+) {
+  const byYear = new Map(national.filter((p) => p.value !== null).map((p) => [p.year, p.value!]));
+  const offsets = anchors.flatMap((anchor) => {
+    const span = ANCHOR_SPAN[anchor.year];
+    if (!span || anchor.value === null) return [];
+    let sum = 0;
+    let count = 0;
+    for (let year = span[0]; year <= span[1]; year += 1) {
+      const v = byYear.get(year);
+      if (v !== undefined) {
+        sum += v;
+        count += 1;
+      }
+    }
+    return count ? [{ year: anchor.year, offset: anchor.value - sum / count }] : [];
+  });
+  if (offsets.length === 0) return [];
+
+  const offsetAt = (year: number) => {
+    if (year <= offsets[0]!.year) return offsets[0]!.offset;
+    const last = offsets[offsets.length - 1]!;
+    if (year >= last.year) return last.offset;
+    const i = offsets.findIndex((o) => o.year > year);
+    const a = offsets[i - 1]!;
+    const b = offsets[i]!;
+    return a.offset + ((year - a.year) / (b.year - a.year)) * (b.offset - a.offset);
+  };
+
+  return [...byYear.entries()]
+    .filter(([year]) => year >= 1995 && year <= 2100)
+    .sort((a, b) => a[0] - b[0])
+    .map(([year, v]) => {
+      const value = Number((v + offsetAt(year)).toFixed(3));
+      return { year, value, delta: Number((value - baseline).toFixed(3)) };
+    });
+}
 
 /**
  * Where each published 20-year window is drawn on a time axis. The windows
@@ -109,7 +169,24 @@ export const GET = handler(async (request) => {
     }),
   );
 
-  const hasData = baseline?.value != null && lines.some((l) => l.points.some((p) => p.delta !== null && p.year > BASELINE_YEAR));
+  if (query.annual === "1" && baseline?.value != null) {
+    const baseValue = baseline.value;
+    await Promise.all(
+      lines.map(async (line) => {
+        const series = await resolveSeries({
+          indicator: query.indicator,
+          scenario: line.id,
+          model: query.model,
+          geography: "PAK",
+        }).catch(() => null);
+        Object.assign(line, {
+          annual: series ? localAnnual(series.points, line.points, baseValue) : [],
+        });
+      }),
+    );
+  }
+
+  const hasData =baseline?.value != null && lines.some((l) => l.points.some((p) => p.delta !== null && p.year > BASELINE_YEAR));
   const nearest = nearestPlace({ lat: query.lat, lon: query.lon }, 150, "PAK");
 
   return {

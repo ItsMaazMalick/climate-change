@@ -16,9 +16,12 @@ export interface PathLine {
     value: number | null;
     delta: number | null;
   }>;
+  /** Optional estimated year-by-year path; drawn instead of the anchor curve. */
+  annual?: Array<{ year: number; value: number | null; delta: number | null }>;
 }
 
-const X_MIN = 2000;
+type SeriesPoint = { year: number; periodLabel: string; value: number | null; delta: number | null };
+
 const X_MAX = 2100;
 const X_TICKS = [2000, 2020, 2040, 2060, 2080, 2100];
 
@@ -111,12 +114,24 @@ export function ProjectionPathChart({
   const innerW = width - margin.left - margin.right;
   const innerH = height - margin.top - margin.bottom;
 
-  const read = (p: PathLine["points"][number]) => (showChange ? p.delta : p.value);
+  const read = (p: { value: number | null; delta: number | null }) => (showChange ? p.delta : p.value);
   const visible = lines.filter((line) => !hidden.has(line.id));
-  const years = lines[0]?.points.map((p) => p.year) ?? [];
+  const dense = lines.some((line) => (line.annual?.length ?? 0) > 0);
+  const X_MIN = dense ? 1995 : 2000;
+
+  /** What a line is drawn and hovered from: yearly estimate, or the anchors. */
+  const seriesOf = (line: PathLine): SeriesPoint[] =>
+    dense && line.annual?.length
+      ? line.annual.map((p) => ({ ...p, periodLabel: String(p.year) }))
+      : line.points;
+
+  const years = [...new Set(lines.flatMap((l) => seriesOf(l).map((p) => p.year)))].sort((a, b) => a - b);
+  const at = (line: PathLine, year: number) => seriesOf(line).find((p) => p.year === year) ?? null;
 
   const domain = (() => {
-    const values = visible.flatMap((l) => l.points.map(read)).filter((v): v is number => v !== null);
+    const values = visible
+      .flatMap((l) => [...seriesOf(l), ...l.points].map(read))
+      .filter((v): v is number => v !== null);
     if (values.length === 0) return null;
     const min = Math.min(...values);
     const max = Math.max(...values);
@@ -136,27 +151,35 @@ export function ProjectionPathChart({
   const y = (v: number) => margin.top + innerH - ((v - domain.min) / (domain.max - domain.min)) * innerH;
 
   const ptsOf = (line: PathLine): Pt[] =>
-    line.points.flatMap((p) => {
+    seriesOf(line).flatMap((p) => {
       const v = read(p);
       return v === null ? [] : [{ x: x(p.year), y: y(v) }];
     });
+  // Yearly data already carries its own shape — join it straight, don't smooth.
+  const lineD = (line: PathLine) =>
+    dense
+      ? ptsOf(line).map((p, i) => `${i ? "L" : "M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join("")
+      : smoothPath(ptsOf(line));
 
-  // Fan: the envelope of the visible pathways at each window.
-  const envelope = years.map((year, i) => {
-    const vals = visible.map((l) => read(l.points[i]!)).filter((v): v is number => v !== null);
+  // Fan: the envelope of the visible pathways at each year.
+  const envelope = years.map((year) => {
+    const vals = visible.map((l) => at(l, year)).map((p) => (p ? read(p) : null)).filter((v): v is number => v !== null);
     return vals.length ? { year, lo: Math.min(...vals), hi: Math.max(...vals) } : null;
   }).filter((e): e is { year: number; lo: number; hi: number } => e !== null);
+  const edge = (pts: Pt[], start: "M" | "L") =>
+    dense ? pts.map((p, i) => `${i || start === "L" ? "L" : "M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join("") : smoothPath(pts, start);
   const fanPath =
     envelope.length > 1
-      ? smoothPath(envelope.map((e) => ({ x: x(e.year), y: y(e.hi) }))) +
-        smoothPath([...envelope].reverse().map((e) => ({ x: x(e.year), y: y(e.lo) })), "L") +
+      ? edge(envelope.map((e) => ({ x: x(e.year), y: y(e.hi) })), "M") +
+        edge([...envelope].reverse().map((e) => ({ x: x(e.year), y: y(e.lo) })), "L") +
         "Z"
       : "";
 
   // End-of-line labels, nudged apart so close pathways don't overprint.
   const endLabels = visible
     .map((line) => {
-      const last = line.points[line.points.length - 1]!;
+      const series = seriesOf(line);
+      const last = series[series.length - 1]!;
       const v = read(last);
       return v === null ? null : { line, v, y: y(v) };
     })
@@ -183,10 +206,10 @@ export function ProjectionPathChart({
 
   const hoverYear = hoverIndex !== null ? (years[hoverIndex] ?? null) : null;
   const readings =
-    hoverIndex !== null
+    hoverYear !== null
       ? visible
-          .map((line) => ({ line, point: line.points[hoverIndex]! }))
-          .filter((r) => read(r.point) !== null)
+          .map((line) => ({ line, point: at(line, hoverYear) }))
+          .filter((r): r is { line: PathLine; point: SeriesPoint } => r.point !== null && read(r.point) !== null)
           .sort((a, b) => (read(b.point) ?? 0) - (read(a.point) ?? 0))
       : [];
   const tipLeft = hoverYear !== null && x(hoverYear) > width * 0.55;
@@ -297,10 +320,10 @@ export function ProjectionPathChart({
           return (
             <path
               key={`${line.id}-${showChange}`}
-              d={smoothPath(ptsOf(line))}
+              d={lineD(line)}
               fill="none"
               stroke={line.color}
-              strokeWidth={isFocus ? 4.5 : 3}
+              strokeWidth={isFocus ? 4.5 : dense ? 2.4 : 3}
               strokeLinecap="round"
               strokeLinejoin="round"
               opacity={dimmed ? 0.18 : 1}
@@ -320,7 +343,7 @@ export function ProjectionPathChart({
           line.points.map((p, i) => {
             const v = read(p);
             if (v === null) return null;
-            const active = hoverIndex === i;
+            const active = !dense && hoverIndex === i;
             return (
               <circle
                 key={`${line.id}-${p.year}`}
@@ -381,7 +404,7 @@ export function ProjectionPathChart({
             {readings[0]!.point.periodLabel}
           </div>
           <div className="mb-2 text-[11px] text-ink-faint">
-            {hoverIndex === 0 ? "Historical baseline" : "20-year average"}
+            {dense ? "Estimated yearly value" : hoverIndex === 0 ? "Historical baseline" : "20-year average"}
           </div>
           <dl className="space-y-1">
             {readings.map(({ line, point }) => (
@@ -392,7 +415,7 @@ export function ProjectionPathChart({
                 </dt>
                 <dd className="tnum text-right">
                   <span className="font-semibold text-ink">{formatValue(point.value, indicatorId)}</span>
-                  {hoverIndex !== 0 && (
+                  {(dense || hoverIndex !== 0) && (
                     <span className="ml-1.5 text-[11px] font-medium" style={{ color: line.color }}>
                       {formatValue(point.delta, indicatorId, "anomaly")}
                     </span>
