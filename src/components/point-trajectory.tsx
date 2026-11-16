@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import { MapPin } from "lucide-react";
 
-import { TimeSeriesChart, type SeriesLine } from "@/components/charts/time-series";
+import { ProjectionPathChart } from "@/components/charts/projection-path-chart";
 import { Field, IndicatorPicker } from "@/components/controls";
 import { ClimateMap, type RegionData } from "@/components/map/climate-map";
 import { Legend } from "@/components/map/legend";
@@ -91,20 +91,6 @@ export function PointTrajectory({ places }: { places: Place[] }) {
   const showChange = state.view === "change";
   const product = showChange ? "anomaly" : "climatology";
 
-  const lines: SeriesLine[] = useMemo(
-    () =>
-      (path.data?.lines ?? []).map((line) => ({
-        id: line.id,
-        label: line.label,
-        color: line.color,
-        points: line.points.map((p) => ({
-          year: p.year,
-          value: showChange ? p.delta : p.value,
-        })),
-      })),
-    [path.data, showChange],
-  );
-
   const unit = displayUnit(path.data?.unit ?? indicator?.unit ?? "", state.indicator, product);
 
   return (
@@ -146,7 +132,7 @@ export function PointTrajectory({ places }: { places: Place[] }) {
       </div>
 
       {/* --------------------------------------------------------- chart -- */}
-      <aside className="w-full shrink-0 overflow-y-auto border-t border-border bg-surface-panel lg:w-[520px] lg:border-l lg:border-t-0">
+      <aside className="w-full shrink-0 overflow-y-auto border-t border-border bg-surface-panel lg:w-[600px] lg:border-l lg:border-t-0 xl:w-[680px]">
         <div className="space-y-5 p-4 pb-16">
           <header>
             <p className="label">Point projection</p>
@@ -255,16 +241,16 @@ export function PointTrajectory({ places }: { places: Place[] }) {
                 ))}
               </div>
 
-              <TimeSeriesChart
-                lines={lines}
-                unit={unit}
-                height={320}
-                splitYear={0}
-                indicatorId={state.indicator}
-                product={product}
-                yLabel={indicator?.label}
-                showMarkers
-              />
+              <EndOfCentury lines={path.data.lines} indicatorId={state.indicator} />
+
+              <div className="rounded-(--radius-container) border border-border bg-surface-raised p-3 shadow-(--elevation-raised)">
+                <ProjectionPathChart
+                  lines={path.data.lines}
+                  indicatorId={state.indicator}
+                  showChange={showChange}
+                  unit={unit}
+                />
+              </div>
 
               <PathTable
                 lines={path.data.lines}
@@ -282,6 +268,57 @@ export function PointTrajectory({ places }: { places: Place[] }) {
           )}
         </div>
       </aside>
+    </div>
+  );
+}
+
+/**
+ * The headline: where this place ends up by 2080–2099 if the world cuts
+ * emissions hard, versus if it does not. The gap between the two cards is the
+ * part of the future that is still being decided.
+ */
+function EndOfCentury({
+  lines,
+  indicatorId,
+}: {
+  lines: PathResponse["lines"];
+  indicatorId: string;
+}) {
+  const pick = (id: string) => {
+    const line = lines.find((l) => l.id === id);
+    const last = line?.points[line.points.length - 1];
+    return line && last ? { line, last } : null;
+  };
+  const cards = [
+    { key: "ssp126", title: "If emissions fall fast", data: pick("ssp126") },
+    { key: "ssp245", title: "Middle of the road", data: pick("ssp245") },
+    { key: "ssp585", title: "If emissions keep rising", data: pick("ssp585") },
+  ];
+
+  return (
+    <div className="grid grid-cols-3 gap-2.5">
+      {cards.map(({ key, title, data }) =>
+        data ? (
+          <div
+            key={key}
+            className="relative overflow-hidden rounded-(--radius-container) border p-3 shadow-(--elevation-raised)"
+            style={{
+              borderColor: `color-mix(in oklab, ${data.line.color} 35%, transparent)`,
+              background: `linear-gradient(160deg, color-mix(in oklab, ${data.line.color} 16%, var(--color-surface-panel)), var(--color-surface-panel) 70%)`,
+            }}
+          >
+            <div className="absolute inset-x-0 top-0 h-1" style={{ background: data.line.color }} />
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-muted">{title}</p>
+            <p className="tnum mt-1.5 text-2xl font-bold leading-none" style={{ color: data.line.color }}>
+              {formatValue(data.last.delta, indicatorId, "anomaly")}
+            </p>
+            <p className="tnum mt-1 text-xs text-ink-muted">
+              {formatValue(data.last.value, indicatorId)} by 2080–2099
+            </p>
+            <p className="mt-1 text-[11px] font-medium text-ink-faint">{data.line.label}</p>
+          </div>
+        ) : null,
+      )}
     </div>
   );
 }
