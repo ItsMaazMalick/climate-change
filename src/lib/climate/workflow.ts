@@ -54,6 +54,7 @@ export const WORKFLOW: WorkflowStep[] = [
 ];
 
 export const REFERENCE_LINKS = [
+  { href: "/trajectory", label: "Point to 2100" },
   { href: "/iofs", label: "IOFS & El Niño" },
   { href: "/learn", label: "Learn" },
   { href: "/methodology", label: "Methodology" },

@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 
-import { formatValue, type ScenarioId } from "@/lib/climate/taxonomy";
+import { formatValue, type ProductId, type ScenarioId } from "@/lib/climate/taxonomy";
 
 import { AXIS, AXIS_TEXT, niceTicks, tooltipStyle, useChartHover } from "./hover";
 
@@ -32,6 +32,8 @@ export function TimeSeriesChart({
   splitYear = 2015,
   yLabel,
   indicatorId = "tas",
+  product = "climatology",
+  showMarkers = false,
 }: {
   lines: SeriesLine[];
   unit: string;
@@ -39,6 +41,10 @@ export function TimeSeriesChart({
   splitYear?: number;
   yLabel?: string;
   indicatorId?: string;
+  /** "anomaly" makes the tooltip print signed changes (+1.8 °C). */
+  product?: ProductId;
+  /** Dots at every real data point — for sparse series such as 20-year windows. */
+  showMarkers?: boolean;
 }) {
   const width = 760;
   const margin = { top: 14, right: 14, bottom: 26, left: 46 };
@@ -210,6 +216,23 @@ export function TimeSeriesChart({
           );
         })}
 
+        {showMarkers &&
+          lines.map((line) =>
+            line.points.map((point) =>
+              point.value === null ? null : (
+                <circle
+                  key={`${line.id}-${point.year}`}
+                  cx={xYear(point.year)}
+                  cy={y(point.value)}
+                  r={2.6}
+                  fill={line.color}
+                  opacity={focused !== null && focused !== line.id ? 0.22 : 1}
+                  pointerEvents="none"
+                />
+              ),
+            ),
+          )}
+
         {hover && hoveredYear !== null && (
           <g pointerEvents="none">
             <line
@@ -267,7 +290,7 @@ export function TimeSeriesChart({
                   />
                   {line.label}
                 </dt>
-                <dd className="tnum font-semibold">{formatValue(value, indicatorId)}</dd>
+                <dd className="tnum font-semibold">{formatValue(value, indicatorId, product)}</dd>
               </div>
             ))}
           </dl>
